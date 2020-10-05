@@ -6,4 +6,4 @@ file(GLOB CORE_HEADER_FILES
 	include/Core.h
 	)
 
-add_library(core STATIC ${CORE_SRC_FILES} ${ORE_HEADER_FILES})
+add_library(Core STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES})

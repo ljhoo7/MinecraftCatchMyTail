@@ -6,4 +6,4 @@ file(GLOB SERVER_HEADER_FILES
 	include/Constant.h
 	)
 
-add_library(server STATIC ${SERVER_SRC_FILES} ${SERVER_HEADER_FILES})
+add_library(Server STATIC ${SERVER_SRC_FILES} ${SERVER_HEADER_FILES})

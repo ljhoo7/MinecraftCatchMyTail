@@ -8,4 +8,4 @@ add_subdirectory(Core)
 add_subdirectory(Server)
 
 #Setting Dependencies
-add_dependencies(server core)
+add_dependencies(Server Core)
