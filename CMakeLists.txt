@@ -8,4 +8,4 @@ add_subdirectory(Core)
 add_subdirectory(Server)
 
 #Setting Dependencies
-add_dependencies(Server Core)
+add_dependencies(CatchMyTailServer ServerCore)
