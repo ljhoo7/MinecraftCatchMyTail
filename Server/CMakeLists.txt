@@ -11,3 +11,5 @@ file(GLOB SERVER_HEADER_FILES
 add_executable(CatchMyTailServer ${SERVER_SRC_FILES} ${SERVER_HEADER_FILES})
 
 target_link_libraries(CatchMyTailServer ../lib/${CMAKE_VS_PLATFORM_NAME}/${CMAKE_CFG_INTDIR}/ServerCore)
+
+set_property(TARGET CatchMyTailServer PROPERTY COMPILE_DEFINITIONS _LIB UNICODE _UNICODE $<IF:$<CONFIG:Debug>,_DEBUG,NDEBUG>)
