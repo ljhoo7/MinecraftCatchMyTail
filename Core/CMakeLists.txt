@@ -1,3 +1,5 @@
+set(CMAKE_CXX_STANDARD 17)
+
 include_directories("include")
 
 file(GLOB CORE_SRC_FILES
@@ -19,3 +21,4 @@ set_property(TARGET ServerCore PROPERTY ARCHIVE_OUTPUT_DIRECTORY ../lib/${CMAKE_
 set_property(TARGET ServerCore PROPERTY COMPILE_DEFINITIONS UNICODE _UNICODE)
 
 target_link_libraries(ServerCore ws2_32)
+target_link_libraries(ServerCore Mswsock)

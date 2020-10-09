@@ -7,17 +7,18 @@ namespace GenericBoson
 	{
 		struct ServerCreateParameter
 		{
-			std::string m_ipString;
+			GBString m_ipString;
 			int m_port = 0;
 		};
 
 		class ServerCore
 		{
-			SOCKET m_listenSocket = INVALID_SOCKET;
+			// If you remove '/100', you will get a compile time error "out of heap".
+			static const constexpr int acceptedSocketArraySize = SOMAXCONN / sizeof(SOCKET) / 100;
+			SOCKET m_listenSocket = INVALID_SOCKET, m_acceptSocketArray[acceptedSocketArraySize] = { INVALID_SOCKET, };
 			HANDLE m_IOCP = INVALID_HANDLE_VALUE;
 
 			ServerCreateParameter m_createParameter;
-
 		public:
 
 			virtual ~ServerCore();
