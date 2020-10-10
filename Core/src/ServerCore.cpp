@@ -31,7 +31,9 @@ namespace GenericBoson
 		{
 			m_createParameter = param;
 
-			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 16);
+			int coreCount = std::thread::hardware_concurrency();
+
+			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 2 * coreCount);
 
 			sockaddr_in service;
 

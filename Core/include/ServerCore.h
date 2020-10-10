@@ -19,6 +19,9 @@ namespace GenericBoson
 			HANDLE m_IOCP = INVALID_HANDLE_VALUE;
 
 			ServerCreateParameter m_createParameter;
+
+			std::vector < std::function<void()>> m_threadPool;
+
 		public:
 
 			virtual ~ServerCore();
