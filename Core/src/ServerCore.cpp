@@ -25,15 +25,42 @@ namespace GenericBoson
 				int result = closesocket(m_listenSocket);
 				assert(SOCKET_ERROR == result);
 			}
+
+			for (int k = 0; k < m_threadPoolSize; ++k)
+			{
+				if (false == m_threadPool[k].joinable())
+				{
+					continue;
+				}
+
+				m_threadPool[k].join();
+			}
+		}
+
+		void ServerCore::ThreadFunction()
+		{
+			static int cnt = 0;
+
+			std::cout << cnt++ << std::endl;
+
+			/*DWORD recievedBytes;
+			IO_TYPE ioType;
+			ExpandedOverlapped eol;
+			BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&ioType, (LPOVERLAPPED*)&eol, NULL);*/
 		}
 
 		std::pair<int, GBString> ServerCore::Start(const ServerCreateParameter& param)
 		{
 			m_createParameter = param;
 
-			int coreCount = std::thread::hardware_concurrency();
+			m_threadPoolSize = 2 * std::thread::hardware_concurrency();
 
-			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 2 * coreCount);
+			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, m_threadPoolSize);
+
+			for (int k = 0; k < m_threadPoolSize; ++k)
+			{
+				m_threadPool.emplace_back(&ServerCore::ThreadFunction);
+			}
 
 			sockaddr_in service;
 

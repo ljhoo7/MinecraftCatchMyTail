@@ -20,7 +20,22 @@ namespace GenericBoson
 
 			ServerCreateParameter m_createParameter;
 
-			std::vector < std::function<void()>> m_threadPool;
+			int m_threadPoolSize = 0;
+			
+			void ThreadFunction();
+			std::vector<std::thread> m_threadPool;
+
+			enum class IO_TYPE : int64_t
+			{
+				ACCEPT,
+				RECEIVE,
+				SEND,
+			};
+
+			struct ExpandedOverlapped : public OVERLAPPED
+			{
+
+			};
 
 		public:
 
