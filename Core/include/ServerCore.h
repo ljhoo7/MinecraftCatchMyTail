@@ -46,7 +46,7 @@ namespace GenericBoson
 			virtual ~ServerCore();
 
 			void ThreadFunction();
-			std::pair<int, GBString> Start(const ServerCreateParameter& param);
+			std::pair<int, int> Start(const ServerCreateParameter& param);
 		};
 	}
 }

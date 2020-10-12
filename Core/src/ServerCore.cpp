@@ -52,7 +52,7 @@ namespace GenericBoson
 			}
 		}
 
-		std::pair<int, GBString> ServerCore::Start(const ServerCreateParameter& param)
+		std::pair<int, int> ServerCore::Start(const ServerCreateParameter& param)
 		{
 			m_createParameter = param;
 
@@ -73,14 +73,14 @@ namespace GenericBoson
 			WSADATA wsaData;
 			int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
 			if (NO_ERROR != result) {
-				return std::make_pair(result, GBFUNCTION);
+				return std::make_pair(result, __LINE__);
 			}
 
 			CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, 0, 0);
 
 			m_listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (INVALID_SOCKET == m_listenSocket) {
-				return std::make_pair(WSAGetLastError(), GBFUNCTION);
+				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 			
 			service.sin_family = AF_INET;
@@ -90,12 +90,12 @@ namespace GenericBoson
 			result = bind(m_listenSocket, (SOCKADDR*)&service, sizeof(service));
 			if (SOCKET_ERROR == result)
 			{
-				return std::make_pair(WSAGetLastError(), GBFUNCTION);
+				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 
 			result = listen(m_listenSocket, SOMAXCONN);
 			if (SOCKET_ERROR == result) {
-				return std::make_pair(WSAGetLastError(), GBFUNCTION);
+				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 
 			LPFN_ACCEPTEX lpfnAcceptEx = NULL;
@@ -114,13 +114,13 @@ namespace GenericBoson
 					&returnedBytes, NULL, NULL);
 				if (result == SOCKET_ERROR)
 				{
-					return std::make_pair(WSAGetLastError(), GBFUNCTION);
+					return std::make_pair(WSAGetLastError(), __LINE__);
 				}
 
 				m_acceptSocketArray[k] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 				if (INVALID_SOCKET == m_acceptSocketArray[k])
 				{
-					return std::make_pair(WSAGetLastError(), GBFUNCTION);
+					return std::make_pair(WSAGetLastError(), __LINE__);
 				}
 
 				memset(&olOverlap, 0, sizeof(olOverlap));
@@ -129,19 +129,20 @@ namespace GenericBoson
 					outBufLength - ((sizeof(sockaddr_in) + 16) * 2),
 					sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
 					&returnedBytes, &olOverlap);
-				if (FALSE == result)
+				int lastSocketError = WSAGetLastError();
+				if (FALSE == result && ERROR_IO_PENDING != lastSocketError)
 				{
-					return std::make_pair(WSAGetLastError(), GBFUNCTION);
+					return std::make_pair(lastSocketError, __LINE__);
 				}
 
-				HANDLE associateResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)0, 0);
+				HANDLE associateResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
 				if (NULL == associateResult)
 				{
-					return std::make_pair(WSAGetLastError(), GBFUNCTION);
+					return std::make_pair(WSAGetLastError(), __LINE__);
 				}
 			}
 
-			return std::make_pair(NO_ERROR, InternalConstant::SUCCESS);
+			return std::make_pair(NO_ERROR, 0);
 		}
 	}
 }

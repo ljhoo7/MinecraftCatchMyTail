@@ -1,6 +1,7 @@
 #include <memory>
 #include <cstdlib>
 #include <WinSock2.h>
+#include <iostream>
 
 #include "../../Core/include/ServerCore.h"
 
@@ -11,7 +12,16 @@ int main()
 	auto pServer = std::make_unique<ServerCore>();
 
 	ServerCreateParameter param;
-	pServer->Start(param);
+	auto startResultPair = pServer->Start(param);
 
-	system("pause");
+	if (NO_ERROR != startResultPair.first)
+	{
+		std::wcout << L"Server start failed at : " << startResultPair.second << " line" << std::endl;
+		std::wcout << L"WSAGetLastError : " << startResultPair.first << std::endl;
+	}
+
+	while (true)
+	{
+		Sleep(10);
+	}
 }
