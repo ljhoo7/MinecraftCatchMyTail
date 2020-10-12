@@ -12,8 +12,8 @@ namespace GenericBoson
 	{
 		struct ServerCreateParameter
 		{
-			GBString m_ipString;
-			int m_port = 0;
+			GBString m_ipString = _GBT("127.0.0.1");
+			int m_port = 25565;
 		};
 
 		class ServerCore
@@ -25,8 +25,8 @@ namespace GenericBoson
 
 			ServerCreateParameter m_createParameter;
 
+			volatile bool m_keepLooping = true;
 			int m_threadPoolSize = 0;
-			
 			std::vector<std::thread> m_threadPool;
 
 			enum class IO_TYPE : int64_t

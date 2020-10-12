@@ -39,14 +39,17 @@ namespace GenericBoson
 
 		void ServerCore::ThreadFunction()
 		{
-			static int cnt = 0;
-
-			std::cout << cnt++ << std::endl;
-
-			/*DWORD recievedBytes;
+			DWORD recievedBytes;
 			IO_TYPE ioType;
 			ExpandedOverlapped eol;
-			BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&ioType, (LPOVERLAPPED*)&eol, NULL);*/
+
+			while(true == m_keepLooping)
+			{
+				BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&ioType, (LPOVERLAPPED*)&eol, INFINITE);
+
+				static int cnt = 0;
+				std::cout << cnt++ << std::endl;
+			}
 		}
 
 		std::pair<int, GBString> ServerCore::Start(const ServerCreateParameter& param)
