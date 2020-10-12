@@ -135,7 +135,7 @@ namespace GenericBoson
 					return std::make_pair(lastSocketError, __LINE__);
 				}
 
-				HANDLE associateResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
+				HANDLE associateResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)0, 0);
 				if (NULL == associateResult)
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);

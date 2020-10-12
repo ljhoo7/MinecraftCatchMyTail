@@ -3,7 +3,21 @@
 #include <iostream>
 #include <cstdlib>
 
-int main()
+class TestClient
+{
+	SOCKET m_clientSocket = INVALID_SOCKET;
+public:
+	TestClient() = default;
+	~TestClient()
+	{
+		closesocket(m_clientSocket);
+		WSACleanup();
+	}
+
+	void Start();
+};
+
+void TestClient::Start()
 {
 	WSADATA wsaData;
 	int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -12,18 +26,36 @@ int main()
 		std::cout << "WSAStartup Error : " << result << std::endl;
 	}
 
-	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (INVALID_SOCKET == clientSocket) {
+	m_clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (INVALID_SOCKET == m_clientSocket) {
 		std::cout << "Creating a socket Error : WSAGetLastError - " << result << std::endl;
 	}
 
-	sockaddr_in service;
-	InetPton(AF_INET, L"127.0.0.1", &service.sin_addr.s_addr);
-	service.sin_port = htons(25565);
+	sockaddr_in socketAddr;
 
-	int connectResult = connect(clientSocket, (sockaddr*)&service, sizeof(service));
+	socketAddr.sin_family = AF_INET;
+	socketAddr.sin_port = htons(25565);
 
-	system("pause");
+	inet_pton(AF_INET, "127.0.0.1", &(socketAddr.sin_addr));
+
+	int connectResult = connect(m_clientSocket, (sockaddr*)&socketAddr, sizeof(socketAddr));
+
+	if (0 != connectResult)
+	{
+		std::cout << "Connection failed : WSAGetLastError : " << WSAGetLastError() << std::endl;
+	}
+}
+
+int main()
+{
+	auto pTestClient = std::make_unique<TestClient>();
+
+	pTestClient->Start();
+
+	while (true)
+	{
+		Sleep(10);
+	}
 
 	return 0;
 }

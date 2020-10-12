@@ -19,7 +19,7 @@ namespace GenericBoson
 		class ServerCore
 		{
 			// If you remove '/100', you will get a compile time error "out of heap".
-			static const constexpr int acceptedSocketArraySize = SOMAXCONN / sizeof(SOCKET) / 100;
+			static const constexpr int acceptedSocketArraySize = 10;//SOMAXCONN / sizeof(SOCKET) / 100;
 			SOCKET m_listenSocket = INVALID_SOCKET, m_acceptSocketArray[acceptedSocketArraySize] = { INVALID_SOCKET, };
 			HANDLE m_IOCP = INVALID_HANDLE_VALUE;
 
