@@ -1,5 +1,10 @@
+#pragma once
+
 #include "GBString.h"
 #include "Constant.h"
+
+#include <vector>
+#include <thread>
 
 namespace GenericBoson
 {
@@ -22,7 +27,6 @@ namespace GenericBoson
 
 			int m_threadPoolSize = 0;
 			
-			void ThreadFunction();
 			std::vector<std::thread> m_threadPool;
 
 			enum class IO_TYPE : int64_t
@@ -41,6 +45,7 @@ namespace GenericBoson
 
 			virtual ~ServerCore();
 
+			void ThreadFunction();
 			std::pair<int, GBString> Start(const ServerCreateParameter& param);
 		};
 	}

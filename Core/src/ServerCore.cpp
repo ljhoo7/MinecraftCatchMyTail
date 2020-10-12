@@ -59,7 +59,10 @@ namespace GenericBoson
 
 			for (int k = 0; k < m_threadPoolSize; ++k)
 			{
-				m_threadPool.emplace_back(&ServerCore::ThreadFunction);
+				m_threadPool.emplace_back([this]()
+				{
+					this->ThreadFunction();
+				});
 			}
 
 			sockaddr_in service;

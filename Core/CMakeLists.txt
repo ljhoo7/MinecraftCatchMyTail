@@ -5,11 +5,14 @@ include_directories("include")
 file(GLOB CORE_SRC_FILES
 	src/ServerCore.cpp
 	src/stdafx.cpp
+	src/Constant.cpp
 	)
 
 file(GLOB CORE_HEADER_FILES
 	include/ServerCore.h
 	include/stdafx.h
+	include/GBString.h
+	include/Constant.h
 	)
 
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS "/Ycstdafx.h")
