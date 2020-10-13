@@ -58,7 +58,12 @@ namespace GenericBoson
 
 			m_threadPoolSize = 2 * std::thread::hardware_concurrency();
 
-			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, m_threadPoolSize);
+			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
+
+			if (NULL == m_IOCP)
+			{
+				return std::make_pair(WSAGetLastError(), __LINE__);
+			}
 
 			for (int k = 0; k < m_threadPoolSize; ++k)
 			{
@@ -76,10 +81,15 @@ namespace GenericBoson
 				return std::make_pair(result, __LINE__);
 			}
 
-			CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, 0, 0);
-
-			m_listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			m_listenSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 			if (INVALID_SOCKET == m_listenSocket) {
+				return std::make_pair(WSAGetLastError(), __LINE__);
+			}
+
+			HANDLE associateListenSocketResult = CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, (u_long)0, 0);
+
+			if (NULL == associateListenSocketResult)
+			{
 				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 			
@@ -92,6 +102,8 @@ namespace GenericBoson
 			{
 				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
+
+			DWORD tmpListenBuffer;
 
 			result = listen(m_listenSocket, SOMAXCONN);
 			if (SOCKET_ERROR == result) {
@@ -117,7 +129,7 @@ namespace GenericBoson
 					return std::make_pair(WSAGetLastError(), __LINE__);
 				}
 
-				m_acceptSocketArray[k] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+				m_acceptSocketArray[k] = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 				if (INVALID_SOCKET == m_acceptSocketArray[k])
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);
@@ -135,8 +147,8 @@ namespace GenericBoson
 					return std::make_pair(lastSocketError, __LINE__);
 				}
 
-				HANDLE associateResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)0, 0);
-				if (NULL == associateResult)
+				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
+				if (NULL == associateAcceptSocketResult)
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);
 				}

@@ -26,7 +26,7 @@ void TestClient::Start()
 		std::cout << "WSAStartup Error : " << result << std::endl;
 	}
 
-	m_clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	m_clientSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 	if (INVALID_SOCKET == m_clientSocket) {
 		std::cout << "Creating a socket Error : WSAGetLastError - " << result << std::endl;
 	}
@@ -38,7 +38,7 @@ void TestClient::Start()
 
 	inet_pton(AF_INET, "127.0.0.1", &(socketAddr.sin_addr));
 
-	int connectResult = connect(m_clientSocket, (sockaddr*)&socketAddr, sizeof(socketAddr));
+	int connectResult = WSAConnect(m_clientSocket, (sockaddr*)&socketAddr, sizeof(socketAddr), NULL, NULL, NULL, NULL);
 
 	if (0 != connectResult)
 	{

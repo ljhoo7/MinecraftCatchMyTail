@@ -31,7 +31,7 @@ namespace GenericBoson
 
 			enum class IO_TYPE : int64_t
 			{
-				ACCEPT,
+				ACCEPT = 1,
 				RECEIVE,
 				SEND,
 			};
