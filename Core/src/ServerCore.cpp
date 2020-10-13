@@ -41,11 +41,13 @@ namespace GenericBoson
 		{
 			DWORD recievedBytes;
 			IO_TYPE ioType;
-			ExpandedOverlapped eol;
+			WSAOVERLAPPED olOverlap;
+
+			memset(&olOverlap, 0, sizeof(olOverlap));
 
 			while(true == m_keepLooping)
 			{
-				BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&ioType, (LPOVERLAPPED*)&eol, INFINITE);
+				BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&ioType, (LPOVERLAPPED*)&olOverlap, INFINITE);
 
 				static int cnt = 0;
 				std::cout << cnt++ << std::endl;
@@ -86,7 +88,7 @@ namespace GenericBoson
 				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 
-			HANDLE associateListenSocketResult = CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, (u_long)0, 0);
+			HANDLE associateListenSocketResult = CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
 
 			if (NULL == associateListenSocketResult)
 			{
@@ -118,7 +120,7 @@ namespace GenericBoson
 			const int outBufLength = 1024;
 			char outputBuffer[1024];
 			
-			for(int k = 0; k < acceptedSocketArraySize; ++k)
+			for (int k = 0; k < acceptedSocketArraySize; ++k)
 			{
 				result = WSAIoctl(m_listenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
 					&GuidAcceptEx, sizeof(GuidAcceptEx),
@@ -138,7 +140,7 @@ namespace GenericBoson
 				memset(&olOverlap, 0, sizeof(olOverlap));
 
 				BOOL result = lpfnAcceptEx(m_listenSocket, m_acceptSocketArray[k], outputBuffer,
-					outBufLength - ((sizeof(sockaddr_in) + 16) * 2),
+					0,//outBufLength - ((sizeof(sockaddr_in) + 16) * 2),
 					sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
 					&returnedBytes, &olOverlap);
 				int lastSocketError = WSAGetLastError();
@@ -147,7 +149,7 @@ namespace GenericBoson
 					return std::make_pair(lastSocketError, __LINE__);
 				}
 
-				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
+				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)0, 0);
 				if (NULL == associateAcceptSocketResult)
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);
