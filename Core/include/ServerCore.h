@@ -38,7 +38,8 @@ namespace GenericBoson
 
 			struct ExpandedOverlapped : public OVERLAPPED
 			{
-
+				SOCKET* m_socket = nullptr;
+				WSABUF m_buf;
 			};
 
 		public:
