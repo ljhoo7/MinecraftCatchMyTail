@@ -36,10 +36,11 @@ namespace GenericBoson
 				SEND,
 			};
 
-			struct ExpandedOverlapped : public OVERLAPPED
+			struct ExpandedOverlapped : public WSAOVERLAPPED
 			{
 				SOCKET* m_socket = nullptr;
-				WSABUF m_buf;
+				IO_TYPE m_type = IO_TYPE::ACCEPT;
+				char m_buffer[1024];
 			};
 
 		public:

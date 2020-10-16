@@ -40,29 +40,30 @@ namespace GenericBoson
 		void ServerCore::ThreadFunction()
 		{
 			DWORD recievedBytes;
-			IO_TYPE ioType;
-			ExpandedOverlapped expendedOverlapped;
-
-			memset(&expendedOverlapped, 0, sizeof(expendedOverlapped));
+			u_long completionKey;
+			ExpandedOverlapped *expendedOverlapped;
 
 			while(true == m_keepLooping)
 			{
-				BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&ioType, (LPOVERLAPPED*)&expendedOverlapped, INFINITE);
+				memset(&expendedOverlapped, 0, sizeof(expendedOverlapped));
 
-				switch (ioType)
+				BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&expendedOverlapped, INFINITE);
+
+				switch (expendedOverlapped->m_type)
 				{
 				case IO_TYPE::ACCEPT:
 				{
-					//WSARecv(expendedOverlapped.m_socket, expendedOverlapped.m_buf, 1, nullptr, )
-					HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)expendedOverlapped.m_socket, m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
-					if (NULL == associateAcceptSocketResult)
-					{
-					}
+					expendedOverlapped->m_type = IO_TYPE::RECEIVE;
+					DWORD flag = 0, receivedBytes = 0;
+					WSABUF wsaBuffer;
+					wsaBuffer.len = 1024;
+					wsaBuffer.buf = expendedOverlapped->m_buffer;
+					WSARecv(*expendedOverlapped->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, expendedOverlapped, nullptr);
 				}
 				break;
 				case IO_TYPE::RECEIVE:
 				{
-
+					std::cout << "Test" << std::endl;
 				}
 				break;
 				case IO_TYPE::SEND:
@@ -116,7 +117,7 @@ namespace GenericBoson
 			}
 
 			// Associate the listening socket with the IOCP.
-			HANDLE associateListenSocketResult = CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
+			HANDLE associateListenSocketResult = CreateIoCompletionPort((HANDLE)m_listenSocket, m_IOCP, (u_long)0, 0);
 
 			if (NULL == associateListenSocketResult)
 			{
@@ -145,8 +146,7 @@ namespace GenericBoson
 			LPFN_ACCEPTEX lpfnAcceptEx = NULL;
 			GUID GuidAcceptEx = WSAID_ACCEPTEX;
 			DWORD returnedBytes;
-			ExpandedOverlapped expandedOverlap;
-
+			
 			const int outBufLength = 1024;
 			char outputBuffer[1024];
 
@@ -170,15 +170,18 @@ namespace GenericBoson
 					return std::make_pair(WSAGetLastError(), __LINE__);
 				}
 
-				memset(&expandedOverlap, 0, sizeof(expandedOverlap));
+				ExpandedOverlapped* expandedOverlap = new ExpandedOverlapped();
 
-				expandedOverlap.m_socket = &m_acceptSocketArray[k];
+				memset(expandedOverlap, 0, sizeof(ExpandedOverlapped));
+
+				expandedOverlap->m_type = IO_TYPE::ACCEPT;
+				expandedOverlap->m_socket = &m_acceptSocketArray[k];
 
 				// Posting an accept operation.
 				BOOL result = lpfnAcceptEx(m_listenSocket, m_acceptSocketArray[k], outputBuffer,
 					0,//outBufLength - ((sizeof(sockaddr_in) + 16) * 2),
 					sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
-					&returnedBytes, &expandedOverlap);
+					&returnedBytes, expandedOverlap);
 				int lastSocketError = WSAGetLastError();
 				if (FALSE == result && ERROR_IO_PENDING != lastSocketError)
 				{
@@ -186,7 +189,7 @@ namespace GenericBoson
 				}
 
 				// Associate this accept socket withd IOCP.
-				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)IO_TYPE::ACCEPT, 0);
+				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)0, 0);
 				if (NULL == associateAcceptSocketResult)
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);
