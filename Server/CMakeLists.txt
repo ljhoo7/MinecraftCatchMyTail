@@ -2,6 +2,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories("include")
 
+add_link_options(/STACK:1073741824)
+
 file(GLOB SERVER_SRC_FILES
 	src/main.cpp
 	)

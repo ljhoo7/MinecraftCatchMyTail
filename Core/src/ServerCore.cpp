@@ -58,7 +58,7 @@ namespace GenericBoson
 					WSABUF wsaBuffer;
 					wsaBuffer.len = 1024;
 					wsaBuffer.buf = expendedOverlapped->m_buffer;
-					WSARecv(*expendedOverlapped->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, expendedOverlapped, nullptr);
+					WSARecv(expendedOverlapped->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, expendedOverlapped, nullptr);
 				}
 				break;
 				case IO_TYPE::RECEIVE:
@@ -135,8 +135,6 @@ namespace GenericBoson
 				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 
-			DWORD tmpListenBuffer;
-
 			// Make the listening socket listen.
 			result = listen(m_listenSocket, SOMAXCONN);
 			if (SOCKET_ERROR == result) {
@@ -146,9 +144,6 @@ namespace GenericBoson
 			LPFN_ACCEPTEX lpfnAcceptEx = NULL;
 			GUID GuidAcceptEx = WSAID_ACCEPTEX;
 			DWORD returnedBytes;
-			
-			const int outBufLength = 1024;
-			char outputBuffer[1024];
 
 			// Getting the AcceptEx function pointer.
 			result = WSAIoctl(m_listenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
@@ -161,27 +156,24 @@ namespace GenericBoson
 			}
 			
 			// Preparing the accept sockets.
-			for (int k = 0; k < acceptedSocketArraySize; ++k)
+			for (int k = 0; k < EXTENDED_OVERLAPPED_ARRAY_SIZE; ++k)
 			{
+				memset(&m_extendedOverlappedArray[k], 0, sizeof(ExpandedOverlapped));
+
 				// Creating an accept socket.
-				m_acceptSocketArray[k] = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
-				if (INVALID_SOCKET == m_acceptSocketArray[k])
+				m_extendedOverlappedArray[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
+				if (INVALID_SOCKET == m_extendedOverlappedArray[k].m_socket)
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);
 				}
 
-				ExpandedOverlapped* expandedOverlap = new ExpandedOverlapped();
-
-				memset(expandedOverlap, 0, sizeof(ExpandedOverlapped));
-
-				expandedOverlap->m_type = IO_TYPE::ACCEPT;
-				expandedOverlap->m_socket = &m_acceptSocketArray[k];
+				m_extendedOverlappedArray[k].m_type = IO_TYPE::ACCEPT;
 
 				// Posting an accept operation.
-				BOOL result = lpfnAcceptEx(m_listenSocket, m_acceptSocketArray[k], outputBuffer,
-					0,//outBufLength - ((sizeof(sockaddr_in) + 16) * 2),
+				char tmpByte;
+				BOOL result = lpfnAcceptEx(m_listenSocket, m_extendedOverlappedArray[k].m_socket, &tmpByte, 0,
 					sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
-					&returnedBytes, expandedOverlap);
+					&returnedBytes, &m_extendedOverlappedArray[k]);
 				int lastSocketError = WSAGetLastError();
 				if (FALSE == result && ERROR_IO_PENDING != lastSocketError)
 				{
@@ -189,7 +181,7 @@ namespace GenericBoson
 				}
 
 				// Associate this accept socket withd IOCP.
-				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_acceptSocketArray[k], m_IOCP, (u_long)0, 0);
+				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_extendedOverlappedArray[k].m_socket, m_IOCP, (u_long)0, 0);
 				if (NULL == associateAcceptSocketResult)
 				{
 					return std::make_pair(WSAGetLastError(), __LINE__);

@@ -48,9 +48,9 @@ void TestClient::Start()
 
 int main()
 {
-	auto pTestClient = std::make_unique<TestClient>();
+	TestClient pTestClient;
 
-	pTestClient->Start();
+	pTestClient.Start();
 
 	while (true)
 	{

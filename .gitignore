@@ -30,5 +30,3 @@
 *.exe
 *.out
 *.app
-protobuf-cpp-3.13.0
-protoc-3.13.0-win64
