@@ -39,31 +39,53 @@ namespace GenericBoson
 
 		void ServerCore::ThreadFunction()
 		{
-			DWORD recievedBytes;
+			DWORD receivedBytes;
 			u_long completionKey;
-			ExpandedOverlapped *expendedOverlapped;
+			ExpandedOverlapped *pEol;
 
 			while(true == m_keepLooping)
 			{
-				memset(&expendedOverlapped, 0, sizeof(expendedOverlapped));
+				memset(&pEol, 0, sizeof(pEol));
 
-				BOOL result = GetQueuedCompletionStatus(m_IOCP, &recievedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&expendedOverlapped, INFINITE);
+				BOOL result = GetQueuedCompletionStatus(m_IOCP, &receivedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
 
-				switch (expendedOverlapped->m_type)
+				switch (pEol->m_type)
 				{
 				case IO_TYPE::ACCEPT:
 				{
-					expendedOverlapped->m_type = IO_TYPE::RECEIVE;
+					pEol->m_type = IO_TYPE::RECEIVE;
 					DWORD flag = 0, receivedBytes = 0;
 					WSABUF wsaBuffer;
 					wsaBuffer.len = 1024;
-					wsaBuffer.buf = expendedOverlapped->m_buffer;
-					WSARecv(expendedOverlapped->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, expendedOverlapped, nullptr);
+					wsaBuffer.buf = &pEol->m_buffer[pEol->m_writeOffset];
+					WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
 				}
 				break;
 				case IO_TYPE::RECEIVE:
 				{
-					std::cout << "Test" << std::endl;
+					if (0 == receivedBytes)
+					{
+						// Disconnected.
+						// #ToDo
+						return;
+					}
+
+					if (0 == pEol->m_leftBytesToReceive)
+					{
+						assert(0 == pEol->m_readOffset);
+
+						pEol->m_readOffset++;
+						pEol->m_leftBytesToReceive = pEol->m_buffer[0];
+
+						break;
+					}
+
+					pEol->m_readOffset += receivedBytes;
+					
+					if (pEol->m_readOffset <= pEol->m_leftBytesToReceive)
+					{
+
+					}
 				}
 				break;
 				case IO_TYPE::SEND:
