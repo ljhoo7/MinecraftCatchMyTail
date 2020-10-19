@@ -53,6 +53,12 @@ namespace GenericBoson
 			virtual ~ServerCore();
 
 			void ThreadFunction();
+			int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
+			int IssueSend(ExpandedOverlapped* pEol);
+
+			// Consuming a gathering completed message.
+			void ConsumeGatheredMessage(const char* message, const uint32_t messageSize);
+
 			std::pair<int, int> Start(const ServerCreateParameter& param);
 		};
 	}

@@ -37,6 +37,28 @@ namespace GenericBoson
 			}
 		}
 
+		int ServerCore::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
+		{
+			pEol->m_type = IO_TYPE::RECEIVE;
+			DWORD flag = 0, receivedBytes = 0;
+			WSABUF wsaBuffer;
+			wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
+			wsaBuffer.buf = &pEol->m_buffer[pEol->m_writeOffset];
+			int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
+
+			return recvResult;
+		}
+
+		int ServerCore::IssueSend(ExpandedOverlapped* pEol)
+		{
+			return -1;
+		}
+
+		void ServerCore::ConsumeGatheredMessage(const char* message, const uint32_t messageSize)
+		{
+
+		}
+
 		void ServerCore::ThreadFunction()
 		{
 			DWORD receivedBytes;
@@ -53,12 +75,7 @@ namespace GenericBoson
 				{
 				case IO_TYPE::ACCEPT:
 				{
-					pEol->m_type = IO_TYPE::RECEIVE;
-					DWORD flag = 0, receivedBytes = 0;
-					WSABUF wsaBuffer;
-					wsaBuffer.len = 1024;
-					wsaBuffer.buf = &pEol->m_buffer[pEol->m_writeOffset];
-					WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
+					int issueRecvResult = IssueRecv(pEol, 1);
 				}
 				break;
 				case IO_TYPE::RECEIVE:
@@ -70,22 +87,34 @@ namespace GenericBoson
 						return;
 					}
 
+					// Getting the size of a message.
 					if (0 == pEol->m_leftBytesToReceive)
 					{
 						assert(0 == pEol->m_readOffset);
+						assert(1 == receivedBytes);
 
 						pEol->m_readOffset++;
 						pEol->m_leftBytesToReceive = pEol->m_buffer[0];
+
+						int issueRecvResult = IssueRecv(pEol, pEol->m_leftBytesToReceive);
 
 						break;
 					}
 
 					pEol->m_readOffset += receivedBytes;
-					
-					if (pEol->m_readOffset <= pEol->m_leftBytesToReceive)
-					{
 
+					assert(pEol->m_leftBytesToReceive < pEol->m_readOffset);
+
+					// Gathering a message completed.
+					if (pEol->m_readOffset == pEol->m_leftBytesToReceive)
+					{
+						ConsumeGatheredMessage(pEol->m_buffer, pEol->m_readOffset);
+						break;
 					}
+
+					// Reset
+					pEol->m_readOffset = 0;
+					pEol->m_leftBytesToReceive = 0;
 				}
 				break;
 				case IO_TYPE::SEND:
