@@ -43,7 +43,7 @@ namespace GenericBoson
 			DWORD flag = 0, receivedBytes = 0;
 			WSABUF wsaBuffer;
 			wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-			wsaBuffer.buf = &pEol->m_buffer[pEol->m_writeOffset];
+			wsaBuffer.buf = &pEol->m_buffer[pEol->m_readOffset];
 			int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
 
 			return recvResult;
