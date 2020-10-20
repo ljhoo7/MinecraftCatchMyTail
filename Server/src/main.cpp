@@ -9,10 +9,10 @@ using namespace GenericBoson::ServerEngine;
 
 int main()
 {
-	ServerCore pServer;
+	auto pServer = std::make_shared<ServerCore>();
 
 	ServerCreateParameter param;
-	auto startResultPair = pServer.Start(param);
+	auto startResultPair = pServer->Start(param);
 
 	if (NO_ERROR != startResultPair.first)
 	{

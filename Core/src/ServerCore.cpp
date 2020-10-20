@@ -63,12 +63,10 @@ namespace GenericBoson
 		{
 			DWORD receivedBytes;
 			u_long completionKey;
-			ExpandedOverlapped *pEol;
+			ExpandedOverlapped *pEol = nullptr;
 
 			while(true == m_keepLooping)
 			{
-				memset(&pEol, 0, sizeof(pEol));
-
 				BOOL result = GetQueuedCompletionStatus(m_IOCP, &receivedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
 
 				switch (pEol->m_type)
@@ -222,7 +220,7 @@ namespace GenericBoson
 
 				// Posting an accept operation.
 				char tmpByte;
-				BOOL result = lpfnAcceptEx(m_listenSocket, m_extendedOverlappedArray[k].m_socket, &tmpByte, 0,
+				BOOL result = lpfnAcceptEx(m_listenSocket, m_extendedOverlappedArray[k].m_socket, m_listenBuffer, 0,
 					sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
 					&returnedBytes, &m_extendedOverlappedArray[k]);
 				int lastSocketError = WSAGetLastError();
