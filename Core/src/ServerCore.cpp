@@ -59,6 +59,19 @@ namespace GenericBoson
 
 		}
 
+		template<typename T>
+		void ServerCore::ReadByteByByte(char* buffer, T& value)
+		{
+			int shift = 0;
+			unsigned char b = 0;
+			do
+			{
+				// #ToDo Read a byte
+				value = value | ((static_cast<T>(b & 0b01111111)) << shift);
+				shift += 7;
+			} while ((b & 0x10000000) != 0);
+		}
+
 		void ServerCore::ThreadFunction()
 		{
 			DWORD receivedBytes;

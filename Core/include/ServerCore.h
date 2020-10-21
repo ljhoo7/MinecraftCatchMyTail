@@ -34,9 +34,6 @@ namespace GenericBoson
 				// #ToDo
 				// This must be exchanged with a circular lock-free queue.
 				char m_buffer[1024];
-
-				
-				char m_tmpByte = 0;
 			};
 
 			// If you remove '/100', you will get a compile time error "out of heap".
@@ -54,6 +51,9 @@ namespace GenericBoson
 			// for AcceptEx's recv buffer which is not using.
 			// Warning : If this is not using, but this must exists till the end.
 			char m_listenBuffer[1024];
+
+			template<typename T>
+			void ReadByteByByte(char* buffer, T& value);
 
 		public:
 
