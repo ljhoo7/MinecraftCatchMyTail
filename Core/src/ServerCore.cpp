@@ -101,18 +101,24 @@ namespace GenericBoson
 
 					pEol->m_readOffset += receivedBytes;
 
-					assert(pEol->m_leftBytesToReceive < pEol->m_readOffset);
-
 					// Gathering a message completed.
-					if (pEol->m_readOffset == pEol->m_leftBytesToReceive)
+					if (pEol->m_leftBytesToReceive + 1 == pEol->m_readOffset)
 					{
 						ConsumeGatheredMessage(pEol->m_buffer, pEol->m_readOffset);
+
+						// Reset
+						pEol->m_readOffset = 0;
+						pEol->m_leftBytesToReceive = 0;
 						break;
 					}
-
-					// Reset
-					pEol->m_readOffset = 0;
-					pEol->m_leftBytesToReceive = 0;
+					else if (pEol->m_leftBytesToReceive + 1 < pEol->m_readOffset)
+					{
+						break;
+					}
+					else
+					{
+						throw new std::exception("Internal logic error.");
+					}
 				}
 				break;
 				case IO_TYPE::SEND:
@@ -208,6 +214,9 @@ namespace GenericBoson
 			for (int k = 0; k < EXTENDED_OVERLAPPED_ARRAY_SIZE; ++k)
 			{
 				memset(&m_extendedOverlappedArray[k], 0, sizeof(ExpandedOverlapped));
+
+				// for debugging
+				//memset(m_extendedOverlappedArray[k].m_buffer, 255, 1024);
 
 				// Creating an accept socket.
 				m_extendedOverlappedArray[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
