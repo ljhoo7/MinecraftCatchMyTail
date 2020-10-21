@@ -54,22 +54,36 @@ namespace GenericBoson
 			return -1;
 		}
 
-		void ServerCore::ConsumeGatheredMessage(const char* message, const uint32_t messageSize)
+		void ServerCore::ConsumeGatheredMessage(const char* message, const uint32_t messageSize, uint32_t& readOffSet)
 		{
+			// Packet Type
 
+			// Protocol Version
+			short protocolVersion;
+			readOffSet += ReadByteByByte(message, protocolVersion);
+
+			// Server Address
+
+			// Server Port
+
+			// Next Stage
 		}
 
 		template<typename T>
-		void ServerCore::ReadByteByByte(char* buffer, T& value)
+		uint32_t ServerCore::ReadByteByByte(const char* buffer, T& value)
 		{
 			int shift = 0;
 			unsigned char b = 0;
+			uint32_t readByteLength = 0;
 			do
 			{
+				readByteLength++;
 				// #ToDo Read a byte
 				value = value | ((static_cast<T>(b & 0b01111111)) << shift);
 				shift += 7;
 			} while ((b & 0x10000000) != 0);
+
+			return readByteLength;
 		}
 
 		void ServerCore::ThreadFunction()
@@ -106,25 +120,28 @@ namespace GenericBoson
 
 						pEol->m_readOffset++;
 						pEol->m_leftBytesToReceive = pEol->m_buffer[0];
+						pEol->m_writeOffset++;
 
 						int issueRecvResult = IssueRecv(pEol, pEol->m_leftBytesToReceive);
 
 						break;
 					}
 
-					pEol->m_readOffset += receivedBytes;
+					pEol->m_writeOffset += receivedBytes;
 
 					// Gathering a message completed.
-					if (pEol->m_leftBytesToReceive + 1 == pEol->m_readOffset)
+					if (pEol->m_leftBytesToReceive + 1 == pEol->m_writeOffset)
 					{
-						ConsumeGatheredMessage(pEol->m_buffer, pEol->m_readOffset);
+						uint32_t messageSize = pEol->m_writeOffset - pEol->m_readOffset;
+						assert(0 < messageSize);
+						ConsumeGatheredMessage(&pEol->m_buffer[pEol->m_readOffset], messageSize, pEol->m_readOffset);
 
 						// Reset
 						pEol->m_readOffset = 0;
 						pEol->m_leftBytesToReceive = 0;
 						break;
 					}
-					else if (pEol->m_leftBytesToReceive + 1 < pEol->m_readOffset)
+					else if (pEol->m_leftBytesToReceive + 1 < pEol->m_writeOffset)
 					{
 						break;
 					}
