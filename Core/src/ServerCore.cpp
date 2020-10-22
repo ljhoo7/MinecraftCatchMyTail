@@ -80,13 +80,14 @@ namespace GenericBoson
 		{
 			int shift = 0;
 			uint32_t readByteLength = 0;
-			char MSB = 0;
+			unsigned char MSB = 0;
 			do
 			{
 				readByteLength++;
-				value = value | ((static_cast<T>(*buffer & 0b01111111)) << shift);
+				unsigned char byteForBuffer = *buffer;
+				value = value | ((static_cast<T>(byteForBuffer & 0b01111111)) << shift);
 				shift += 7;
-				MSB = (*buffer) & 0x10000000;
+				MSB = byteForBuffer & 0b10000000;
 				buffer++;
 			} while (0 != MSB);
 
