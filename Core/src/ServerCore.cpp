@@ -54,13 +54,19 @@ namespace GenericBoson
 			return -1;
 		}
 
-		void ServerCore::ConsumeGatheredMessage(const char* message, const uint32_t messageSize, uint32_t& readOffSet)
+		void ServerCore::ConsumeGatheredMessage(char* message, const uint32_t messageSize, uint32_t& readOffSet)
 		{
 			// Packet Type
+			char packetType = 0;
+			uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
+			readOffSet += readPacketTypeByteLength;
+			message += readPacketTypeByteLength;
 
 			// Protocol Version
-			short protocolVersion;
-			readOffSet += ReadByteByByte(message, protocolVersion);
+			short protocolVersion = 0;
+			uint32_t readProtocolVersionByteLength = ReadByteByByte(message, protocolVersion);
+			readOffSet += readProtocolVersionByteLength;
+			message += readProtocolVersionByteLength;
 
 			// Server Address
 
@@ -70,18 +76,19 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		uint32_t ServerCore::ReadByteByByte(const char* buffer, T& value)
+		uint32_t ServerCore::ReadByteByByte(char* buffer, T& value)
 		{
 			int shift = 0;
-			unsigned char b = 0;
 			uint32_t readByteLength = 0;
+			char MSB = 0;
 			do
 			{
 				readByteLength++;
-				// #ToDo Read a byte
-				value = value | ((static_cast<T>(b & 0b01111111)) << shift);
+				value = value | ((static_cast<T>(*buffer & 0b01111111)) << shift);
 				shift += 7;
-			} while ((b & 0x10000000) != 0);
+				MSB = (*buffer) & 0x10000000;
+				buffer++;
+			} while (0 != MSB);
 
 			return readByteLength;
 		}

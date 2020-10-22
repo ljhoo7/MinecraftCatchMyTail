@@ -53,7 +53,7 @@ namespace GenericBoson
 			char m_listenBuffer[1024];
 
 			template<typename T>
-			uint32_t ReadByteByByte(const char* buffer, T& value);
+			uint32_t ReadByteByByte(char* buffer, T& value);
 
 		public:
 
@@ -64,7 +64,7 @@ namespace GenericBoson
 			int IssueSend(ExpandedOverlapped* pEol);
 
 			// Consuming a gathering completed message.
-			void ConsumeGatheredMessage(const char* message, const uint32_t messageSize, uint32_t& readOffSet);
+			void ConsumeGatheredMessage(char* message, const uint32_t messageSize, uint32_t& readOffSet);
 
 			std::pair<int, int> Start(const ServerCreateParameter& param);
 		};
