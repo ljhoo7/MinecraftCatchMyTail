@@ -54,6 +54,9 @@ namespace GenericBoson
 
 			template<typename T>
 			uint32_t ReadByteByByte(char* buffer, T& value);
+			
+			template<typename STRING>
+			uint32_t ReadString(char* buffer, STRING& outString);
 
 		public:
 

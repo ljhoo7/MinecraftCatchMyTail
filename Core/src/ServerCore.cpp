@@ -69,10 +69,34 @@ namespace GenericBoson
 			message += readProtocolVersionByteLength;
 
 			// Server Address
+			std::string serverAddressStr;
+			uint32_t readServerAddressStringByteLength = ReadString(message, serverAddressStr);
+			readOffSet += readServerAddressStringByteLength;
+			message += readServerAddressStringByteLength;
 
 			// Server Port
 
 			// Next Stage
+		}
+
+		template<typename STRING>
+		uint32_t ServerCore::ReadString(char* buffer, STRING& outString)
+		{
+			uint32_t readByteLength = 0;
+
+			// String Length
+			char stringLength = 0;
+			uint32_t readStringLengthByteLength = ReadByteByByte(buffer, stringLength);
+			readByteLength += readStringLengthByteLength;
+			buffer += readStringLengthByteLength;
+
+			outString.reserve(stringLength);
+			outString.assign(buffer, stringLength);
+
+			readByteLength += stringLength;
+			buffer += stringLength;
+
+			return readByteLength;
 		}
 
 		template<typename T>
@@ -266,7 +290,6 @@ namespace GenericBoson
 				m_extendedOverlappedArray[k].m_type = IO_TYPE::ACCEPT;
 
 				// Posting an accept operation.
-				char tmpByte;
 				BOOL result = lpfnAcceptEx(m_listenSocket, m_extendedOverlappedArray[k].m_socket, m_listenBuffer, 0,
 					sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
 					&returnedBytes, &m_extendedOverlappedArray[k]);
