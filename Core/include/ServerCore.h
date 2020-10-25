@@ -58,6 +58,8 @@ namespace GenericBoson
 			template<typename STRING>
 			uint32_t ReadString(char* buffer, STRING& outString);
 
+			template<typename T>
+			uint32_t Read(char* buffer, T& outValue);
 		public:
 
 			virtual ~ServerCore();
