@@ -75,13 +75,17 @@ namespace GenericBoson
 			message += readServerAddressStringByteLength;
 
 			// Server Port
-			unsigned short portNumber;
+			uint16_t portNumber;
 			uint32_t readPortNumberByteLength = Read(message, portNumber);
-			portNumber = ntohl(portNumber);
+			portNumber = ntohs(portNumber);
 			readOffSet += readPortNumberByteLength;
 			message += readPortNumberByteLength;
 
 			// Next Stage
+			char nextStage = 0;
+			uint32_t readNextStageByteLength = ReadByteByByte(message, nextStage);
+			readOffSet += readNextStageByteLength;
+			message += readNextStageByteLength;
 		}
 
 		template<typename T>
