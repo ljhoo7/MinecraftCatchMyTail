@@ -1,3 +1,7 @@
+cmake_minimum_required (VERSION 2.6)
+
+project (BisonFlexTest)
+
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB BISON_FLEX_TEST_SRC
