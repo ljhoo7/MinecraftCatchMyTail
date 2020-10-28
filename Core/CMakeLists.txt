@@ -21,4 +21,4 @@ set_property(TARGET ServerCore PROPERTY ARCHIVE_OUTPUT_DIRECTORY ../lib/${CMAKE_
 
 set_property(TARGET ServerCore PROPERTY COMPILE_DEFINITIONS UNICODE _UNICODE)
 
-target_include_directories(ServerCore PRIVATE "$ENV{BOOST_ROOT}" "include")
+target_include_directories(ServerCore PRIVATE "$ENV{BOOST_ROOT}" "include" "../curl/include")
