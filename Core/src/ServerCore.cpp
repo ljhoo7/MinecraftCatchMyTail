@@ -54,7 +54,7 @@ namespace GenericBoson
 			return -1;
 		}
 
-		void ServerCore::ConsumeGatheredMessage(char* message, const uint32_t messageSize, uint32_t& readOffSet)
+		void ServerCore::ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
 		{
 			// Packet Type
 			char packetType = 0;
@@ -62,30 +62,57 @@ namespace GenericBoson
 			readOffSet += readPacketTypeByteLength;
 			message += readPacketTypeByteLength;
 
-			// Protocol Version
-			short protocolVersion = 0;
-			uint32_t readProtocolVersionByteLength = ReadByteByByte(message, protocolVersion);
-			readOffSet += readProtocolVersionByteLength;
-			message += readProtocolVersionByteLength;
+			switch(eol.m_sessionState)
+			{
+			case SessionState::login:
+			{
+				switch (packetType)
+				{
+				case 0:	// login start
+				{
 
-			// Server Address
-			std::string serverAddressStr;
-			uint32_t readServerAddressStringByteLength = ReadString(message, serverAddressStr);
-			readOffSet += readServerAddressStringByteLength;
-			message += readServerAddressStringByteLength;
+				}
+				break;
+				default:
+					assert(false);
+				}
+			}
+			break;
+			case SessionState::start:
+			{
+				// Protocol Version
+				short protocolVersion = 0;
+				uint32_t readProtocolVersionByteLength = ReadByteByByte(message, protocolVersion);
+				readOffSet += readProtocolVersionByteLength;
+				message += readProtocolVersionByteLength;
 
-			// Server Port
-			uint16_t portNumber;
-			uint32_t readPortNumberByteLength = Read(message, portNumber);
-			portNumber = ntohs(portNumber);
-			readOffSet += readPortNumberByteLength;
-			message += readPortNumberByteLength;
+				eol.m_protocolVersion = protocolVersion;
 
-			// Next Stage
-			char nextStage = 0;
-			uint32_t readNextStageByteLength = ReadByteByByte(message, nextStage);
-			readOffSet += readNextStageByteLength;
-			message += readNextStageByteLength;
+				// Server Address
+				std::string serverAddressStr;
+				uint32_t readServerAddressStringByteLength = ReadString(message, serverAddressStr);
+				readOffSet += readServerAddressStringByteLength;
+				message += readServerAddressStringByteLength;
+
+				// Server Port
+				uint16_t portNumber;
+				uint32_t readPortNumberByteLength = Read(message, portNumber);
+				portNumber = ntohs(portNumber);
+				readOffSet += readPortNumberByteLength;
+				message += readPortNumberByteLength;
+
+				// Next Stage
+				char nextStage = 0;
+				uint32_t readNextStageByteLength = ReadByteByByte(message, nextStage);
+				readOffSet += readNextStageByteLength;
+				message += readNextStageByteLength;
+
+				eol.m_sessionState = (SessionState)nextStage;
+			}
+			default:
+				assert(false);
+				break;
+			}
 		}
 
 		template<typename T>
@@ -183,7 +210,7 @@ namespace GenericBoson
 					{
 						uint32_t messageSize = pEol->m_writeOffset - pEol->m_readOffset;
 						assert(0 < messageSize);
-						ConsumeGatheredMessage(&pEol->m_buffer[pEol->m_readOffset], messageSize, pEol->m_readOffset);
+						ConsumeGatheredMessage(*pEol, &pEol->m_buffer[pEol->m_readOffset], messageSize, pEol->m_readOffset);
 
 						// Reset
 						pEol->m_readOffset = 0;

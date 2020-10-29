@@ -10,6 +10,14 @@ namespace GenericBoson
 {
 	namespace ServerEngine
 	{
+		enum class SessionState : char
+		{
+			status,
+			login,
+			in_game,
+			start = 99
+		};
+
 		struct ServerCreateParameter
 		{
 			GBString m_ipString = _GBT("127.0.0.1");
@@ -34,6 +42,10 @@ namespace GenericBoson
 				// #ToDo
 				// This must be exchanged with a circular lock-free queue.
 				char m_buffer[1024];
+
+				SessionState m_sessionState = SessionState::start;
+
+				short m_protocolVersion = 0;
 			};
 
 			// If you remove '/100', you will get a compile time error "out of heap".
@@ -69,7 +81,7 @@ namespace GenericBoson
 			int IssueSend(ExpandedOverlapped* pEol);
 
 			// Consuming a gathering completed message.
-			void ConsumeGatheredMessage(char* message, const uint32_t messageSize, uint32_t& readOffSet);
+			void ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet);
 
 			std::pair<int, int> Start(const ServerCreateParameter& param);
 		};
