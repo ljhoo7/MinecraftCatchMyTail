@@ -219,7 +219,10 @@ namespace GenericBoson
 
 						// Reset
 						pEol->m_readOffset = 0;
+						pEol->m_writeOffset = 0;
 						pEol->m_leftBytesToReceive = 0;
+
+						int issueRecvResult = IssueRecv(pEol, 1);
 						break;
 					}
 					else if (pEol->m_leftBytesToReceive + 1 < pEol->m_writeOffset)

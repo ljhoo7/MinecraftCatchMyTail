@@ -49,7 +49,7 @@ namespace GenericBoson
 			};
 
 			// If you remove '/100', you will get a compile time error "out of heap".
-			static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = 1;//SOMAXCONN / sizeof(ExpandedOverlapped) / 100;
+			static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = SOMAXCONN / sizeof(ExpandedOverlapped) / 100;
 			SOCKET m_listenSocket = INVALID_SOCKET;
 			ExpandedOverlapped m_extendedOverlappedArray[EXTENDED_OVERLAPPED_ARRAY_SIZE];
 			HANDLE m_IOCP = INVALID_HANDLE_VALUE;
