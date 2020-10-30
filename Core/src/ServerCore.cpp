@@ -70,7 +70,11 @@ namespace GenericBoson
 				{
 				case 0:	// login start
 				{
-
+					// Server Address
+					std::string userName;
+					uint32_t rr5 = ReadString(message, userName);
+					readOffSet += rr5;
+					message += rr5;
 				}
 				break;
 				default:
@@ -82,33 +86,34 @@ namespace GenericBoson
 			{
 				// Protocol Version
 				short protocolVersion = 0;
-				uint32_t readProtocolVersionByteLength = ReadByteByByte(message, protocolVersion);
-				readOffSet += readProtocolVersionByteLength;
-				message += readProtocolVersionByteLength;
+				uint32_t rr1 = ReadByteByByte(message, protocolVersion);
+				readOffSet += rr1;
+				message += rr1;
 
 				eol.m_protocolVersion = protocolVersion;
 
 				// Server Address
 				std::string serverAddressStr;
-				uint32_t readServerAddressStringByteLength = ReadString(message, serverAddressStr);
-				readOffSet += readServerAddressStringByteLength;
-				message += readServerAddressStringByteLength;
+				uint32_t rr2 = ReadString(message, serverAddressStr);
+				readOffSet += rr2;
+				message += rr2;
 
 				// Server Port
 				uint16_t portNumber;
-				uint32_t readPortNumberByteLength = Read(message, portNumber);
+				uint32_t rr3 = Read(message, portNumber);
 				portNumber = ntohs(portNumber);
-				readOffSet += readPortNumberByteLength;
-				message += readPortNumberByteLength;
+				readOffSet += rr3;
+				message += rr3;
 
 				// Next Stage
 				char nextStage = 0;
-				uint32_t readNextStageByteLength = ReadByteByByte(message, nextStage);
-				readOffSet += readNextStageByteLength;
-				message += readNextStageByteLength;
+				uint32_t rr4 = ReadByteByByte(message, nextStage);
+				readOffSet += rr4;
+				message += rr4;
 
 				eol.m_sessionState = (SessionState)nextStage;
 			}
+			break;
 			default:
 				assert(false);
 				break;

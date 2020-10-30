@@ -12,10 +12,10 @@ namespace GenericBoson
 	{
 		enum class SessionState : char
 		{
+			start = 0,
 			status,
 			login,
 			in_game,
-			start = 99
 		};
 
 		struct ServerCreateParameter
