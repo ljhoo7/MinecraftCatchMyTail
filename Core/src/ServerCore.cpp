@@ -167,6 +167,19 @@ namespace GenericBoson
 			return readByteLength;
 		}
 
+		template<typename T>
+		uint32_t ServerCore::Write(char* buffer, const T& outValue)
+		{
+			*(T*)buffer = outValue;
+
+			return sizeof(T);
+		}
+
+		template<typename T>
+		uint32_t ServerCore::WriteByteByByte(char* buffer, const T& value)
+		{
+		}
+
 		void ServerCore::ThreadFunction()
 		{
 			DWORD receivedBytes;
