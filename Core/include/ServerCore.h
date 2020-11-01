@@ -74,7 +74,7 @@ namespace GenericBoson
 			uint32_t Read(char* buffer, T& outValue);
 
 			template<typename T>
-			uint32_t WriteByteByByte(char* buffer, const T& value);
+			uint32_t WriteByteByByte(char* buffer, T value);
 
 			template<typename T>
 			uint32_t Write(char* buffer, const T& outValue);

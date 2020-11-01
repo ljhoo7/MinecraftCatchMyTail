@@ -153,6 +153,8 @@ namespace GenericBoson
 		{
 			int shift = 0;
 			uint32_t readByteLength = 0;
+
+			// the read MSB means the sign of keeping going.
 			unsigned char MSB = 0;
 			do
 			{
@@ -176,8 +178,26 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		uint32_t ServerCore::WriteByteByByte(char* buffer, const T& value)
+		uint32_t ServerCore::WriteByteByByte(char* buffer, T value)
 		{
+			uint32_t writeByteLength = 0;
+
+			do 
+			{
+				unsigned char MSB = 0;
+
+				if (0b11111111 < value)
+				{
+					MSB = 0b10000000;
+				}
+
+				*buffer = value & 0b11111111;
+				*buffer = value | MSB;
+
+				buffer++;
+			} while (0 < value);
+
+			return writeByteLength;
 		}
 
 		void ServerCore::ThreadFunction()
