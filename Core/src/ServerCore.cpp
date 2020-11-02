@@ -43,7 +43,7 @@ namespace GenericBoson
 			DWORD flag = 0, receivedBytes = 0;
 			WSABUF wsaBuffer;
 			wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-			wsaBuffer.buf = &pEol->m_buffer[pEol->m_readOffset];
+			wsaBuffer.buf = &pEol->m_receiveBuffer.m_buffer[pEol->m_receiveBuffer.m_readOffset];
 			int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
 
 			return recvResult;
@@ -52,6 +52,11 @@ namespace GenericBoson
 		int ServerCore::IssueSend(ExpandedOverlapped* pEol)
 		{
 			return -1;
+		}
+
+		void ServerCore::SendLoginSuccess()
+		{
+
 		}
 
 		void ServerCore::ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
@@ -75,6 +80,8 @@ namespace GenericBoson
 					uint32_t rr5 = ReadString(message, userName);
 					readOffSet += rr5;
 					message += rr5;
+
+					SendLoginSuccess();
 				}
 				break;
 				default:
@@ -229,36 +236,36 @@ namespace GenericBoson
 					// Getting the size of a message.
 					if (0 == pEol->m_leftBytesToReceive)
 					{
-						assert(0 == pEol->m_readOffset);
+						assert(0 == pEol->m_receiveBuffer.m_readOffset);
 						assert(1 == receivedBytes);
 
-						pEol->m_readOffset++;
-						pEol->m_leftBytesToReceive = pEol->m_buffer[0];
-						pEol->m_writeOffset++;
+						pEol->m_receiveBuffer.m_readOffset++;
+						pEol->m_leftBytesToReceive = pEol->m_receiveBuffer.m_buffer[0];
+						pEol->m_receiveBuffer.m_writeOffset++;
 
 						int issueRecvResult = IssueRecv(pEol, pEol->m_leftBytesToReceive);
 
 						break;
 					}
 
-					pEol->m_writeOffset += receivedBytes;
+					pEol->m_receiveBuffer.m_writeOffset += receivedBytes;
 
 					// Gathering a message completed.
-					if (pEol->m_leftBytesToReceive + 1 == pEol->m_writeOffset)
+					if (pEol->m_leftBytesToReceive + 1 == pEol->m_receiveBuffer.m_writeOffset)
 					{
-						uint32_t messageSize = pEol->m_writeOffset - pEol->m_readOffset;
+						uint32_t messageSize = pEol->m_receiveBuffer.m_writeOffset - pEol->m_receiveBuffer.m_readOffset;
 						assert(0 < messageSize);
-						ConsumeGatheredMessage(*pEol, &pEol->m_buffer[pEol->m_readOffset], messageSize, pEol->m_readOffset);
+						ConsumeGatheredMessage(*pEol, &pEol->m_receiveBuffer.m_buffer[pEol->m_receiveBuffer.m_readOffset], messageSize, pEol->m_receiveBuffer.m_readOffset);
 
 						// Reset
-						pEol->m_readOffset = 0;
-						pEol->m_writeOffset = 0;
+						pEol->m_receiveBuffer.m_readOffset = 0;
+						pEol->m_receiveBuffer.m_writeOffset = 0;
 						pEol->m_leftBytesToReceive = 0;
 
 						int issueRecvResult = IssueRecv(pEol, 1);
 						break;
 					}
-					else if (pEol->m_leftBytesToReceive + 1 < pEol->m_writeOffset)
+					else if (pEol->m_leftBytesToReceive + 1 < pEol->m_receiveBuffer.m_writeOffset)
 					{
 						break;
 					}

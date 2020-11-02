@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB CORE_SRC_FILES
 	src/ServerCore.cpp
 	src/stdafx.cpp
+	src/GBBuffer.cpp
 	src/Constant.cpp
 	)
 
@@ -10,6 +11,7 @@ file(GLOB CORE_HEADER_FILES
 	include/ServerCore.h
 	include/stdafx.h
 	include/GBString.h
+	include/GBBuffer.h
 	include/Constant.h
 	)
 
