@@ -13,6 +13,7 @@ file(GLOB CORE_HEADER_FILES
 	include/GBString.h
 	include/GBBuffer.h
 	include/Constant.h
+	include/PacketType.h
 	)
 
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS "/Ycstdafx.h")

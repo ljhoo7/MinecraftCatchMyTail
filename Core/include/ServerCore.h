@@ -3,6 +3,7 @@
 #include "GBString.h"
 #include "Constant.h"
 #include "GBBuffer.h"
+#include "PacketType.h"
 
 #include <vector>
 #include <thread>
@@ -82,7 +83,8 @@ namespace GenericBoson
 		public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 		public: int IssueSend(ExpandedOverlapped* pEol);
 
-		public: void SendLoginSuccess();
+		public: void SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 
 			// Consuming a gathering completed message.
 		public: void ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet);

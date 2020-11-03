@@ -54,9 +54,41 @@ namespace GenericBoson
 			return -1;
 		}
 
-		void ServerCore::SendLoginSuccess()
+		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
+			uint32_t writePacketTypeByteLength = WriteByteByByte(bufferToSend, (uint32_t)PacketType::StartCompression);
+			writeOffSet += writePacketTypeByteLength;
+			bufferToSend += writePacketTypeByteLength;
 
+			uint32_t writeCompressThresholdByteLength = WriteByteByByte(bufferToSend, InternalConstant::CompressThreshold);
+			writeOffSet += writeCompressThresholdByteLength;
+			bufferToSend += writeCompressThresholdByteLength;
+
+			
+		}
+
+		void ServerCore::EnqueueAndIssueSend(ExpandedOverlapped& eol)
+		{
+			{
+				std::lock_guard<std::mutex> lock(m_mainLock);
+
+				m_sendQueue.push(&eol);
+			}
+
+			while (false == m_sendQueue.empty())
+			{
+				{
+					auto pEol = m_sendQueue.front();
+					m_sendQueue.pop();
+					WSABUF sendBuf;
+					sendBuf.buf = pEol->m_writeBuffer.m_buffer;
+					sendBuf.len = pEol->m_writeBuffer.m_writeOffset;
+					DWORD sentBytes = 0;
+					int sendResult = WSASend(pEol->m_socket, &sendBuf, 1, &sentBytes, NULL, pEol, NULL);
+				}
+
+				Sleep(10);
+			}
 		}
 
 		void ServerCore::ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
@@ -71,9 +103,9 @@ namespace GenericBoson
 			{
 			case SessionState::login:
 			{
-				switch (packetType)
+				switch ((PacketType)packetType)
 				{
-				case 0:	// login start
+				case PacketType::LoginStart:
 				{
 					// Server Address
 					std::string userName;
@@ -81,7 +113,7 @@ namespace GenericBoson
 					readOffSet += rr5;
 					message += rr5;
 
-					SendLoginSuccess();
+					SendLoginSuccess(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 				}
 				break;
 				default:
@@ -198,8 +230,8 @@ namespace GenericBoson
 					MSB = 0b10000000;
 				}
 
-				*buffer = value & 0b11111111;
-				*buffer = value | MSB;
+				*buffer = (char)(value & 0b11111111);
+				*buffer = (char)(value | MSB);
 
 				buffer++;
 			} while (0 < value);
