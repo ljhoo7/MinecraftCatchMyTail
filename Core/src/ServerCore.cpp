@@ -64,7 +64,7 @@ namespace GenericBoson
 			writeOffSet += writeCompressThresholdByteLength;
 			bufferToSend += writeCompressThresholdByteLength;
 
-			
+			EnqueueAndIssueSend(eol);
 		}
 
 		void ServerCore::EnqueueAndIssueSend(ExpandedOverlapped& eol)
@@ -199,9 +199,9 @@ namespace GenericBoson
 			{
 				readByteLength++;
 				unsigned char byteForBuffer = *buffer;
-				value = value | ((static_cast<T>(byteForBuffer & 0b01111111)) << shift);
+				value = value | ((static_cast<T>(byteForBuffer & 0b0111'1111)) << shift);
 				shift += 7;
-				MSB = byteForBuffer & 0b10000000;
+				MSB = byteForBuffer & 0b1000'0000;
 				buffer++;
 			} while (0 != MSB);
 
@@ -225,15 +225,16 @@ namespace GenericBoson
 			{
 				unsigned char MSB = 0;
 
-				if (0b11111111 < value)
+				if (0b0111'1111 < value)
 				{
-					MSB = 0b10000000;
+					MSB = 0b1000'0000;
 				}
 
-				*buffer = (char)(value & 0b11111111);
+				*buffer = (char)(value & 0b0111'1111);
 				*buffer = (char)(value | MSB);
 
 				buffer++;
+				value = value >> 7;
 			} while (0 < value);
 
 			return writeByteLength;
