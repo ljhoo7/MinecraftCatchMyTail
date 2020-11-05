@@ -136,6 +136,7 @@ namespace GenericBoson
 
 					eol.m_userName = userName;
 
+					SendStartCompress(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendLoginSuccess(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 				}
 				break;
