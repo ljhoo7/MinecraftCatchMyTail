@@ -48,6 +48,8 @@ namespace GenericBoson
 				GBBuffer m_receiveBuffer;
 				GBBuffer m_writeBuffer;
 
+				std::string m_userName;
+
 				SessionState m_sessionState = SessionState::start;
 
 				short m_protocolVersion = 0;
@@ -76,6 +78,7 @@ namespace GenericBoson
 		private: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString);
 		private: template<typename T> uint32_t Read(char* buffer, T& outValue);
 		private: template<typename T> uint32_t WriteByteByByte(char* buffer, T value);
+		private: template<typename STRING> uint32_t WriteString(char* buffer, const STRING& inString);
 		private: template<typename T> uint32_t Write(char* buffer, const T& outValue);
 
 		public: virtual ~ServerCore();
@@ -83,6 +86,7 @@ namespace GenericBoson
 		public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 		public: int IssueSend(ExpandedOverlapped* pEol);
 
+		public: void SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 

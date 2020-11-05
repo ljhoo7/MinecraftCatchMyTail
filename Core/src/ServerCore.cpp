@@ -54,15 +54,33 @@ namespace GenericBoson
 			return -1;
 		}
 
+		void ServerCore::SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr1 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::StartCompression);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			uint32_t wr2 = WriteByteByByte(bufferToSend, InternalConstant::CompressThreshold);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			EnqueueAndIssueSend(eol);
+		}
+
 		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t writePacketTypeByteLength = WriteByteByByte(bufferToSend, (uint32_t)PacketType::StartCompression);
-			writeOffSet += writePacketTypeByteLength;
-			bufferToSend += writePacketTypeByteLength;
+			uint32_t wr1 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::LoginSuccess);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
 
-			uint32_t writeCompressThresholdByteLength = WriteByteByByte(bufferToSend, InternalConstant::CompressThreshold);
-			writeOffSet += writeCompressThresholdByteLength;
-			bufferToSend += writeCompressThresholdByteLength;
+			// UUID #ToDo
+			uint32_t wr2 = WriteString(bufferToSend, "UUID");
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			uint32_t wr3 = WriteString(bufferToSend, eol.m_userName);
+			writeOffSet += wr3;
+			bufferToSend += wr3;
 
 			EnqueueAndIssueSend(eol);
 		}
@@ -85,6 +103,9 @@ namespace GenericBoson
 					sendBuf.len = pEol->m_writeBuffer.m_writeOffset;
 					DWORD sentBytes = 0;
 					int sendResult = WSASend(pEol->m_socket, &sendBuf, 1, &sentBytes, NULL, pEol, NULL);
+
+					// All write buffer must be set to zero because it will do bit-operations.
+					memset(pEol->m_writeBuffer.m_buffer, 0, 1024);
 				}
 
 				Sleep(10);
@@ -112,6 +133,8 @@ namespace GenericBoson
 					uint32_t rr = ReadString(message, userName);
 					readOffSet += rr;
 					message += rr;
+
+					eol.m_userName = userName;
 
 					SendLoginSuccess(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 				}
@@ -192,9 +215,9 @@ namespace GenericBoson
 
 			// String Length
 			char stringLength = 0;
-			uint32_t readStringLengthByteLength = ReadByteByByte(buffer, stringLength);
-			readByteLength += readStringLengthByteLength;
-			buffer += readStringLengthByteLength;
+			uint32_t rr1 = ReadByteByByte(buffer, stringLength);
+			readByteLength += rr1;
+			buffer += rr1;
 
 			outString.reserve(stringLength);
 			outString.assign(buffer, stringLength);
@@ -203,6 +226,24 @@ namespace GenericBoson
 			buffer += stringLength;
 
 			return readByteLength;
+		}
+
+		template<typename STRING>
+		uint32_t ServerCore::WriteString(char* buffer, const STRING& inString)
+		{
+			uint32_t writeByteLength = 0;
+
+			// String Length
+			size_t inStringSize = inString.length();
+			uint32_t wr1 = WriteByteByByte(buffer, inStringSize);
+			writeByteLength += wr1;
+			buffer += wr1;
+
+			errno_t cpyStrResult = strncpy_s(buffer, inString.c_str(), inStringSize);
+			writeByteLength += inStringSize;
+			buffer += inStringSize;
+
+			return writeByteLength;
 		}
 
 		template<typename T>
