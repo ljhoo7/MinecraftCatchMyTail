@@ -109,9 +109,9 @@ namespace GenericBoson
 				{
 					// Server Address
 					std::string userName;
-					uint32_t rr5 = ReadString(message, userName);
-					readOffSet += rr5;
-					message += rr5;
+					uint32_t rr = ReadString(message, userName);
+					readOffSet += rr;
+					message += rr;
 
 					SendLoginSuccess(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 				}
@@ -151,6 +151,24 @@ namespace GenericBoson
 				message += rr4;
 
 				eol.m_sessionState = (SessionState)nextStage;
+			}
+			break;
+			case SessionState::in_game:
+			{
+				switch ((PacketType)packetType)
+				{
+				case PacketType::ClientSettings:
+				{
+					// Server Address
+					std::string localeString;
+					uint32_t rr = ReadString(message, localeString);
+					readOffSet += rr;
+					message += rr;
+				}
+				break;
+				default:
+					assert(false);
+				}
 			}
 			break;
 			default:
