@@ -74,7 +74,8 @@ namespace GenericBoson
 			bufferToSend += wr1;
 
 			// UUID #ToDo
-			uint32_t wr2 = WriteString(bufferToSend, "UUID");
+			std::string tmpUUDI = "{5550AEA5-0443-4C06-A1CB-CF916EA1623D}";
+			uint32_t wr2 = WriteString(bufferToSend, tmpUUDI);
 			writeOffSet += wr2;
 			bufferToSend += wr2;
 
@@ -240,7 +241,7 @@ namespace GenericBoson
 			writeByteLength += wr1;
 			buffer += wr1;
 
-			errno_t cpyStrResult = strncpy_s(buffer, inString.c_str(), inStringSize);
+			errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
 			writeByteLength += inStringSize;
 			buffer += inStringSize;
 
