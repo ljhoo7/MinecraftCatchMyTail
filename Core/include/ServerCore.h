@@ -4,11 +4,13 @@
 #include "Constant.h"
 #include "GBBuffer.h"
 #include "PacketType.h"
+#include "Character.h"
 
 #include <vector>
 #include <thread>
 #include <queue>
 #include <mutex>
+#include <atomic>
 
 namespace GenericBoson
 {
@@ -70,8 +72,10 @@ namespace GenericBoson
 		private: std::queue<ExpandedOverlapped*> m_sendQueue;
 		private: std::mutex m_mainLock;
 
-			// for AcceptEx's recv buffer which is not using.
-			// Warning : If this is not using, but this must exists till the end.
+		private: static std::atomic<uint32_t> m_fermionCounter;
+
+		// for AcceptEx's recv buffer which is not using.
+		// Warning : If this is not using, but this must exists till the end.
 		private: char m_listenBuffer[1024];
 
 		private: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value);
@@ -80,6 +84,7 @@ namespace GenericBoson
 		private: template<typename T> uint32_t WriteByteByByte(char* buffer, T value);
 		private: template<typename STRING> uint32_t WriteString(char* buffer, const STRING& inString);
 		private: template<typename T> uint32_t Write(char* buffer, const T& outValue);
+		private: template<typename T> uint32_t WriteAsBigEndian(char* buffer, T value);
 
 		public: virtual ~ServerCore();
 		public: void ThreadFunction();
@@ -88,6 +93,7 @@ namespace GenericBoson
 
 		public: void SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 
 			// Consuming a gathering completed message.

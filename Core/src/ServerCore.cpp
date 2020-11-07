@@ -74,7 +74,7 @@ namespace GenericBoson
 			bufferToSend += wr1;
 
 			// UUID #ToDo
-			std::string tmpUUDI = "{5550AEA5-0443-4C06-A1CB-CF916EA1623D}";
+			std::string tmpUUDI = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
 			uint32_t wr2 = WriteString(bufferToSend, tmpUUDI);
 			writeOffSet += wr2;
 			bufferToSend += wr2;
@@ -84,6 +84,25 @@ namespace GenericBoson
 			bufferToSend += wr3;
 
 			EnqueueAndIssueSend(eol);
+		}
+
+		void ServerCore::SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			// Creating Controllerable Character
+			Character controllerableCharacter;
+
+			// Sending FermionID
+			uint32_t wr1 = WriteAsBigEndian(bufferToSend, controllerableCharacter.m_ID);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			EnqueueAndIssueSend(eol);
+		}
+
+		template<typename T>
+		uint32_t ServerCore::WriteAsBigEndian(char* buffer, T value)
+		{
+
 		}
 
 		void ServerCore::EnqueueAndIssueSend(ExpandedOverlapped& eol)
@@ -495,5 +514,7 @@ namespace GenericBoson
 
 			return std::make_pair(NO_ERROR, 0);
 		}
+
+		std::atomic<uint32_t> ServerCore::m_fermionCounter = 1;
 	}
 }

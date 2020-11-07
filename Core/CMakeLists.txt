@@ -5,6 +5,8 @@ file(GLOB CORE_SRC_FILES
 	src/stdafx.cpp
 	src/GBBuffer.cpp
 	src/Constant.cpp
+	src/Character.cpp
+	src/Fermion.cpp
 	)
 
 file(GLOB CORE_HEADER_FILES
@@ -14,6 +16,8 @@ file(GLOB CORE_HEADER_FILES
 	include/GBBuffer.h
 	include/Constant.h
 	include/PacketType.h
+	include/Character.h
+	include/Fermion.h
 	)
 
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS "/Ycstdafx.h")
