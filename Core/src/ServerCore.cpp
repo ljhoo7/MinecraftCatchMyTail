@@ -92,17 +92,53 @@ namespace GenericBoson
 			Character controllerableCharacter;
 
 			// Sending FermionID
-			uint32_t wr1 = WriteAsBigEndian(bufferToSend, controllerableCharacter.m_ID);
+			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, controllerableCharacter.m_ID);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+
+			uint8_t hardCoreFlag = 0;
+			uint32_t wr2 = WriteByteByByte(bufferToSend, hardCoreFlag);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			Dimension demension = Dimension::overworld;
+			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, demension);
+			writeOffSet += wr3;
+			bufferToSend += wr3;
+
+			uint8_t difficulty = 2; // 2 = Normal
+			uint32_t wr4 = WriteByteByByte(bufferToSend, difficulty);
+			writeOffSet += wr4;
+			bufferToSend += wr4;
+
+			uint8_t maxPlayerCount = 255;
+			uint32_t wr5 = WriteByteByByte(bufferToSend, maxPlayerCount);
+			writeOffSet += wr5;
+			bufferToSend += wr5;
+
+			std::string levelType = "default";
+			uint32_t wr6 = WriteString(bufferToSend, levelType);
+			writeOffSet += wr6;
+			bufferToSend += wr6;
+
+			uint8_t reducedDebugInfo = 0; // bool
+			uint32_t wr7 = WriteByteByByte(bufferToSend, reducedDebugInfo);
+			writeOffSet += wr7;
+			bufferToSend += wr7;
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		template<typename T>
-		uint32_t ServerCore::WriteAsBigEndian(char* buffer, T value)
+		uint32_t ServerCore::Write2BytesAsBigEndian(char* buffer, uint16_t value)
 		{
+			uint32_t valueConvertedToBigEndian = htons(value);
+			return WriteByteByByte(buffer, valueConvertedToBigEndian);
+		}
 
+		uint32_t ServerCore::Write4BytesAsBigEndian(char* buffer, uint32_t value)
+		{
+			uint32_t valueConvertedToBigEndian = htonl(value);
+			return WriteByteByByte(buffer, valueConvertedToBigEndian);
 		}
 
 		void ServerCore::EnqueueAndIssueSend(ExpandedOverlapped& eol)

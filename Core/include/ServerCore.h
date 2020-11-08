@@ -24,6 +24,14 @@ namespace GenericBoson
 			in_game,
 		};
 
+		enum Dimension
+		{
+			nether = -1,
+			overworld = 0,
+			end = 1,
+			notSet = 255,
+		};
+
 		struct ServerCreateParameter
 		{
 			GBString m_ipString = _GBT("127.0.0.1");
@@ -84,7 +92,8 @@ namespace GenericBoson
 		private: template<typename T> uint32_t WriteByteByByte(char* buffer, T value);
 		private: template<typename STRING> uint32_t WriteString(char* buffer, const STRING& inString);
 		private: template<typename T> uint32_t Write(char* buffer, const T& outValue);
-		private: template<typename T> uint32_t WriteAsBigEndian(char* buffer, T value);
+		private: uint32_t Write2BytesAsBigEndian(char* buffer, uint16_t value);
+		private: uint32_t Write4BytesAsBigEndian(char* buffer, uint32_t value);
 
 		public: virtual ~ServerCore();
 		public: void ThreadFunction();
