@@ -88,11 +88,12 @@ namespace GenericBoson
 
 		void ServerCore::SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			// Creating Controllerable Character
-			Character controllerableCharacter;
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::JoinGame);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
 
 			// Sending FermionID
-			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, controllerableCharacter.m_ID);
+			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, eol.m_controllableCharacter.m_ID);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
 
@@ -127,6 +128,13 @@ namespace GenericBoson
 			bufferToSend += wr7;
 
 			EnqueueAndIssueSend(eol);
+		}
+
+		void ServerCore::SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::SpawnSpot);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
 		}
 
 		uint32_t ServerCore::Write2BytesAsBigEndian(char* buffer, uint16_t value)

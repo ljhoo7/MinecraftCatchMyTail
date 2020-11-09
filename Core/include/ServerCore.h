@@ -62,6 +62,8 @@ namespace GenericBoson
 
 				SessionState m_sessionState = SessionState::start;
 
+				Character m_controllableCharacter;
+
 				short m_protocolVersion = 0;
 			};
 
@@ -103,6 +105,7 @@ namespace GenericBoson
 		public: void SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 
 			// Consuming a gathering completed message.

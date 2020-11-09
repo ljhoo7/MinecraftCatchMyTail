@@ -13,6 +13,7 @@ namespace GenericBoson
 			StartCompression = 3,
 			ClientSettings = 4,
 			JoinGame = 5,
+			SpawnSpot = 55,
 		};
 	}
 }
