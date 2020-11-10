@@ -135,6 +135,11 @@ namespace GenericBoson
 			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::SpawnSpot);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
+
+			uint64_t spawnSpot = 0;
+			uint32_t wr1 = WriteByteByByte(bufferToSend, spawnSpot);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
 		}
 
 		uint32_t ServerCore::Write2BytesAsBigEndian(char* buffer, uint16_t value)
