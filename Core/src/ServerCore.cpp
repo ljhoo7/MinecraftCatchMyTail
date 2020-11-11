@@ -136,15 +136,33 @@ namespace GenericBoson
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
-			uint64_t spawnSpot = 0;
-			uint32_t wr1 = WriteByteByByte(bufferToSend, spawnSpot);
+			GBVector3<int> spawnSpot(10, 10, 10);
+			uint32_t wr1 = WriteIntGBVector3(bufferToSend, spawnSpot);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+		}
+
+		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
+		{
+			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
+			uint64_t spawnSpot = (uint64_t)(value.x & bitFlag) << 38; // 38 is the number of zero in bitFlag!
+			spawnSpot |= (uint64_t)(value.y 
+				& 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111);
+			spawnSpot |= (uint64_t)(value.z & bitFlag) << 26; // 26 is the number of one in bitFlag!
+			return WriteByteByByte(buffer, spawnSpot);
 		}
 
 		uint32_t ServerCore::Write2BytesAsBigEndian(char* buffer, uint16_t value)
 		{
 			uint32_t valueConvertedToBigEndian = htons(value);
+			return WriteByteByByte(buffer, valueConvertedToBigEndian);
+		}
+
+		uint32_t ServerCore::Write8BytesAsBigEndian(char* buffer, uint64_t value)
+		{
+			uint64_t highWord = htonl((uint32_t)value) << 32;
+			uint64_t lowWord = htonl(value >> 32);
+			uint64_t valueConvertedToBigEndian = highWord + lowWord;
 			return WriteByteByByte(buffer, valueConvertedToBigEndian);
 		}
 

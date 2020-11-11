@@ -1,23 +1,11 @@
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB CORE_SRC_FILES
-	src/ServerCore.cpp
-	src/stdafx.cpp
-	src/GBBuffer.cpp
-	src/Constant.cpp
-	src/Character.cpp
-	src/Fermion.cpp
+	src/*.cpp
 	)
 
 file(GLOB CORE_HEADER_FILES
-	include/ServerCore.h
-	include/stdafx.h
-	include/GBString.h
-	include/GBBuffer.h
-	include/Constant.h
-	include/PacketType.h
-	include/Character.h
-	include/Fermion.h
+	include/*.h
 	)
 
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS "/Ycstdafx.h")

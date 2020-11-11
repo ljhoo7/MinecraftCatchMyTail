@@ -5,6 +5,7 @@
 #include "GBBuffer.h"
 #include "PacketType.h"
 #include "Character.h"
+#include "GBVector.h"
 
 #include <vector>
 #include <thread>
@@ -96,6 +97,8 @@ namespace GenericBoson
 		private: template<typename T> uint32_t Write(char* buffer, const T& outValue);
 		private: uint32_t Write2BytesAsBigEndian(char* buffer, uint16_t value);
 		private: uint32_t Write4BytesAsBigEndian(char* buffer, uint32_t value);
+		private: uint32_t Write8BytesAsBigEndian(char* buffer, uint64_t value);
+		private: uint32_t WriteIntGBVector3(char* buffer, const GBVector3<int>& value);
 
 		public: virtual ~ServerCore();
 		public: void ThreadFunction();
