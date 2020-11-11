@@ -109,6 +109,7 @@ namespace GenericBoson
 		public: void SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 
 			// Consuming a gathering completed message.

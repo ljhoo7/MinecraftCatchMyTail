@@ -142,6 +142,18 @@ namespace GenericBoson
 			bufferToSend += wr1;
 		}
 
+		void ServerCore::SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Difficulty);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			char difficulty = 1;
+			uint32_t wr1 = WriteByteByByte(bufferToSend, difficulty);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+		}
+
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
@@ -225,6 +237,9 @@ namespace GenericBoson
 
 					SendStartCompress(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendLoginSuccess(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendJoinGame(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendSpawnSpot(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendDifficulty(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 				}
 				break;
 				default:
