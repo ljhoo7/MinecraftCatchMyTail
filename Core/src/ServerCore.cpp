@@ -56,32 +56,32 @@ namespace GenericBoson
 
 		void ServerCore::SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr1 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::StartCompression);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::StartCompression);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			uint32_t wr1 = WriteByteByByte(bufferToSend, InternalConstant::CompressThreshold);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
-
-			uint32_t wr2 = WriteByteByByte(bufferToSend, InternalConstant::CompressThreshold);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
 
 			EnqueueAndIssueSend(eol);
 		}
 
 		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr1 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::LoginSuccess);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::LoginSuccess);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
 
 			// UUID #ToDo
 			std::string tmpUUDI = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-			uint32_t wr2 = WriteString(bufferToSend, tmpUUDI);
+			uint32_t wr1 = WriteString(bufferToSend, tmpUUDI);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			uint32_t wr2 = WriteString(bufferToSend, eol.m_userName);
 			writeOffSet += wr2;
 			bufferToSend += wr2;
-
-			uint32_t wr3 = WriteString(bufferToSend, eol.m_userName);
-			writeOffSet += wr3;
-			bufferToSend += wr3;
 
 			EnqueueAndIssueSend(eol);
 		}
@@ -152,6 +152,27 @@ namespace GenericBoson
 			uint32_t wr1 = WriteByteByByte(bufferToSend, difficulty);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+		}
+
+		void ServerCore::SendCharacterAbility(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::CharacterAbility);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			uint32_t wr1 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_abilityState);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			float correctedFlyingMaxSpeed = 0.05f * eol.m_controllableCharacter.m_flyingMaxSpeed;
+			uint32_t wr2 = Write4BytesAsBigEndian(bufferToSend, correctedFlyingMaxSpeed);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			float correctedSprintingMaxSpeed = 0.05f * eol.m_controllableCharacter.m_sprintingMaxSpeed;
+			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, correctedSprintingMaxSpeed);
+			writeOffSet += wr3;
+			bufferToSend += wr3;
 		}
 
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
@@ -240,6 +261,7 @@ namespace GenericBoson
 					SendJoinGame(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendSpawnSpot(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendDifficulty(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendCharacterAbility(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 				}
 				break;
 				default:
