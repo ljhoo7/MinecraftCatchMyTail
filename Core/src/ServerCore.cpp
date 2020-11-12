@@ -262,6 +262,17 @@ namespace GenericBoson
 					SendSpawnSpot(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendDifficulty(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendCharacterAbility(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+
+					//SendWeather #ToDo
+
+					//SendTime();
+					//SendInventory();
+					//SendHealth();
+					//SendExp();
+					//SendActiveSlot();
+					//SendPlayerListAndAddPlayer();
+
+					//eol.m_sessionState = authed;
 				}
 				break;
 				default:

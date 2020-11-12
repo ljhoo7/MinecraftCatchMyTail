@@ -9,7 +9,7 @@ namespace GenericBoson
 		// This is a box in Minecraft.
 		class Fermion
 		{
-		public: Fermion();
+		public: Fermion() = default;
 		public: virtual ~Fermion() = default;
 
 		// Fermion ID
