@@ -175,6 +175,23 @@ namespace GenericBoson
 			bufferToSend += wr3;
 		}
 
+		void ServerCore::SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Time);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			uint32_t wr1 = Write8BytesAsBigEndian(bufferToSend, m_world.m_ageMs);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			// false == m_world.m_dayLightEnabled #ToDo
+
+			uint32_t wr2 = Write8BytesAsBigEndian(bufferToSend, m_world.m_timeOfDay);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+		}
+
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
@@ -265,7 +282,7 @@ namespace GenericBoson
 
 					//SendWeather #ToDo
 
-					//SendTime();
+					SendTime(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					//SendInventory();
 					//SendHealth();
 					//SendExp();

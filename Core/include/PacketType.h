@@ -16,6 +16,7 @@ namespace GenericBoson
 			Difficulty = 9,
 			CharacterAbility = 38,
 			SpawnSpot = 55,
+			Time = 61,
 		};
 	}
 }

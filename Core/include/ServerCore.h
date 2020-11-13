@@ -6,6 +6,7 @@
 #include "PacketType.h"
 #include "Character.h"
 #include "GBVector.h"
+#include "World.h"
 
 #include <vector>
 #include <thread>
@@ -68,6 +69,8 @@ namespace GenericBoson
 				short m_protocolVersion = 0;
 			};
 
+		public: World m_world;
+
 			// If you remove '/100', you will get a compile time error "out of heap".
 		private: static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 		private: SOCKET m_listenSocket = INVALID_SOCKET;
@@ -111,6 +114,8 @@ namespace GenericBoson
 		public: void SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendCharacterAbility(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 
 			// Consuming a gathering completed message.

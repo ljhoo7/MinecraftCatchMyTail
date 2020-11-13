@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace GenericBoson
 {
 	namespace ServerEngine
@@ -12,6 +14,10 @@ namespace GenericBoson
 			Rainy = 1,
 			Stormy = 2,
 		};
+
+		public: int64_t m_ageMs;
+		public: int64_t m_timeOfDay;
+		public: bool m_dayLightEnabled = true;
 		};
 	}
 }
