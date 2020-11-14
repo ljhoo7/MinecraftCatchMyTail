@@ -17,6 +17,7 @@ namespace GenericBoson
 			CharacterAbility = 38,
 			SpawnSpot = 55,
 			Time = 61,
+			Inventory = 71,
 		};
 	}
 }

@@ -192,6 +192,13 @@ namespace GenericBoson
 			bufferToSend += wr2;
 		}
 
+		void ServerCore::SendInventory(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Inventory);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+		}
+
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
@@ -283,7 +290,7 @@ namespace GenericBoson
 					//SendWeather #ToDo
 
 					SendTime(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					//SendInventory();
+					SendInventory(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					//SendHealth();
 					//SendExp();
 					//SendActiveSlot();
