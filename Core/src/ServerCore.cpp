@@ -197,6 +197,10 @@ namespace GenericBoson
 			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Inventory);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
+
+			uint32_t wr1 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_inventory.m_ID);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
 		}
 
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)

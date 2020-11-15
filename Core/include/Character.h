@@ -1,11 +1,25 @@
 #pragma once
 
+#include <atomic>
+
 #include "Fermion.h"
 
 namespace GenericBoson
 {
 	namespace ServerEngine
 	{
+		class Inventory
+		{
+		private: static std::atomic<unsigned char> g_IDFactory;
+		public: Inventory()
+		{
+			m_ID = g_IDFactory.fetch_add(1) % 127;
+			m_ID += 1;
+		}
+		public: unsigned char m_ID;
+		public: int16_t m_numberOfSlots = 1;
+		};
+
 		class Character : public Fermion
 		{
 		public: static const char GOD1_BITMASK;
@@ -16,6 +30,8 @@ namespace GenericBoson
 		public: char m_abilityState = 0;
 		public: float m_flyingMaxSpeed = 1.0f;
 		public: float m_sprintingMaxSpeed = 1.3f;
+
+		public: Inventory m_inventory;
 
 		public: bool IsGod()
 		{

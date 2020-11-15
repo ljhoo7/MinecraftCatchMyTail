@@ -14,5 +14,7 @@ namespace GenericBoson
 		const char Character::FLYING_BITMASK = 0b0000'0010;
 		const char Character::GOD2_BITMASK = 0b1000'0000;
 		const char Character::CANFLY_BITMASK = 0b0000'0100;
+
+		uint8_t Inventory::g_IDFactory = 0;
 	}
 }
