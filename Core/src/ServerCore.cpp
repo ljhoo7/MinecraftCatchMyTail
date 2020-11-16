@@ -201,6 +201,16 @@ namespace GenericBoson
 			uint32_t wr1 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_inventory.m_ID);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+
+			uint32_t wr2 = WriteByteByByte(bufferToSend, (int16_t)eol.m_controllableCharacter.m_inventory.GetTotalSlotCount());
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			for (auto& pSlot : eol.m_controllableCharacter.m_inventory.m_slotVector)
+			{
+				// #ToDo
+				pSlot->WriteItem();
+			}
 		}
 
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)

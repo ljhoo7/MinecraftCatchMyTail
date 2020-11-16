@@ -21,7 +21,9 @@ namespace GenericBoson
 		public: unsigned char m_ID;
 		public: int16_t m_numberOfSlots = 1;
 
-		public: std::vector<SlotBase> m_slotVector;
+		public: std::vector<SlotBase*> m_slotVector;
+
+		public: int GetTotalSlotCount();
 		};
 	}
 }
