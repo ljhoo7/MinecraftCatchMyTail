@@ -140,6 +140,8 @@ namespace GenericBoson
 			uint32_t wr1 = WriteIntGBVector3(bufferToSend, spawnSpot);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+
+			EnqueueAndIssueSend(eol);
 		}
 
 		void ServerCore::SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
@@ -152,6 +154,8 @@ namespace GenericBoson
 			uint32_t wr1 = WriteByteByByte(bufferToSend, difficulty);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+
+			EnqueueAndIssueSend(eol);
 		}
 
 		void ServerCore::SendCharacterAbility(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
@@ -173,6 +177,8 @@ namespace GenericBoson
 			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, correctedSprintingMaxSpeed);
 			writeOffSet += wr3;
 			bufferToSend += wr3;
+
+			EnqueueAndIssueSend(eol);
 		}
 
 		void ServerCore::SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
@@ -190,6 +196,8 @@ namespace GenericBoson
 			uint32_t wr2 = Write8BytesAsBigEndian(bufferToSend, m_world.m_timeOfDay);
 			writeOffSet += wr2;
 			bufferToSend += wr2;
+
+			EnqueueAndIssueSend(eol);
 		}
 
 		void ServerCore::SendInventory(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
@@ -211,6 +219,29 @@ namespace GenericBoson
 				// #ToDo
 				pSlot->WriteItem();
 			}
+
+			EnqueueAndIssueSend(eol);
+		}
+
+		void ServerCore::SendHealth(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Health);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, eol.m_controllableCharacter.m_health);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			uint32_t wr2 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_foodLevel);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, eol.m_controllableCharacter.m_foodSaturationLevel);
+			writeOffSet += wr3;
+			bufferToSend += wr3;
+
+			EnqueueAndIssueSend(eol);
 		}
 
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
@@ -305,7 +336,7 @@ namespace GenericBoson
 
 					SendTime(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendInventory(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					//SendHealth();
+					SendHealth(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					//SendExp();
 					//SendActiveSlot();
 					//SendPlayerListAndAddPlayer();

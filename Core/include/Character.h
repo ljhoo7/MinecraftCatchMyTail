@@ -20,6 +20,13 @@ namespace GenericBoson
 
 		public: Inventory m_inventory;
 
+		public: static const float MAX_HEALTH;
+		public: static const int MAX_FOOD_LEVEL;
+
+		public: float m_health = MAX_HEALTH;
+		public: int m_foodLevel = MAX_FOOD_LEVEL;
+		public: float m_foodSaturationLevel = 5.0f;
+
 		public: bool IsGod()
 		{
 			char result = m_abilityState & GOD1_BITMASK;
