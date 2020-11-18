@@ -27,6 +27,11 @@ namespace GenericBoson
 		public: int m_foodLevel = MAX_FOOD_LEVEL;
 		public: float m_foodSaturationLevel = 5.0f;
 
+		public: int m_experience = 0;
+
+		public: float GetXpPercentage();
+		public: int GetLevel();
+
 		public: bool IsGod()
 		{
 			char result = m_abilityState & GOD1_BITMASK;

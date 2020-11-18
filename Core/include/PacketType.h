@@ -14,6 +14,7 @@ namespace GenericBoson
 			ClientSettings = 4,
 			JoinGame = 5,
 			Difficulty = 9,
+			Experience = 26,
 			CharacterAbility = 38,
 			SpawnSpot = 55,
 			Time = 61,

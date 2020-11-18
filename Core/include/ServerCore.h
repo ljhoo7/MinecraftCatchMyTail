@@ -117,6 +117,7 @@ namespace GenericBoson
 		public: void SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendInventory(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendHealth(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendExperience(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 

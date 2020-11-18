@@ -10,6 +10,18 @@ namespace GenericBoson
 
 		}
 
+		float Character::GetXpPercentage()
+		{
+			// #ToDo
+			return m_experience;
+		}
+
+		int Character::GetLevel()
+		{
+			// #ToDo
+			return 1;
+		}
+
 		const char Character::GOD1_BITMASK = 0b0000'0001;
 		const char Character::FLYING_BITMASK = 0b0000'0010;
 		const char Character::GOD2_BITMASK = 0b1000'0000;

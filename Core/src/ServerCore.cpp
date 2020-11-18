@@ -244,6 +244,29 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
+		void ServerCore::SendExperience(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Experience);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			float xpPercentage = eol.m_controllableCharacter.GetXpPercentage();
+			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, xpPercentage);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			int level = eol.m_controllableCharacter.GetLevel();
+			uint32_t wr2 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Experience);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			uint32_t wr3 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_experience);
+			writeOffSet += wr3;
+			bufferToSend += wr3;
+
+			EnqueueAndIssueSend(eol);
+		}
+
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
@@ -337,7 +360,7 @@ namespace GenericBoson
 					SendTime(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendInventory(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendHealth(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					//SendExp();
+					SendExp();
 					//SendActiveSlot();
 					//SendPlayerListAndAddPlayer();
 
