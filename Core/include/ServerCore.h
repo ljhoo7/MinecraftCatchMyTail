@@ -60,6 +60,7 @@ namespace GenericBoson
 				GBBuffer m_receiveBuffer;
 				GBBuffer m_writeBuffer;
 
+				std::string m_uuid;
 				std::string m_userName;
 
 				SessionState m_sessionState = SessionState::start;
@@ -119,6 +120,7 @@ namespace GenericBoson
 		public: void SendHealth(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendExperience(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 		public: void SendEquippedItem(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendPlayerList(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
 
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 

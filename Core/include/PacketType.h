@@ -17,6 +17,7 @@ namespace GenericBoson
 			Experience = 26,
 			EquippedItemChange = 29,
 			CharacterAbility = 38,
+			PlayerList = 39,
 			SpawnSpot = 55,
 			Time = 61,
 			Health = 66,

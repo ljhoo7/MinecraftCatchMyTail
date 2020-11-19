@@ -56,7 +56,7 @@ namespace GenericBoson
 
 		void ServerCore::SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::StartCompression);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::StartCompression);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -69,13 +69,13 @@ namespace GenericBoson
 
 		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::LoginSuccess);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::LoginSuccess);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
 			// UUID #ToDo
-			std::string tmpUUDI = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-			uint32_t wr1 = WriteString(bufferToSend, tmpUUDI);
+			eol.m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
+			uint32_t wr1 = WriteString(bufferToSend, eol.m_uuid);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
 
@@ -88,7 +88,7 @@ namespace GenericBoson
 
 		void ServerCore::SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::JoinGame);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::JoinGame);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -132,7 +132,7 @@ namespace GenericBoson
 
 		void ServerCore::SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::SpawnSpot);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::SpawnSpot);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -146,7 +146,7 @@ namespace GenericBoson
 
 		void ServerCore::SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Difficulty);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Difficulty);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -160,7 +160,7 @@ namespace GenericBoson
 
 		void ServerCore::SendCharacterAbility(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::CharacterAbility);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::CharacterAbility);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -183,7 +183,7 @@ namespace GenericBoson
 
 		void ServerCore::SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Time);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Time);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -202,7 +202,7 @@ namespace GenericBoson
 
 		void ServerCore::SendInventory(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Inventory);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Inventory);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -225,7 +225,7 @@ namespace GenericBoson
 
 		void ServerCore::SendHealth(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Health);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Health);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -246,7 +246,7 @@ namespace GenericBoson
 
 		void ServerCore::SendExperience(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Experience);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Experience);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
@@ -256,7 +256,7 @@ namespace GenericBoson
 			bufferToSend += wr1;
 
 			int level = eol.m_controllableCharacter.GetLevel();
-			uint32_t wr2 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::Experience);
+			uint32_t wr2 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Experience);
 			writeOffSet += wr2;
 			bufferToSend += wr2;
 
@@ -269,13 +269,38 @@ namespace GenericBoson
 
 		void ServerCore::SendEquippedItem(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::EquippedItemChange);
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::EquippedItemChange);
 			writeOffSet += wr0;
 			bufferToSend += wr0;
 
-			uint32_t wr1 = WriteByteByByte(bufferToSend, (uint8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
+			uint32_t wr1 = WriteByteByByte(bufferToSend, (int8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
 			writeOffSet += wr1;
 			bufferToSend += wr1;
+
+			EnqueueAndIssueSend(eol);
+		}
+
+		void ServerCore::SendPlayerList(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::PlayerList);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			uint32_t wr1 = WriteByteByByte(bufferToSend, (int32_t)0);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			uint32_t wr2 = WriteByteByByte(bufferToSend, (int32_t)1);
+			writeOffSet += wr2;
+			bufferToSend += wr2;
+
+			uint32_t wr3 = WriteString(bufferToSend, eol.m_uuid);
+			writeOffSet += wr3;
+			bufferToSend += wr3;
+
+			uint32_t wr4 = WriteString(bufferToSend, eol.m_userName);
+			writeOffSet += wr4;
+			bufferToSend += wr4;
 
 			EnqueueAndIssueSend(eol);
 		}
@@ -375,7 +400,7 @@ namespace GenericBoson
 					SendHealth(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendExperience(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendEquippedItem(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					//SendPlayerListAndAddPlayer();
+					SendPlayerList(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 
 					//eol.m_sessionState = authed;
 				}
