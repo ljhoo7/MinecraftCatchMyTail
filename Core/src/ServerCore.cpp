@@ -267,6 +267,19 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
+		void ServerCore::SendEquippedItem(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		{
+			uint32_t wr0 = WriteByteByByte(bufferToSend, (uint32_t)PacketType::EquippedItemChange);
+			writeOffSet += wr0;
+			bufferToSend += wr0;
+
+			uint32_t wr1 = WriteByteByByte(bufferToSend, (uint8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
+			writeOffSet += wr1;
+			bufferToSend += wr1;
+
+			EnqueueAndIssueSend(eol);
+		}
+
 		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
@@ -360,8 +373,8 @@ namespace GenericBoson
 					SendTime(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendInventory(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					SendHealth(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendExp();
-					//SendActiveSlot();
+					SendExperience(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendEquippedItem(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
 					//SendPlayerListAndAddPlayer();
 
 					//eol.m_sessionState = authed;

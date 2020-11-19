@@ -15,6 +15,7 @@ namespace GenericBoson
 			JoinGame = 5,
 			Difficulty = 9,
 			Experience = 26,
+			EquippedItemChange = 29,
 			CharacterAbility = 38,
 			SpawnSpot = 55,
 			Time = 61,
