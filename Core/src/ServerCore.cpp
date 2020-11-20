@@ -302,6 +302,25 @@ namespace GenericBoson
 			writeOffSet += wr4;
 			bufferToSend += wr4;
 
+			// #ToDo
+			// Send Property List Size
+			uint32_t wr5 = WriteByteByByte(bufferToSend, (int32_t)0);
+			writeOffSet += wr5;
+			bufferToSend += wr5;
+
+			uint32_t wr6 = WriteByteByByte(bufferToSend, (int32_t)m_world.m_gameMode);
+			writeOffSet += wr6;
+			bufferToSend += wr6;
+
+			// #ToDo
+			uint32_t wr7 = WriteByteByByte(bufferToSend, (int32_t)m_world.m_pingMs);
+			writeOffSet += wr7;
+			bufferToSend += wr7;
+
+			uint32_t wr8 = WriteByteByByte(bufferToSend, (char)0);
+			writeOffSet += wr8;
+			bufferToSend += wr8;
+
 			EnqueueAndIssueSend(eol);
 		}
 
