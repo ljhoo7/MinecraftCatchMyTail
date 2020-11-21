@@ -96,31 +96,31 @@ namespace GenericBoson
 		private: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value);
 		private: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString);
 		private: template<typename T> uint32_t Read(char* buffer, T& outValue);
-		private: template<typename T> uint32_t WriteByteByByte(char* buffer, T value);
-		private: template<typename STRING> uint32_t WriteString(char* buffer, const STRING& inString);
-		private: template<typename T> uint32_t Write(char* buffer, const T& outValue);
-		private: uint32_t Write2BytesAsBigEndian(char* buffer, uint16_t value);
-		private: uint32_t Write4BytesAsBigEndian(char* buffer, uint32_t value);
-		private: uint32_t Write8BytesAsBigEndian(char* buffer, uint64_t value);
-		private: uint32_t WriteIntGBVector3(char* buffer, const GBVector3<int>& value);
+		private: template<typename T> void WriteByteByByte(ExpandedOverlapped& eol, T value);
+		private: template<typename STRING> void WriteString(ExpandedOverlapped& eol, const STRING& inString);
+		private: template<typename T> void Write(ExpandedOverlapped& eol, const T& outValue);
+		private: void Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value);
+		private: void Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value);
+		private: void Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value);
+		private: void WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value);
 
 		public: virtual ~ServerCore();
 		public: void ThreadFunction();
 		public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 		public: int IssueSend(ExpandedOverlapped* pEol);
 
-		public: void SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendCharacterAbility(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendInventory(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendHealth(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendExperience(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendEquippedItem(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
-		public: void SendPlayerList(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet);
+		public: void SendStartCompress(ExpandedOverlapped& eol);
+		public: void SendLoginSuccess(ExpandedOverlapped& eol);
+		public: void SendJoinGame(ExpandedOverlapped& eol);
+		public: void SendSpawnSpot(ExpandedOverlapped& eol);
+		public: void SendDifficulty(ExpandedOverlapped& eol);
+		public: void SendCharacterAbility(ExpandedOverlapped& eol);
+		public: void SendTime(ExpandedOverlapped& eol);
+		public: void SendInventory(ExpandedOverlapped& eol);
+		public: void SendHealth(ExpandedOverlapped& eol);
+		public: void SendExperience(ExpandedOverlapped& eol);
+		public: void SendEquippedItem(ExpandedOverlapped& eol);
+		public: void SendPlayerList(ExpandedOverlapped& eol);
 
 		public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 

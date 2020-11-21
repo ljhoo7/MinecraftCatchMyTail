@@ -54,165 +54,106 @@ namespace GenericBoson
 			return -1;
 		}
 
-		void ServerCore::SendStartCompress(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendStartCompress(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::StartCompression);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
-
-			uint32_t wr1 = WriteByteByByte(bufferToSend, InternalConstant::CompressThreshold);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteByteByByte(eol, (int32_t)PacketType::StartCompression);
+			WriteByteByByte(eol, InternalConstant::CompressThreshold);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::LoginSuccess);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::LoginSuccess);
 
 			// UUID #ToDo
 			eol.m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-			uint32_t wr1 = WriteString(bufferToSend, eol.m_uuid);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
-
-			uint32_t wr2 = WriteString(bufferToSend, eol.m_userName);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
+			WriteString(eol, eol.m_uuid);
+			WriteString(eol, eol.m_userName);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendJoinGame(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendJoinGame(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::JoinGame);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::JoinGame);
 
 			// Sending FermionID
-			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, eol.m_controllableCharacter.m_ID);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_ID);
 
 			uint8_t hardCoreFlag = 0;
-			uint32_t wr2 = WriteByteByByte(bufferToSend, hardCoreFlag);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
+			WriteByteByByte(eol, hardCoreFlag);
 
 			Dimension demension = Dimension::overworld;
-			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, demension);
-			writeOffSet += wr3;
-			bufferToSend += wr3;
+			Write4BytesAsBigEndian(eol, demension);
 
 			uint8_t difficulty = 2; // 2 = Normal
-			uint32_t wr4 = WriteByteByByte(bufferToSend, difficulty);
-			writeOffSet += wr4;
-			bufferToSend += wr4;
+			WriteByteByByte(eol, difficulty);
 
 			uint8_t maxPlayerCount = 255;
-			uint32_t wr5 = WriteByteByByte(bufferToSend, maxPlayerCount);
-			writeOffSet += wr5;
-			bufferToSend += wr5;
+			WriteByteByByte(eol, maxPlayerCount);
 
 			std::string levelType = "default";
-			uint32_t wr6 = WriteString(bufferToSend, levelType);
-			writeOffSet += wr6;
-			bufferToSend += wr6;
+			WriteString(eol, levelType);
 
 			uint8_t reducedDebugInfo = 0; // bool
-			uint32_t wr7 = WriteByteByByte(bufferToSend, reducedDebugInfo);
-			writeOffSet += wr7;
-			bufferToSend += wr7;
+			WriteByteByByte(eol, reducedDebugInfo);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendSpawnSpot(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendSpawnSpot(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::SpawnSpot);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::SpawnSpot);
 
 			GBVector3<int> spawnSpot(10, 10, 10);
-			uint32_t wr1 = WriteIntGBVector3(bufferToSend, spawnSpot);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteIntGBVector3(eol, spawnSpot);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendDifficulty(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendDifficulty(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Difficulty);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::Difficulty);
 
 			char difficulty = 1;
-			uint32_t wr1 = WriteByteByByte(bufferToSend, difficulty);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteByteByByte(eol, difficulty);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendCharacterAbility(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendCharacterAbility(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::CharacterAbility);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::CharacterAbility);
 
-			uint32_t wr1 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_abilityState);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteByteByByte(eol, eol.m_controllableCharacter.m_abilityState);
 
 			float correctedFlyingMaxSpeed = 0.05f * eol.m_controllableCharacter.m_flyingMaxSpeed;
-			uint32_t wr2 = Write4BytesAsBigEndian(bufferToSend, correctedFlyingMaxSpeed);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
+			Write4BytesAsBigEndian(eol, correctedFlyingMaxSpeed);
 
 			float correctedSprintingMaxSpeed = 0.05f * eol.m_controllableCharacter.m_sprintingMaxSpeed;
-			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, correctedSprintingMaxSpeed);
-			writeOffSet += wr3;
-			bufferToSend += wr3;
+			Write4BytesAsBigEndian(eol, correctedSprintingMaxSpeed);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendTime(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendTime(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Time);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
-
-			uint32_t wr1 = Write8BytesAsBigEndian(bufferToSend, m_world.m_ageMs);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteByteByByte(eol, (int32_t)PacketType::Time);
+			Write8BytesAsBigEndian(eol, m_world.m_ageMs);
 
 			// false == m_world.m_dayLightEnabled #ToDo
 
-			uint32_t wr2 = Write8BytesAsBigEndian(bufferToSend, m_world.m_timeOfDay);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
+			Write8BytesAsBigEndian(eol, m_world.m_timeOfDay);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendInventory(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendInventory(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Inventory);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
-
-			uint32_t wr1 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_inventory.m_ID);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
-
-			uint32_t wr2 = WriteByteByByte(bufferToSend, (int16_t)eol.m_controllableCharacter.m_inventory.GetTotalSlotCount());
-			writeOffSet += wr2;
-			bufferToSend += wr2;
+			WriteByteByByte(eol, (int32_t)PacketType::Inventory);
+			WriteByteByByte(eol, eol.m_controllableCharacter.m_inventory.m_ID);
+			WriteByteByByte(eol, (int16_t)eol.m_controllableCharacter.m_inventory.GetTotalSlotCount());
 
 			for (auto& pSlot : eol.m_controllableCharacter.m_inventory.m_slotVector)
 			{
@@ -223,135 +164,92 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendHealth(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendHealth(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Health);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
-
-			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, eol.m_controllableCharacter.m_health);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
-
-			uint32_t wr2 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_foodLevel);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
-
-			uint32_t wr3 = Write4BytesAsBigEndian(bufferToSend, eol.m_controllableCharacter.m_foodSaturationLevel);
-			writeOffSet += wr3;
-			bufferToSend += wr3;
+			WriteByteByByte(eol, (int32_t)PacketType::Health);
+			Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_health);
+			WriteByteByByte(eol, eol.m_controllableCharacter.m_foodLevel);
+			Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_foodSaturationLevel);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendExperience(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendExperience(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Experience);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::Experience);
 
 			float xpPercentage = eol.m_controllableCharacter.GetXpPercentage();
-			uint32_t wr1 = Write4BytesAsBigEndian(bufferToSend, xpPercentage);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			Write4BytesAsBigEndian(eol, xpPercentage);
 
 			int level = eol.m_controllableCharacter.GetLevel();
-			uint32_t wr2 = WriteByteByByte(bufferToSend, (int32_t)PacketType::Experience);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
-
-			uint32_t wr3 = WriteByteByByte(bufferToSend, eol.m_controllableCharacter.m_experience);
-			writeOffSet += wr3;
-			bufferToSend += wr3;
+			WriteByteByByte(eol, (int32_t)PacketType::Experience);
+			WriteByteByByte(eol, eol.m_controllableCharacter.m_experience);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendEquippedItem(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendEquippedItem(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::EquippedItemChange);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
-
-			uint32_t wr1 = WriteByteByByte(bufferToSend, (int8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteByteByByte(eol, (int32_t)PacketType::EquippedItemChange);
+			WriteByteByByte(eol, (int8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendPlayerList(ExpandedOverlapped& eol, char* bufferToSend, uint32_t& writeOffSet)
+		void ServerCore::SendPlayerList(ExpandedOverlapped& eol)
 		{
-			uint32_t wr0 = WriteByteByByte(bufferToSend, (int32_t)PacketType::PlayerList);
-			writeOffSet += wr0;
-			bufferToSend += wr0;
+			WriteByteByByte(eol, (int32_t)PacketType::PlayerList);
 
-			uint32_t wr1 = WriteByteByByte(bufferToSend, (int32_t)0);
-			writeOffSet += wr1;
-			bufferToSend += wr1;
+			WriteByteByByte(eol, (int32_t)0);
 
-			uint32_t wr2 = WriteByteByByte(bufferToSend, (int32_t)1);
-			writeOffSet += wr2;
-			bufferToSend += wr2;
+			WriteByteByByte(eol, (int32_t)1);
 
-			uint32_t wr3 = WriteString(bufferToSend, eol.m_uuid);
-			writeOffSet += wr3;
-			bufferToSend += wr3;
+			WriteString(eol, eol.m_uuid);
 
-			uint32_t wr4 = WriteString(bufferToSend, eol.m_userName);
-			writeOffSet += wr4;
-			bufferToSend += wr4;
+			WriteString(eol, eol.m_userName);
 
 			// #ToDo
 			// Send Property List Size
-			uint32_t wr5 = WriteByteByByte(bufferToSend, (int32_t)0);
-			writeOffSet += wr5;
-			bufferToSend += wr5;
+			WriteByteByByte(eol, (int32_t)0);
 
-			uint32_t wr6 = WriteByteByByte(bufferToSend, (int32_t)m_world.m_gameMode);
-			writeOffSet += wr6;
-			bufferToSend += wr6;
+			WriteByteByByte(eol, (int32_t)m_world.m_gameMode);
 
 			// #ToDo
-			uint32_t wr7 = WriteByteByByte(bufferToSend, (int32_t)m_world.m_pingMs);
-			writeOffSet += wr7;
-			bufferToSend += wr7;
+			WriteByteByByte(eol, (int32_t)m_world.m_pingMs);
 
-			uint32_t wr8 = WriteByteByByte(bufferToSend, (char)0);
-			writeOffSet += wr8;
-			bufferToSend += wr8;
+			WriteByteByByte(eol, (char)0);
 
 			EnqueueAndIssueSend(eol);
 		}
 
-		uint32_t ServerCore::WriteIntGBVector3(char* buffer, const GBVector3<int>& value)
+		void ServerCore::WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
 			uint64_t spawnSpot = (uint64_t)(value.x & bitFlag) << 38; // 38 is the number of zero in bitFlag!
 			spawnSpot |= (uint64_t)(value.y 
 				& 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111);
 			spawnSpot |= (uint64_t)(value.z & bitFlag) << 26; // 26 is the number of one in bitFlag!
-			return WriteByteByByte(buffer, spawnSpot);
+			WriteByteByByte(eol, spawnSpot);
 		}
 
-		uint32_t ServerCore::Write2BytesAsBigEndian(char* buffer, uint16_t value)
+		void ServerCore::Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value)
 		{
 			uint32_t valueConvertedToBigEndian = htons(value);
-			return WriteByteByByte(buffer, valueConvertedToBigEndian);
+			WriteByteByByte(eol, valueConvertedToBigEndian);
 		}
 
-		uint32_t ServerCore::Write8BytesAsBigEndian(char* buffer, uint64_t value)
+		void ServerCore::Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value)
 		{
 			uint64_t highWord = htonl((uint32_t)value) << 32;
 			uint64_t lowWord = htonl(value >> 32);
 			uint64_t valueConvertedToBigEndian = highWord + lowWord;
-			return WriteByteByByte(buffer, valueConvertedToBigEndian);
+			WriteByteByByte(eol, valueConvertedToBigEndian);
 		}
 
-		uint32_t ServerCore::Write4BytesAsBigEndian(char* buffer, uint32_t value)
+		void ServerCore::Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value)
 		{
 			uint32_t valueConvertedToBigEndian = htonl(value);
-			return WriteByteByByte(buffer, valueConvertedToBigEndian);
+			WriteByteByByte(eol, valueConvertedToBigEndian);
 		}
 
 		void ServerCore::EnqueueAndIssueSend(ExpandedOverlapped& eol)
@@ -405,21 +303,21 @@ namespace GenericBoson
 
 					eol.m_userName = userName;
 
-					SendStartCompress(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendLoginSuccess(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendJoinGame(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendSpawnSpot(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendDifficulty(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendCharacterAbility(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendStartCompress(eol);
+					SendLoginSuccess(eol);
+					SendJoinGame(eol);
+					SendSpawnSpot(eol);
+					SendDifficulty(eol);
+					SendCharacterAbility(eol);
 
 					//SendWeather #ToDo
 
-					SendTime(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendInventory(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendHealth(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendExperience(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendEquippedItem(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
-					SendPlayerList(eol, eol.m_writeBuffer.m_buffer, eol.m_writeBuffer.m_writeOffset);
+					SendTime(eol);
+					SendInventory(eol);
+					SendHealth(eol);
+					SendExperience(eol);
+					SendEquippedItem(eol);
+					SendPlayerList(eol);
 
 					//eol.m_sessionState = authed;
 				}
@@ -514,21 +412,18 @@ namespace GenericBoson
 		}
 
 		template<typename STRING>
-		uint32_t ServerCore::WriteString(char* buffer, const STRING& inString)
+		void ServerCore::WriteString(ExpandedOverlapped& eol, const STRING& inString)
 		{
 			uint32_t writeByteLength = 0;
+			char* buffer = eol.m_writeBuffer.m_buffer;
 
 			// String Length
 			size_t inStringSize = inString.length();
-			uint32_t wr1 = WriteByteByByte(buffer, inStringSize);
-			writeByteLength += wr1;
-			buffer += wr1;
+			WriteByteByByte(eol, inStringSize);
 
 			errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
-			writeByteLength += inStringSize;
+			eol.m_writeBuffer.m_writeOffset += writeByteLength;
 			buffer += inStringSize;
-
-			return writeByteLength;
 		}
 
 		template<typename T>
@@ -553,17 +448,19 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		uint32_t ServerCore::Write(char* buffer, const T& outValue)
+		void ServerCore::Write(ExpandedOverlapped& eol, const T& outValue)
 		{
 			*(T*)buffer = outValue;
 
-			return sizeof(T);
+			int writeLength = sizeof(T);
+			eol.m_writeBuffer.m_buffer += writeLength;
+			eol.m_writeBuffer.m_writeOffset += writeLength;
 		}
 
 		template<typename T>
-		uint32_t ServerCore::WriteByteByByte(char* buffer, T value)
+		void ServerCore::WriteByteByByte(ExpandedOverlapped& eol, T value)
 		{
-			uint32_t writeByteLength = 0;
+			char* buffer = eol.m_writeBuffer.m_buffer;
 
 			do 
 			{
@@ -578,10 +475,10 @@ namespace GenericBoson
 				*buffer = (char)(value | MSB);
 
 				buffer++;
+				eol.m_writeBuffer.m_writeOffset++;
+
 				value = value >> 7;
 			} while (0 < value);
-
-			return writeByteLength;
 		}
 
 		void ServerCore::ThreadFunction()
