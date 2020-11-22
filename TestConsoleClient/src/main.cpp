@@ -44,6 +44,16 @@ void TestClient::Start()
 	{
 		std::cout << "Connection failed : WSAGetLastError : " << WSAGetLastError() << std::endl;
 	}
+
+	char buffer[1000];
+	WSABUF buf;
+	buf.buf = buffer;
+	buf.len = 1000;
+	DWORD bytesToSend = sizeof(short);
+	WSAOVERLAPPED ol;
+
+	// Send Protocol version
+	WSASend(m_clientSocket, &buf, 1, &bytesToSend, NULL, &ol, NULL);
 }
 
 int main()
