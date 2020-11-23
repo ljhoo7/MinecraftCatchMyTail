@@ -3,11 +3,11 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories("include")
 
 file(GLOB TEST_CLIENT_SRC_FILES
-	src/main.cpp
+	src/*.cpp
 	)
 
 file(GLOB TEST_CLIENT_HEADER_FILES
-	include/stdafx.h
+	include/*.h
 	)
 
 add_executable(TestConsoleClient ${TEST_CLIENT_SRC_FILES} ${TEST_CLIENT_HEADER_FILES})

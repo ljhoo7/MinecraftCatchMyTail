@@ -418,7 +418,7 @@ namespace GenericBoson
 			char* buffer = eol.m_writeBuffer.m_buffer;
 
 			// String Length
-			size_t inStringSize = inString.length();
+			char inStringSize = (char)inString.length();
 			WriteByteByByte(eol, inStringSize);
 
 			errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
