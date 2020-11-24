@@ -4,6 +4,9 @@
 #include <WS2tcpip.h>
 #include <iostream>
 #include <cstdlib>
+#include <cassert>
+
+const short MINECRAFT_PORT_NUMBER = 25565;
 
 class TestClient
 {

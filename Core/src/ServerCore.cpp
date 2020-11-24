@@ -271,6 +271,12 @@ namespace GenericBoson
 					DWORD sentBytes = 0;
 					int sendResult = WSASend(pEol->m_socket, &sendBuf, 1, &sentBytes, NULL, pEol, NULL);
 
+					if (0 != sendResult)
+					{
+						std::cout << "[WSASend failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+						assert(false);
+					}
+
 					// All write buffer must be set to zero because it will do bit-operations.
 					memset(pEol->m_writeBuffer.m_buffer, 0, 1024);
 				}
