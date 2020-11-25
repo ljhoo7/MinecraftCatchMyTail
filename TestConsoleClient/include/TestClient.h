@@ -22,8 +22,8 @@ public:
 	void Start();
 
 	template<typename T>
-	void Send(const T& param);
+	T* AssignFromBuffer(char* buffer, int& writeOffset);
 
 	template<typename STRING>
-	void SendString(const STRING& str);
+	void InscribeStringToBuffer(const STRING& str, char* buffer, int& writeOffset);
 };

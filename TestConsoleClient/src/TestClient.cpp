@@ -1,42 +1,38 @@
 #include "TestClient.h"
 
+const int BUFFER_SIZE = 1024;
+
 template<typename T>
-void TestClient::Send(const T& param)
+T* TestClient::AssignFromBuffer<T>(char* buffer, int& writeOffset)
 {
-	WSABUF buf;
-	buf.buf = (char*)&param;
-	DWORD bytesToSend = sizeof(T);
-	buf.len = bytesToSend;
-	WSAOVERLAPPED ol;
+	assert(writeOffset + sizeof(T) < BUFFER_SIZE);
 
-	int sendResult = WSASend(m_clientSocket, &buf, 1, &bytesToSend, NULL, &ol, NULL);
+	size_t bytesToAssign = sizeof(T);
 
-	if (0 != sendResult)
-	{
-		std::cout << "[WSASend failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
-	}
+	T* pAddrToReturn = (T*)&buffer[writeOffset];
+
+	writeOffset += bytesToAssign;
+
+	return pAddrToReturn;
 }
 
 template<typename STRING>
-void TestClient::SendString(const STRING& str)
+void TestClient::InscribeStringToBuffer(const STRING& str, char* buffer, int& writeOffset)
 {
-	// String Length
-	char inStringSize = str.length();
-	Send(inStringSize);
+	char* pStringLength = AssignFromBuffer<char>(buffer, writeOffset);
+	*pStringLength = (char)str.length();
 
-	WSABUF buf;
-	char* buffer = (char*)str.c_str();
-	buf.buf = buffer;
-	buf.len = inStringSize;
-	DWORD bytesToSend = inStringSize;
-	WSAOVERLAPPED ol;
+	assert(writeOffset + *pStringLength < BUFFER_SIZE);
 
-	int sendResult = WSASend(m_clientSocket, &buf, 1, &bytesToSend, NULL, &ol, NULL);
+	errno_t strncpyResult = strncpy_s(buffer, BUFFER_SIZE - writeOffset, (char*)str.c_str(), *pStringLength);
 
-	if (0 != sendResult)
+	if (0 != strncpyResult)
 	{
-		std::cout << "[WSASend failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+		std::cout << "[strncpy_s failed] return value : " << strncpyResult << std::endl;
+		assert(false);
 	}
+
+	writeOffset += *pStringLength;
 }
 
 void TestClient::Start()
@@ -48,10 +44,10 @@ void TestClient::Start()
 		std::cout << "WSAStartup Error : " << result << std::endl;
 	}
 
-	m_clientSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
+	m_clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (INVALID_SOCKET == m_clientSocket)
 	{
-		std::cout << "[SocketCreating failed] WSAGetLastError : " << result << std::endl;
+		std::cout << "[SocketCreating failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
 	}
 
 	sockaddr_in socketAddr;
@@ -61,24 +57,43 @@ void TestClient::Start()
 
 	inet_pton(AF_INET, "127.0.0.1", &(socketAddr.sin_addr));
 
-	int connectResult = WSAConnect(m_clientSocket, (sockaddr*)&socketAddr, sizeof(socketAddr), NULL, NULL, NULL, NULL);
+	int connectResult = connect(m_clientSocket, (sockaddr*)&socketAddr, sizeof(socketAddr));
 
 	if (0 != connectResult)
 	{
 		std::cout << "[Connection failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
 	}
 
-	int32_t packetType = 0;
-	Send(packetType);
-
-	short protocolVersion = 340;		// 340 = 1.12.2
-	Send(protocolVersion);
-
+	int writeOffset = 0;
+	char buffer[BUFFER_SIZE] = { 0, };
 	std::string serverAddrStr = "127.0.0.1";
-	SendString(serverAddrStr);
 
-	Send(MINECRAFT_PORT_NUMBER);
+	char* pPacketLength = AssignFromBuffer<char>(buffer, writeOffset);
+	*pPacketLength = sizeof(int32_t) + sizeof(short) + sizeof(char) + serverAddrStr.length() + sizeof(short) + sizeof(char);
 
-	char nextStage = 0;		// 0 == LOGIN_START
-	Send(0);
+	// [1]
+	int32_t* pPacketType = AssignFromBuffer<int32_t>(buffer, writeOffset);
+	*pPacketType = 0;
+
+	// [2]
+	short* pProtocolVersion = AssignFromBuffer<short>(buffer, writeOffset);
+	*pProtocolVersion = 340;
+
+	// [3]
+	InscribeStringToBuffer(serverAddrStr, buffer, writeOffset);
+
+	// [4]
+	short* pPort = AssignFromBuffer<short>(buffer, writeOffset);
+	*pPort = MINECRAFT_PORT_NUMBER;
+
+	// [5]
+	char* pNextStage = AssignFromBuffer<char>(buffer, writeOffset);
+	*pNextStage = 340;
+
+	int sendResult = send(m_clientSocket, buffer, writeOffset, NULL);
+
+	if (SOCKET_ERROR == sendResult)
+	{
+		std::cout << "[WSASend failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+	}
 }
