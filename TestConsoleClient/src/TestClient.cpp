@@ -72,11 +72,11 @@ void TestClient::Start()
 	*pPacketLength = sizeof(int32_t) + sizeof(short) + sizeof(char) + serverAddrStr.length() + sizeof(short) + sizeof(char);
 
 	// [1]
-	int32_t* pPacketType = AssignFromBuffer<int32_t>(buffer, writeOffset);
+	char* pPacketType = AssignFromBuffer<char>(buffer, writeOffset);
 	*pPacketType = 0;
 
 	// [2]
-	short* pProtocolVersion = AssignFromBuffer<short>(buffer, writeOffset);
+	char* pProtocolVersion = AssignFromBuffer<char>(buffer, writeOffset);
 	*pProtocolVersion = 340;
 
 	// [3]
