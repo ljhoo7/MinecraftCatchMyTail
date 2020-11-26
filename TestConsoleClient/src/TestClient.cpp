@@ -3,7 +3,7 @@
 const int BUFFER_SIZE = 1024;
 
 template<typename T>
-T* TestClient::AssignFromBuffer<T>(char* buffer, int& writeOffset)
+T* TestClient::AssignFromBuffer(char* buffer, int& writeOffset)
 {
 	assert(writeOffset + sizeof(T) < BUFFER_SIZE);
 
@@ -24,7 +24,7 @@ void TestClient::InscribeStringToBuffer(const STRING& str, char* buffer, int& wr
 
 	assert(writeOffset + *pStringLength < BUFFER_SIZE);
 
-	errno_t strncpyResult = strncpy_s(buffer, BUFFER_SIZE - writeOffset, (char*)str.c_str(), *pStringLength);
+	errno_t strncpyResult = strncpy_s(&buffer[writeOffset], BUFFER_SIZE - writeOffset, (char*)str.c_str(), *pStringLength);
 
 	if (0 != strncpyResult)
 	{
