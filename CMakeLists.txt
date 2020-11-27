@@ -22,10 +22,10 @@ endfunction()
 
 #Adding VC Projects
 add_subdirectory(Core)
-add_subdirectory(Server)
-add_subdirectory(TestConsoleClient)
+add_subdirectory(GBServer)
+add_subdirectory(GBClient)
 add_subdirectory(curl/lib)
 
 #Setting Dependencies
-add_dependencies(CatchMyTailServer ServerCore)
-add_dependencies(ServerCore libcurl)
+add_dependencies(GBServer GBCore)
+add_dependencies(GBCore libcurl)
