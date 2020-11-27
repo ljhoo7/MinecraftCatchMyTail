@@ -2,8 +2,5 @@
 
 namespace GenericBoson
 {
-	namespace ServerEngine
-	{
-		const TCHAR* InternalConstant::SUCCESS = _T("Success");
-	}
+	const TCHAR* InternalConstant::SUCCESS = _T("Success");
 }

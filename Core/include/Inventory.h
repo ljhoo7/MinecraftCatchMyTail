@@ -8,24 +8,21 @@
 
 namespace GenericBoson
 {
-	namespace ServerEngine
+	class Inventory
 	{
-		class Inventory
-		{
-		private: static std::atomic<unsigned char> g_IDFactory;
-		public: Inventory()
-		{
-			m_ID = g_IDFactory.fetch_add(1) % 127;
-			m_ID += 1;
-		}
-		public: unsigned char m_ID;
-		public: int16_t m_numberOfSlots = 1;
-
-		public: int m_equippedSlotID = 0;
-
-		public: std::vector<SlotBase*> m_slotVector;
-
-		public: int GetTotalSlotCount();
-		};
+	private: static std::atomic<unsigned char> g_IDFactory;
+	public: Inventory()
+	{
+		m_ID = g_IDFactory.fetch_add(1) % 127;
+		m_ID += 1;
 	}
+	public: unsigned char m_ID;
+	public: int16_t m_numberOfSlots = 1;
+
+	public: int m_equippedSlotID = 0;
+
+	public: std::vector<SlotBase*> m_slotVector;
+
+	public: int GetTotalSlotCount();
+	};
 }

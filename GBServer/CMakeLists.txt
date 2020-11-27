@@ -5,11 +5,11 @@ include_directories("include")
 #add_link_options(/STACK:10737418)
 
 file(GLOB SERVER_SRC_FILES
-	src/main.cpp
+	src/*.cpp
 	)
 
 file(GLOB SERVER_HEADER_FILES
-	include/Constant.h
+	include/*.h
 	)
 
 add_executable(GBServer ${SERVER_SRC_FILES} ${SERVER_HEADER_FILES})

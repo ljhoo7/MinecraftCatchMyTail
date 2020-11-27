@@ -4,16 +4,13 @@
 
 namespace GenericBoson
 {
-	namespace ServerEngine
+	// This is a box in Minecraft.
+	class Fermion
 	{
-		// This is a box in Minecraft.
-		class Fermion
-		{
-		public: Fermion() = default;
-		public: virtual ~Fermion() = default;
+	public: Fermion() = default;
+	public: virtual ~Fermion() = default;
 
-		// Fermion ID
-		public: uint32_t m_ID = 0;
-		};
-	}
+	// Fermion ID
+	public: uint32_t m_ID = 0;
+	};
 }

@@ -2,12 +2,9 @@
 
 namespace GenericBoson
 {
-	namespace ServerEngine
+	class SlotBase
 	{
-		class SlotBase
-		{
-		public: virtual int GetSlotCount() = 0;
-		public: virtual int WriteItem() = 0;
-		};
-	}
+	public: virtual int GetSlotCount() = 0;
+	public: virtual int WriteItem() = 0;
+	};
 }

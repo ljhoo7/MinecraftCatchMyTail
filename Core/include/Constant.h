@@ -5,13 +5,10 @@
 
 namespace GenericBoson
 {
-	namespace ServerEngine
+	struct InternalConstant
 	{
-		struct InternalConstant
-		{
-			static const TCHAR* SUCCESS;
-			
-			static const uint32_t CompressThreshold = 256;
-		};
-	}
+		static const TCHAR* SUCCESS;
+
+		static const uint32_t CompressThreshold = 256;
+	};
 }

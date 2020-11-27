@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "ServerCore.h"
+#include "GBCore.h"
 
 namespace GenericBoson
 {
 	namespace ServerEngine
 	{
-		ServerCore::~ServerCore()
+		Core::~Core()
 		{
 			WSACleanup();
 			
@@ -37,7 +37,7 @@ namespace GenericBoson
 			}
 		}
 
-		int ServerCore::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
+		int Core::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
 		{
 			pEol->m_type = IO_TYPE::RECEIVE;
 			DWORD flag = 0, receivedBytes = 0;
@@ -49,12 +49,12 @@ namespace GenericBoson
 			return recvResult;
 		}
 
-		int ServerCore::IssueSend(ExpandedOverlapped* pEol)
+		int Core::IssueSend(ExpandedOverlapped* pEol)
 		{
 			return -1;
 		}
 
-		void ServerCore::SendStartCompress(ExpandedOverlapped& eol)
+		void Core::SendStartCompress(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::StartCompression);
 			WriteByteByByte(eol, InternalConstant::CompressThreshold);
@@ -62,7 +62,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendLoginSuccess(ExpandedOverlapped& eol)
+		void Core::SendLoginSuccess(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::LoginSuccess);
 
@@ -74,7 +74,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendJoinGame(ExpandedOverlapped& eol)
+		void Core::SendJoinGame(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::JoinGame);
 
@@ -102,7 +102,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendSpawnSpot(ExpandedOverlapped& eol)
+		void Core::SendSpawnSpot(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::SpawnSpot);
 
@@ -112,7 +112,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendDifficulty(ExpandedOverlapped& eol)
+		void Core::SendDifficulty(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::Difficulty);
 
@@ -122,7 +122,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendCharacterAbility(ExpandedOverlapped& eol)
+		void Core::SendCharacterAbility(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::CharacterAbility);
 
@@ -137,7 +137,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendTime(ExpandedOverlapped& eol)
+		void Core::SendTime(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::Time);
 			Write8BytesAsBigEndian(eol, m_world.m_ageMs);
@@ -149,7 +149,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendInventory(ExpandedOverlapped& eol)
+		void Core::SendInventory(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::Inventory);
 			WriteByteByByte(eol, eol.m_controllableCharacter.m_inventory.m_ID);
@@ -164,7 +164,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendHealth(ExpandedOverlapped& eol)
+		void Core::SendHealth(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::Health);
 			Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_health);
@@ -174,7 +174,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendExperience(ExpandedOverlapped& eol)
+		void Core::SendExperience(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::Experience);
 
@@ -188,7 +188,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendEquippedItem(ExpandedOverlapped& eol)
+		void Core::SendEquippedItem(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::EquippedItemChange);
 			WriteByteByByte(eol, (int8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
@@ -196,7 +196,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::SendPlayerList(ExpandedOverlapped& eol)
+		void Core::SendPlayerList(ExpandedOverlapped& eol)
 		{
 			WriteByteByByte(eol, (int32_t)PacketType::PlayerList);
 
@@ -222,7 +222,7 @@ namespace GenericBoson
 			EnqueueAndIssueSend(eol);
 		}
 
-		void ServerCore::WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value)
+		void Core::WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value)
 		{
 			const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
 			uint64_t spawnSpot = (uint64_t)(value.x & bitFlag) << 38; // 38 is the number of zero in bitFlag!
@@ -232,13 +232,13 @@ namespace GenericBoson
 			WriteByteByByte(eol, spawnSpot);
 		}
 
-		void ServerCore::Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value)
+		void Core::Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value)
 		{
 			uint32_t valueConvertedToBigEndian = htons(value);
 			WriteByteByByte(eol, valueConvertedToBigEndian);
 		}
 
-		void ServerCore::Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value)
+		void Core::Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value)
 		{
 			uint64_t highWord = htonl((uint32_t)value) << 32;
 			uint64_t lowWord = htonl(value >> 32);
@@ -246,13 +246,13 @@ namespace GenericBoson
 			WriteByteByByte(eol, valueConvertedToBigEndian);
 		}
 
-		void ServerCore::Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value)
+		void Core::Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value)
 		{
 			uint32_t valueConvertedToBigEndian = htonl(value);
 			WriteByteByByte(eol, valueConvertedToBigEndian);
 		}
 
-		void ServerCore::EnqueueAndIssueSend(ExpandedOverlapped& eol)
+		void Core::EnqueueAndIssueSend(ExpandedOverlapped& eol)
 		{
 			{
 				std::lock_guard<std::mutex> lock(m_mainLock);
@@ -285,7 +285,7 @@ namespace GenericBoson
 			}
 		}
 
-		void ServerCore::ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
+		void Core::ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
 		{
 			// Packet Type
 			char packetType = 0;
@@ -390,7 +390,7 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		uint32_t ServerCore::Read(char* buffer, T& outValue)
+		uint32_t Core::Read(char* buffer, T& outValue)
 		{
 			outValue = *(T*)buffer;
 			
@@ -398,7 +398,7 @@ namespace GenericBoson
 		}
 
 		template<typename STRING>
-		uint32_t ServerCore::ReadString(char* buffer, STRING& outString)
+		uint32_t Core::ReadString(char* buffer, STRING& outString)
 		{
 			uint32_t readByteLength = 0;
 
@@ -418,7 +418,7 @@ namespace GenericBoson
 		}
 
 		template<typename STRING>
-		void ServerCore::WriteString(ExpandedOverlapped& eol, const STRING& inString)
+		void Core::WriteString(ExpandedOverlapped& eol, const STRING& inString)
 		{
 			uint32_t writeByteLength = 0;
 			char* buffer = eol.m_writeBuffer.m_buffer;
@@ -433,7 +433,7 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		uint32_t ServerCore::ReadByteByByte(char* buffer, T& value)
+		uint32_t Core::ReadByteByByte(char* buffer, T& value)
 		{
 			int shift = 0;
 			uint32_t readByteLength = 0;
@@ -454,7 +454,7 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		void ServerCore::Write(ExpandedOverlapped& eol, const T& outValue)
+		void Core::Write(ExpandedOverlapped& eol, const T& outValue)
 		{
 			*(T*)buffer = outValue;
 
@@ -464,7 +464,7 @@ namespace GenericBoson
 		}
 
 		template<typename T>
-		void ServerCore::WriteByteByByte(ExpandedOverlapped& eol, T value)
+		void Core::WriteByteByByte(ExpandedOverlapped& eol, T value)
 		{
 			char* buffer = eol.m_writeBuffer.m_buffer;
 
@@ -487,7 +487,7 @@ namespace GenericBoson
 			} while (0 < value);
 		}
 
-		void ServerCore::ThreadFunction()
+		void Core::ThreadFunction()
 		{
 			DWORD receivedBytes;
 			u_long completionKey;
@@ -566,7 +566,7 @@ namespace GenericBoson
 			}
 		}
 
-		std::pair<int, int> ServerCore::Start(const ServerCreateParameter& param)
+		std::pair<int, int> Core::Start(const ServerCreateParameter& param)
 		{
 			// Copying the parameter as member variable.
 			m_createParameter = param;
@@ -682,6 +682,6 @@ namespace GenericBoson
 			return std::make_pair(NO_ERROR, 0);
 		}
 
-		std::atomic<uint32_t> ServerCore::m_fermionCounter = 1;
+		std::atomic<uint32_t> Core::m_fermionCounter = 1;
 	}
 }

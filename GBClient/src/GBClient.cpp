@@ -1,4 +1,4 @@
-#include "TestClient.h"
+#include "GBClient.h"
 
 const int BUFFER_SIZE = 1024;
 

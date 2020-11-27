@@ -2,7 +2,4 @@
 
 namespace GenericBoson
 {
-	namespace ServerEngine
-	{
-	}
 }
