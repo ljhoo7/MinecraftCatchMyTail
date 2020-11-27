@@ -3,13 +3,13 @@
 #include <WinSock2.h>
 #include <iostream>
 
-#include "../../Core/include/GBCore.h"
+#include "GBServer.h"
 
-using namespace GenericBoson::ServerEngine;
+using namespace GenericBoson;
 
 int main()
 {
-	auto pServer = std::make_shared<Core>();
+	auto pServer = std::make_shared<Server>();
 
 	ServerCreateParameter param;
 	auto startResultPair = pServer->Start(param);

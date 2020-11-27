@@ -47,7 +47,7 @@ namespace GenericBoson
 			SEND,
 		};
 
-	private: struct ExpandedOverlapped : public WSAOVERLAPPED
+	protected: struct ExpandedOverlapped : public WSAOVERLAPPED
 		{
 			SOCKET m_socket = INVALID_SOCKET;
 			IO_TYPE m_type = IO_TYPE::ACCEPT;
@@ -91,39 +91,26 @@ namespace GenericBoson
 	// Warning : If this is not using, but this must exists till the end.
 	private: char m_listenBuffer[1024];
 
-	private: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value);
-	private: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString);
-	private: template<typename T> uint32_t Read(char* buffer, T& outValue);
-	private: template<typename T> void WriteByteByByte(ExpandedOverlapped& eol, T value);
-	private: template<typename STRING> void WriteString(ExpandedOverlapped& eol, const STRING& inString);
-	private: template<typename T> void Write(ExpandedOverlapped& eol, const T& outValue);
-	private: void Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value);
-	private: void Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value);
-	private: void Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value);
-	private: void WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value);
+	protected: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value);
+	protected: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString);
+	protected: template<typename T> uint32_t Read(char* buffer, T& outValue);
+	protected: template<typename T> void WriteByteByByte(ExpandedOverlapped& eol, T value);
+	protected: template<typename STRING> void WriteString(ExpandedOverlapped& eol, const STRING& inString);
+	protected: template<typename T> void Write(ExpandedOverlapped& eol, const T& outValue);
+	protected: void Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value);
+	protected: void Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value);
+	protected: void Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value);
+	protected: void WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value);
 
 	public: virtual ~Core();
 	public: void ThreadFunction();
 	public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 	public: int IssueSend(ExpandedOverlapped* pEol);
 
-	public: void SendStartCompress(ExpandedOverlapped& eol);
-	public: void SendLoginSuccess(ExpandedOverlapped& eol);
-	public: void SendJoinGame(ExpandedOverlapped& eol);
-	public: void SendSpawnSpot(ExpandedOverlapped& eol);
-	public: void SendDifficulty(ExpandedOverlapped& eol);
-	public: void SendCharacterAbility(ExpandedOverlapped& eol);
-	public: void SendTime(ExpandedOverlapped& eol);
-	public: void SendInventory(ExpandedOverlapped& eol);
-	public: void SendHealth(ExpandedOverlapped& eol);
-	public: void SendExperience(ExpandedOverlapped& eol);
-	public: void SendEquippedItem(ExpandedOverlapped& eol);
-	public: void SendPlayerList(ExpandedOverlapped& eol);
-
 	public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
 
 		// Consuming a gathering completed message.
-	public: void ConsumeGatheredMessage(ExpandedOverlapped& eol, char* mescsage, const uint32_t messageSize, uint32_t& readOffSet);
+	public: virtual void ConsumeGatheredMessage(ExpandedOverlapped& eol, char* mescsage, const uint32_t messageSize, uint32_t& readOffSet) = 0;
 
 	public: std::pair<int, int> Start(const ServerCreateParameter& param);
 	};
