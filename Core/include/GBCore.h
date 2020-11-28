@@ -1,12 +1,12 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include "GBString.h"
 #include "Constant.h"
 #include "GBBuffer.h"
 #include "PacketType.h"
-#include "Character.h"
 #include "GBVector.h"
-#include "World.h"
 
 #include <vector>
 #include <thread>

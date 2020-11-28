@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Core/include/GBCore.h"
+#include "Character.h"
 
 namespace GenericBoson
 {
