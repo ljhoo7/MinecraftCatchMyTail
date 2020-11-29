@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Fermion.h"
+#include "../../Core/include/Fermion.h"
 #include "Inventory.h"
 
 namespace GenericBoson

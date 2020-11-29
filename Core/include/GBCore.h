@@ -63,12 +63,8 @@ namespace GenericBoson
 
 			SessionState m_sessionState = SessionState::start;
 
-			Character m_controllableCharacter;
-
 			short m_protocolVersion = 0;
 		};
-
-	public: World m_world;
 
 		// If you remove '/100', you will get a compile time error "out of heap".
 	private: static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = SOMAXCONN / sizeof(ExpandedOverlapped) / 200;

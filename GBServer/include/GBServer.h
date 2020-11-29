@@ -2,11 +2,19 @@
 
 #include "../../Core/include/GBCore.h"
 #include "Character.h"
+#include "World.h"
 
 namespace GenericBoson
 {
 	class Server : public Core
 	{
+	public: World m_world;
+
+	private: struct CharacterInfo : public ExpandedOverlapped
+	{
+		Character m_controllableCharacter;
+	};
+
 	public: void SendStartCompress(ExpandedOverlapped& eol);
 	public: void SendLoginSuccess(ExpandedOverlapped& eol);
 	public: void SendJoinGame(ExpandedOverlapped& eol);
