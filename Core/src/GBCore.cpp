@@ -52,42 +52,42 @@ namespace GenericBoson
 		return -1;
 	}
 
-	void Core::WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value)
+	void Core::WriteIntGBVector3(ExpandedOverlapped* pEol, const GBVector3<int>& value)
 	{
 		const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
 		uint64_t spawnSpot = (uint64_t)(value.x & bitFlag) << 38; // 38 is the number of zero in bitFlag!
 		spawnSpot |= (uint64_t)(value.y 
 			& 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111);
 		spawnSpot |= (uint64_t)(value.z & bitFlag) << 26; // 26 is the number of one in bitFlag!
-		WriteByteByByte(eol, spawnSpot);
+		WriteByteByByte(pEol, spawnSpot);
 	}
 
-	void Core::Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value)
+	void Core::Write2BytesAsBigEndian(ExpandedOverlapped* pEol, uint16_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htons(value);
-		WriteByteByByte(eol, valueConvertedToBigEndian);
+		WriteByteByByte(pEol, valueConvertedToBigEndian);
 	}
 
-	void Core::Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value)
+	void Core::Write8BytesAsBigEndian(ExpandedOverlapped* pEol, uint64_t value)
 	{
 		uint64_t highWord = htonl((uint32_t)value) << 32;
 		uint64_t lowWord = htonl(value >> 32);
 		uint64_t valueConvertedToBigEndian = highWord + lowWord;
-		WriteByteByByte(eol, valueConvertedToBigEndian);
+		WriteByteByByte(pEol, valueConvertedToBigEndian);
 	}
 
-	void Core::Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value)
+	void Core::Write4BytesAsBigEndian(ExpandedOverlapped* pEol, uint32_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htonl(value);
-		WriteByteByByte(eol, valueConvertedToBigEndian);
+		WriteByteByByte(pEol, valueConvertedToBigEndian);
 	}
 
-	void Core::EnqueueAndIssueSend(ExpandedOverlapped& eol)
+	void Core::EnqueueAndIssueSend(ExpandedOverlapped* pEol)
 	{
 		{
 			std::lock_guard<std::mutex> lock(m_mainLock);
 
-			m_sendQueue.push(&eol);
+			m_sendQueue.push(pEol);
 		}
 
 		while (false == m_sendQueue.empty())
@@ -144,17 +144,17 @@ namespace GenericBoson
 	}
 
 	template<typename STRING>
-	void Core::WriteString(ExpandedOverlapped& eol, const STRING& inString)
+	void Core::WriteString(ExpandedOverlapped* pEol, const STRING& inString)
 	{
 		uint32_t writeByteLength = 0;
-		char* buffer = eol.m_writeBuffer.m_buffer;
+		char* buffer = pEol->m_writeBuffer.m_buffer;
 
 		// String Length
 		char inStringSize = (char)inString.length();
-		WriteByteByByte(eol, inStringSize);
+		WriteByteByByte(pEol, inStringSize);
 
 		errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
-		eol.m_writeBuffer.m_writeOffset += writeByteLength;
+		pEol->m_writeBuffer.m_writeOffset += writeByteLength;
 		buffer += inStringSize;
 	}
 
@@ -180,19 +180,19 @@ namespace GenericBoson
 	}
 
 	template<typename T>
-	void Core::Write(ExpandedOverlapped& eol, const T& outValue)
+	void Core::Write(ExpandedOverlapped* pEol, const T& outValue)
 	{
 		*(T*)buffer = outValue;
 
 		int writeLength = sizeof(T);
-		eol.m_writeBuffer.m_buffer += writeLength;
-		eol.m_writeBuffer.m_writeOffset += writeLength;
+		pEol->m_writeBuffer.m_buffer += writeLength;
+		pEol->m_writeBuffer.m_writeOffset += writeLength;
 	}
 
 	template<typename T>
-	void Core::WriteByteByByte(ExpandedOverlapped& eol, T value)
+	void Core::WriteByteByByte(ExpandedOverlapped* pEol, T value)
 	{
-		char* buffer = eol.m_writeBuffer.m_buffer;
+		char* buffer = pEol->m_writeBuffer.m_buffer;
 
 		do 
 		{
@@ -207,7 +207,7 @@ namespace GenericBoson
 			*buffer = (char)(value | MSB);
 
 			buffer++;
-			eol.m_writeBuffer.m_writeOffset++;
+			pEol->m_writeBuffer.m_writeOffset++;
 
 			value = value >> 7;
 		} while (0 < value);
@@ -261,7 +261,7 @@ namespace GenericBoson
 				{
 					uint32_t messageSize = pEol->m_receiveBuffer.m_writeOffset - pEol->m_receiveBuffer.m_readOffset;
 					assert(0 < messageSize);
-					ConsumeGatheredMessage(*pEol, &pEol->m_receiveBuffer.m_buffer[pEol->m_receiveBuffer.m_readOffset], messageSize, pEol->m_receiveBuffer.m_readOffset);
+					ConsumeGatheredMessage(pEol, &pEol->m_receiveBuffer.m_buffer[pEol->m_receiveBuffer.m_readOffset], messageSize, pEol->m_receiveBuffer.m_readOffset);
 
 					// Reset
 					pEol->m_receiveBuffer.m_readOffset = 0;
@@ -369,15 +369,13 @@ namespace GenericBoson
 		{
 			return std::make_pair(WSAGetLastError(), __LINE__);
 		}
+
+		ExpandedOverlapped* m_extendedOverlappedArray = nullptr;
+		m_extendedOverlappedArray = (ExpandedOverlapped*)GetSessionInformationArray();
 			
 		// Preparing the accept sockets.
 		for (int k = 0; k < EXTENDED_OVERLAPPED_ARRAY_SIZE; ++k)
 		{
-			memset(&m_extendedOverlappedArray[k], 0, sizeof(ExpandedOverlapped));
-
-			// for debugging
-			//memset(m_extendedOverlappedArray[k].m_buffer, 255, 1024);
-
 			// Creating an accept socket.
 			m_extendedOverlappedArray[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 			if (INVALID_SOCKET == m_extendedOverlappedArray[k].m_socket)

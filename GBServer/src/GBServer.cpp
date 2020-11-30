@@ -2,184 +2,190 @@
 
 namespace GenericBoson
 {
-	void Server::SendStartCompress(ExpandedOverlapped& eol)
+	void Server::SendStartCompress(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::StartCompression);
-		WriteByteByByte(eol, InternalConstant::CompressThreshold);
+		WriteByteByByte(pSi, (int32_t)PacketType::StartCompression);
+		WriteByteByByte(pSi, InternalConstant::CompressThreshold);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendLoginSuccess(ExpandedOverlapped& eol)
+	void Server::SendLoginSuccess(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::LoginSuccess);
+		WriteByteByByte(pSi, (int32_t)PacketType::LoginSuccess);
 
 		// UUID #ToDo
-		eol.m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-		WriteString(eol, eol.m_uuid);
-		WriteString(eol, eol.m_userName);
+		pSi->m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
+		WriteString(pSi, pSi->m_uuid);
+		WriteString(pSi, pSi->m_userName);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendJoinGame(ExpandedOverlapped& eol)
+	void Server::SendJoinGame(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::JoinGame);
+		WriteByteByByte(pSi, (int32_t)PacketType::JoinGame);
 
 		// Sending FermionID
-		Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_ID);
+		Write4BytesAsBigEndian(pSi, pSi->m_controllableCharacter.m_ID);
 
 		uint8_t hardCoreFlag = 0;
-		WriteByteByByte(eol, hardCoreFlag);
+		WriteByteByByte(pSi, hardCoreFlag);
 
 		Dimension demension = Dimension::overworld;
-		Write4BytesAsBigEndian(eol, demension);
+		Write4BytesAsBigEndian(pSi, demension);
 
 		uint8_t difficulty = 2; // 2 = Normal
-		WriteByteByByte(eol, difficulty);
+		WriteByteByByte(pSi, difficulty);
 
 		uint8_t maxPlayerCount = 255;
-		WriteByteByByte(eol, maxPlayerCount);
+		WriteByteByByte(pSi, maxPlayerCount);
 
 		std::string levelType = "default";
-		WriteString(eol, levelType);
+		WriteString(pSi, levelType);
 
 		uint8_t reducedDebugInfo = 0; // bool
-		WriteByteByByte(eol, reducedDebugInfo);
+		WriteByteByByte(pSi, reducedDebugInfo);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendSpawnSpot(ExpandedOverlapped& eol)
+	void Server::SendSpawnSpot(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::SpawnSpot);
+		WriteByteByByte(pSi, (int32_t)PacketType::SpawnSpot);
 
 		GBVector3<int> spawnSpot(10, 10, 10);
-		WriteIntGBVector3(eol, spawnSpot);
+		WriteIntGBVector3(pSi, spawnSpot);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendDifficulty(ExpandedOverlapped& eol)
+	void Server::SendDifficulty(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::Difficulty);
+		WriteByteByByte(pSi, (int32_t)PacketType::Difficulty);
 
 		char difficulty = 1;
-		WriteByteByByte(eol, difficulty);
+		WriteByteByByte(pSi, difficulty);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendCharacterAbility(ExpandedOverlapped& eol)
+	void Server::SendCharacterAbility(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::CharacterAbility);
+		WriteByteByByte(pSi, (int32_t)PacketType::CharacterAbility);
 
-		WriteByteByByte(eol, eol.m_controllableCharacter.m_abilityState);
+		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_abilityState);
 
-		float correctedFlyingMaxSpeed = 0.05f * eol.m_controllableCharacter.m_flyingMaxSpeed;
-		Write4BytesAsBigEndian(eol, correctedFlyingMaxSpeed);
+		float correctedFlyingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_flyingMaxSpeed;
+		Write4BytesAsBigEndian(pSi, correctedFlyingMaxSpeed);
 
-		float correctedSprintingMaxSpeed = 0.05f * eol.m_controllableCharacter.m_sprintingMaxSpeed;
-		Write4BytesAsBigEndian(eol, correctedSprintingMaxSpeed);
+		float correctedSprintingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_sprintingMaxSpeed;
+		Write4BytesAsBigEndian(pSi, correctedSprintingMaxSpeed);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendTime(ExpandedOverlapped& eol)
+	void Server::SendTime(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::Time);
-		Write8BytesAsBigEndian(eol, m_world.m_ageMs);
+		WriteByteByByte(pSi, (int32_t)PacketType::Time);
+		Write8BytesAsBigEndian(pSi, m_world.m_ageMs);
 
 		// false == m_world.m_dayLightEnabled #ToDo
 
-		Write8BytesAsBigEndian(eol, m_world.m_timeOfDay);
+		Write8BytesAsBigEndian(pSi, m_world.m_timeOfDay);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendInventory(ExpandedOverlapped& eol)
+	void Server::SendInventory(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::Inventory);
-		WriteByteByByte(eol, eol.m_controllableCharacter.m_inventory.m_ID);
-		WriteByteByByte(eol, (int16_t)eol.m_controllableCharacter.m_inventory.GetTotalSlotCount());
+		WriteByteByByte(pSi, (int32_t)PacketType::Inventory);
+		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_inventory.m_ID);
+		WriteByteByByte(pSi, (int16_t)pSi->m_controllableCharacter.m_inventory.GetTotalSlotCount());
 
-		for (auto& pSlot : eol.m_controllableCharacter.m_inventory.m_slotVector)
+		for (auto& pSlot : pSi->m_controllableCharacter.m_inventory.m_slotVector)
 		{
 			// #ToDo
 			pSlot->WriteItem();
 		}
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendHealth(ExpandedOverlapped& eol)
+	void Server::SendHealth(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::Health);
-		Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_health);
-		WriteByteByByte(eol, eol.m_controllableCharacter.m_foodLevel);
-		Write4BytesAsBigEndian(eol, eol.m_controllableCharacter.m_foodSaturationLevel);
+		WriteByteByByte(pSi, (int32_t)PacketType::Health);
+		Write4BytesAsBigEndian(pSi, pSi->m_controllableCharacter.m_health);
+		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_foodLevel);
+		Write4BytesAsBigEndian(pSi, pSi->m_controllableCharacter.m_foodSaturationLevel);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendExperience(ExpandedOverlapped& eol)
+	void Server::SendExperience(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::Experience);
+		WriteByteByByte(pSi, (int32_t)PacketType::Experience);
 
-		float xpPercentage = eol.m_controllableCharacter.GetXpPercentage();
-		Write4BytesAsBigEndian(eol, xpPercentage);
+		float xpPercentage = pSi->m_controllableCharacter.GetXpPercentage();
+		Write4BytesAsBigEndian(pSi, xpPercentage);
 
-		int level = eol.m_controllableCharacter.GetLevel();
-		WriteByteByByte(eol, (int32_t)PacketType::Experience);
-		WriteByteByByte(eol, eol.m_controllableCharacter.m_experience);
+		int level = pSi->m_controllableCharacter.GetLevel();
+		WriteByteByByte(pSi, (int32_t)PacketType::Experience);
+		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_experience);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendEquippedItem(ExpandedOverlapped& eol)
+	void Server::SendEquippedItem(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::EquippedItemChange);
-		WriteByteByByte(eol, (int8_t)eol.m_controllableCharacter.m_inventory.m_equippedSlotID);
+		WriteByteByByte(pSi, (int32_t)PacketType::EquippedItemChange);
+		WriteByteByByte(pSi, (int8_t)pSi->m_controllableCharacter.m_inventory.m_equippedSlotID);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-	void Server::SendPlayerList(ExpandedOverlapped& eol)
+	void Server::SendPlayerList(SessionInfomation* pSi)
 	{
-		WriteByteByByte(eol, (int32_t)PacketType::PlayerList);
+		WriteByteByByte(pSi, (int32_t)PacketType::PlayerList);
 
-		WriteByteByByte(eol, (int32_t)0);
+		WriteByteByByte(pSi, (int32_t)0);
 
-		WriteByteByByte(eol, (int32_t)1);
+		WriteByteByByte(pSi, (int32_t)1);
 
-		WriteString(eol, eol.m_uuid);
+		WriteString(pSi, pSi->m_uuid);
 
-		WriteString(eol, eol.m_userName);
+		WriteString(pSi, pSi->m_userName);
 
 		// #ToDo
 		// Send Property List Size
-		WriteByteByByte(eol, (int32_t)0);
+		WriteByteByByte(pSi, (int32_t)0);
 
-		WriteByteByByte(eol, (int32_t)m_world.m_gameMode);
+		WriteByteByByte(pSi, (int32_t)m_world.m_gameMode);
 
 		// #ToDo
-		WriteByteByByte(eol, (int32_t)m_world.m_pingMs);
+		WriteByteByByte(pSi, (int32_t)m_world.m_pingMs);
 
-		WriteByteByByte(eol, (char)0);
+		WriteByteByByte(pSi, (char)0);
 
-		EnqueueAndIssueSend(eol);
+		EnqueueAndIssueSend(pSi);
 	}
 
-
-	void Server::ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
+	void* Server::GetSessionInformationArray()
 	{
+		return (void*)m_sessionInfoArray;
+	}
+
+	void Server::ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
+	{
+		SessionInfomation* pSi = static_cast<SessionInfomation*>(pEol);
+
 		// Packet Type
 		char packetType = 0;
 		uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
 		readOffSet += readPacketTypeByteLength;
 		message += readPacketTypeByteLength;
 
-		switch (eol.m_sessionState)
+		switch (pSi->m_sessionState)
 		{
 		case SessionState::login:
 		{
@@ -193,23 +199,23 @@ namespace GenericBoson
 				readOffSet += rr;
 				message += rr;
 
-				eol.m_userName = userName;
+				pSi->m_userName = userName;
 
-				SendStartCompress(eol);
-				SendLoginSuccess(eol);
-				SendJoinGame(eol);
-				SendSpawnSpot(eol);
-				SendDifficulty(eol);
-				SendCharacterAbility(eol);
+				SendStartCompress(pSi);
+				SendLoginSuccess(pSi);
+				SendJoinGame(pSi);
+				SendSpawnSpot(pSi);
+				SendDifficulty(pSi);
+				SendCharacterAbility(pSi);
 
 				//SendWeather #ToDo
 
-				SendTime(eol);
-				SendInventory(eol);
-				SendHealth(eol);
-				SendExperience(eol);
-				SendEquippedItem(eol);
-				SendPlayerList(eol);
+				SendTime(pSi);
+				SendInventory(pSi);
+				SendHealth(pSi);
+				SendExperience(pSi);
+				SendEquippedItem(pSi);
+				SendPlayerList(pSi);
 
 				//eol.m_sessionState = authed;
 			}
@@ -227,7 +233,7 @@ namespace GenericBoson
 			readOffSet += rr1;
 			message += rr1;
 
-			eol.m_protocolVersion = protocolVersion;
+			pSi->m_protocolVersion = protocolVersion;
 
 			// Server Address
 			std::string serverAddressStr;
@@ -248,7 +254,7 @@ namespace GenericBoson
 			readOffSet += rr4;
 			message += rr4;
 
-			eol.m_sessionState = (SessionState)nextStage;
+			pSi->m_sessionState = (SessionState)nextStage;
 		}
 		break;
 		case SessionState::in_game:

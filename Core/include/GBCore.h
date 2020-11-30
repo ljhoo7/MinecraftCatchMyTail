@@ -57,19 +57,11 @@ namespace GenericBoson
 			// This must be exchanged with a circular lock-free queue.
 			GBBuffer m_receiveBuffer;
 			GBBuffer m_writeBuffer;
-
-			std::string m_uuid;
-			std::string m_userName;
-
-			SessionState m_sessionState = SessionState::start;
-
-			short m_protocolVersion = 0;
 		};
 
 		// If you remove '/100', you will get a compile time error "out of heap".
-	private: static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
+	public: static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 	private: SOCKET m_listenSocket = INVALID_SOCKET;
-	private: ExpandedOverlapped m_extendedOverlappedArray[EXTENDED_OVERLAPPED_ARRAY_SIZE];
 	private: HANDLE m_IOCP = INVALID_HANDLE_VALUE;
 
 	private: ServerCreateParameter m_createParameter;
@@ -90,23 +82,25 @@ namespace GenericBoson
 	protected: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value);
 	protected: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString);
 	protected: template<typename T> uint32_t Read(char* buffer, T& outValue);
-	protected: template<typename T> void WriteByteByByte(ExpandedOverlapped& eol, T value);
-	protected: template<typename STRING> void WriteString(ExpandedOverlapped& eol, const STRING& inString);
-	protected: template<typename T> void Write(ExpandedOverlapped& eol, const T& outValue);
-	protected: void Write2BytesAsBigEndian(ExpandedOverlapped& eol, uint16_t value);
-	protected: void Write4BytesAsBigEndian(ExpandedOverlapped& eol, uint32_t value);
-	protected: void Write8BytesAsBigEndian(ExpandedOverlapped& eol, uint64_t value);
-	protected: void WriteIntGBVector3(ExpandedOverlapped& eol, const GBVector3<int>& value);
+	protected: template<typename T> void WriteByteByByte(ExpandedOverlapped* eol, T value);
+	protected: template<typename STRING> void WriteString(ExpandedOverlapped* eol, const STRING& inString);
+	protected: template<typename T> void Write(ExpandedOverlapped* eol, const T& outValue);
+	protected: void Write2BytesAsBigEndian(ExpandedOverlapped* eol, uint16_t value);
+	protected: void Write4BytesAsBigEndian(ExpandedOverlapped* eol, uint32_t value);
+	protected: void Write8BytesAsBigEndian(ExpandedOverlapped* eol, uint64_t value);
+	protected: void WriteIntGBVector3(ExpandedOverlapped* eol, const GBVector3<int>& value);
 
 	public: virtual ~Core();
 	public: void ThreadFunction();
 	public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 	public: int IssueSend(ExpandedOverlapped* pEol);
 
-	public: void EnqueueAndIssueSend(ExpandedOverlapped& eol);
+	public: void EnqueueAndIssueSend(ExpandedOverlapped* pEol);
 
 		// Consuming a gathering completed message.
-	public: virtual void ConsumeGatheredMessage(ExpandedOverlapped& eol, char* mescsage, const uint32_t messageSize, uint32_t& readOffSet) = 0;
+	public: virtual void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* mescsage, const uint32_t messageSize, uint32_t& readOffSet) = 0;
+
+	protected: virtual void* GetSessionInformationArray() = 0;
 
 	public: std::pair<int, int> Start(const ServerCreateParameter& param);
 	};

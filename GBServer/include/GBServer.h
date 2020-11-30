@@ -10,24 +10,34 @@ namespace GenericBoson
 	{
 	public: World m_world;
 
-	private: struct CharacterInfo : public ExpandedOverlapped
+	private: struct SessionInfomation : public ExpandedOverlapped
 	{
 		Character m_controllableCharacter;
+
+		std::string m_uuid;
+		std::string m_userName;
+
+		SessionState m_sessionState = SessionState::start;
+
+		short m_protocolVersion = 0;
 	};
 
-	public: void SendStartCompress(ExpandedOverlapped& eol);
-	public: void SendLoginSuccess(ExpandedOverlapped& eol);
-	public: void SendJoinGame(ExpandedOverlapped& eol);
-	public: void SendSpawnSpot(ExpandedOverlapped& eol);
-	public: void SendDifficulty(ExpandedOverlapped& eol);
-	public: void SendCharacterAbility(ExpandedOverlapped& eol);
-	public: void SendTime(ExpandedOverlapped& eol);
-	public: void SendInventory(ExpandedOverlapped& eol);
-	public: void SendHealth(ExpandedOverlapped& eol);
-	public: void SendExperience(ExpandedOverlapped& eol);
-	public: void SendEquippedItem(ExpandedOverlapped& eol);
-	public: void SendPlayerList(ExpandedOverlapped& eol);
+	private: SessionInfomation m_sessionInfoArray[Core::EXTENDED_OVERLAPPED_ARRAY_SIZE];
 
-	private: void ConsumeGatheredMessage(ExpandedOverlapped& eol, char* message, const uint32_t messageSize, uint32_t& readOffSet) override;
+	public: void SendStartCompress(SessionInfomation*);
+	public: void SendLoginSuccess(SessionInfomation*);
+	public: void SendJoinGame(SessionInfomation*);
+	public: void SendSpawnSpot(SessionInfomation*);
+	public: void SendDifficulty(SessionInfomation*);
+	public: void SendCharacterAbility(SessionInfomation*);
+	public: void SendTime(SessionInfomation*);
+	public: void SendInventory(SessionInfomation*);
+	public: void SendHealth(SessionInfomation*);
+	public: void SendExperience(SessionInfomation*);
+	public: void SendEquippedItem(SessionInfomation*);
+	public: void SendPlayerList(SessionInfomation*);
+
+	private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, uint32_t& readOffSet) override;
+	private: void* GetSessionInformationArray() override;
 	};
 }
