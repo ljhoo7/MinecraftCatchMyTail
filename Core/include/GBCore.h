@@ -79,12 +79,98 @@ namespace GenericBoson
 	// Warning : If this is not using, but this must exists till the end.
 	private: char m_listenBuffer[1024];
 
-	protected: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value);
-	protected: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString);
-	protected: template<typename T> uint32_t Read(char* buffer, T& outValue);
-	protected: template<typename T> void WriteByteByByte(ExpandedOverlapped* eol, T value);
-	protected: template<typename STRING> void WriteString(ExpandedOverlapped* eol, const STRING& inString);
-	protected: template<typename T> void Write(ExpandedOverlapped* eol, const T& outValue);
+	protected: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value)
+	{
+		int shift = 0;
+		uint32_t readByteLength = 0;
+
+		// the read MSB means the sign of keeping going.
+		unsigned char MSB = 0;
+		do
+		{
+			readByteLength++;
+			unsigned char byteForBuffer = *buffer;
+			value = value | ((static_cast<T>(byteForBuffer & 0b0111'1111)) << shift);
+			shift += 7;
+			MSB = byteForBuffer & 0b1000'0000;
+			buffer++;
+		} while (0 != MSB);
+
+		return readByteLength;
+	}
+
+	protected: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString)
+	{
+		uint32_t readByteLength = 0;
+
+		// String Length
+		char stringLength = 0;
+		uint32_t rr1 = ReadByteByByte(buffer, stringLength);
+		readByteLength += rr1;
+		buffer += rr1;
+
+		outString.reserve(stringLength);
+		outString.assign(buffer, stringLength);
+
+		readByteLength += stringLength;
+		buffer += stringLength;
+
+		return readByteLength;
+	}
+
+	protected: template<typename T> uint32_t Read(char* buffer, T& outValue)
+	{
+		outValue = *(T*)buffer;
+
+		return sizeof(T);
+	}
+
+	protected: template<typename T> void WriteByteByByte(ExpandedOverlapped* pEol, T value)
+	{
+		char* buffer = pEol->m_writeBuffer.m_buffer;
+
+		do
+		{
+			unsigned char MSB = 0;
+
+			if (0b0111'1111 < value)
+			{
+				MSB = 0b1000'0000;
+			}
+
+			*buffer = (char)(value & 0b0111'1111);
+			*buffer = (char)(value | MSB);
+
+			buffer++;
+			pEol->m_writeBuffer.m_writeOffset++;
+
+			value = value >> 7;
+		} while (0 < value);
+	}
+
+	protected: template<typename STRING> void WriteString(ExpandedOverlapped* pEol, const STRING& inString)
+	{
+		uint32_t writeByteLength = 0;
+		char* buffer = pEol->m_writeBuffer.m_buffer;
+
+		// String Length
+		char inStringSize = (char)inString.length();
+		WriteByteByByte(pEol, inStringSize);
+
+		errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
+		pEol->m_writeBuffer.m_writeOffset += writeByteLength;
+		buffer += inStringSize;
+	}
+
+	protected: template<typename T> void Write(ExpandedOverlapped* pEol, const T& outValue)
+	{
+		*(T*)buffer = outValue;
+
+		int writeLength = sizeof(T);
+		pEol->m_writeBuffer.m_buffer += writeLength;
+		pEol->m_writeBuffer.m_writeOffset += writeLength;
+	}
+
 	protected: void Write2BytesAsBigEndian(ExpandedOverlapped* eol, uint16_t value);
 	protected: void Write4BytesAsBigEndian(ExpandedOverlapped* eol, uint32_t value);
 	protected: void Write8BytesAsBigEndian(ExpandedOverlapped* eol, uint64_t value);
@@ -94,7 +180,6 @@ namespace GenericBoson
 	public: void ThreadFunction();
 	public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 	public: int IssueSend(ExpandedOverlapped* pEol);
-
 	public: void EnqueueAndIssueSend(ExpandedOverlapped* pEol);
 
 		// Consuming a gathering completed message.
