@@ -14,7 +14,7 @@ file(GLOB SERVER_HEADER_FILES
 
 add_executable(GBServer ${SERVER_SRC_FILES} ${SERVER_HEADER_FILES})
 
-target_link_libraries(GBServer ../lib/${CMAKE_VS_PLATFORM_NAME}/${CMAKE_CFG_INTDIR}/ServerCore)
+target_link_libraries(GBServer ../lib/${CMAKE_VS_PLATFORM_NAME}/${CMAKE_CFG_INTDIR}/GBCore)
 
 set_property(TARGET GBServer PROPERTY COMPILE_DEFINITIONS _LIB UNICODE _UNICODE $<IF:$<CONFIG:Debug>,_DEBUG,NDEBUG>)
 

@@ -180,6 +180,7 @@ namespace GenericBoson
 	public: void ThreadFunction();
 	public: int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 	public: int IssueSend(ExpandedOverlapped* pEol);
+
 	public: void EnqueueAndIssueSend(ExpandedOverlapped* pEol);
 
 		// Consuming a gathering completed message.
