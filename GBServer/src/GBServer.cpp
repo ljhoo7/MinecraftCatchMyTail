@@ -4,104 +4,104 @@ namespace GenericBoson
 {
 	void Server::SendStartCompress(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::StartCompression);
-		WriteByteByByte(pSi, InternalConstant::CompressThreshold);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::StartCompression);
+		WriteByteByByte(&pSi->m_writeBuffer, InternalConstant::CompressThreshold);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendLoginSuccess(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::LoginSuccess);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::LoginSuccess);
 
 		// UUID #ToDo
 		pSi->m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-		WriteString(pSi, pSi->m_uuid);
-		WriteString(pSi, pSi->m_userName);
+		WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
+		WriteString(&pSi->m_writeBuffer, pSi->m_userName);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendJoinGame(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::JoinGame);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::JoinGame);
 
 		// Sending FermionID
-		Write4BytesAsBigEndian(pSi, pSi->m_controllableCharacter.m_ID);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_ID);
 
 		uint8_t hardCoreFlag = 0;
-		WriteByteByByte(pSi, hardCoreFlag);
+		WriteByteByByte(&pSi->m_writeBuffer, hardCoreFlag);
 
 		Dimension demension = Dimension::overworld;
-		Write4BytesAsBigEndian(pSi, demension);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, demension);
 
 		uint8_t difficulty = 2; // 2 = Normal
-		WriteByteByByte(pSi, difficulty);
+		WriteByteByByte(&pSi->m_writeBuffer, difficulty);
 
 		uint8_t maxPlayerCount = 255;
-		WriteByteByByte(pSi, maxPlayerCount);
+		WriteByteByByte(&pSi->m_writeBuffer, maxPlayerCount);
 
 		std::string levelType = "default";
-		WriteString(pSi, levelType);
+		WriteString(&pSi->m_writeBuffer, levelType);
 
 		uint8_t reducedDebugInfo = 0; // bool
-		WriteByteByByte(pSi, reducedDebugInfo);
+		WriteByteByByte(&pSi->m_writeBuffer, reducedDebugInfo);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendSpawnSpot(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::SpawnSpot);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::SpawnSpot);
 
 		GBVector3<int> spawnSpot(10, 10, 10);
-		WriteIntGBVector3(pSi, spawnSpot);
+		WriteIntGBVector3(&pSi->m_writeBuffer, spawnSpot);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendDifficulty(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::Difficulty);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Difficulty);
 
 		char difficulty = 1;
-		WriteByteByByte(pSi, difficulty);
+		WriteByteByByte(&pSi->m_writeBuffer, difficulty);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendCharacterAbility(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::CharacterAbility);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::CharacterAbility);
 
-		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_abilityState);
+		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_abilityState);
 
 		float correctedFlyingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_flyingMaxSpeed;
-		Write4BytesAsBigEndian(pSi, correctedFlyingMaxSpeed);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, correctedFlyingMaxSpeed);
 
 		float correctedSprintingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_sprintingMaxSpeed;
-		Write4BytesAsBigEndian(pSi, correctedSprintingMaxSpeed);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, correctedSprintingMaxSpeed);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendTime(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::Time);
-		Write8BytesAsBigEndian(pSi, m_world.m_ageMs);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Time);
+		Write8BytesAsBigEndian(&pSi->m_writeBuffer, m_world.m_ageMs);
 
 		// false == m_world.m_dayLightEnabled #ToDo
 
-		Write8BytesAsBigEndian(pSi, m_world.m_timeOfDay);
+		Write8BytesAsBigEndian(&pSi->m_writeBuffer, m_world.m_timeOfDay);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendInventory(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::Inventory);
-		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_inventory.m_ID);
-		WriteByteByByte(pSi, (int16_t)pSi->m_controllableCharacter.m_inventory.GetTotalSlotCount());
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Inventory);
+		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_inventory.m_ID);
+		WriteByteByByte(&pSi->m_writeBuffer, (int16_t)pSi->m_controllableCharacter.m_inventory.GetTotalSlotCount());
 
 		for (auto& pSlot : pSi->m_controllableCharacter.m_inventory.m_slotVector)
 		{
@@ -114,58 +114,58 @@ namespace GenericBoson
 
 	void Server::SendHealth(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::Health);
-		Write4BytesAsBigEndian(pSi, pSi->m_controllableCharacter.m_health);
-		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_foodLevel);
-		Write4BytesAsBigEndian(pSi, pSi->m_controllableCharacter.m_foodSaturationLevel);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Health);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_health);
+		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodLevel);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodSaturationLevel);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendExperience(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::Experience);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Experience);
 
 		float xpPercentage = pSi->m_controllableCharacter.GetXpPercentage();
-		Write4BytesAsBigEndian(pSi, xpPercentage);
+		Write4BytesAsBigEndian(&pSi->m_writeBuffer, xpPercentage);
 
 		int level = pSi->m_controllableCharacter.GetLevel();
-		WriteByteByByte(pSi, (int32_t)PacketType::Experience);
-		WriteByteByByte(pSi, pSi->m_controllableCharacter.m_experience);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Experience);
+		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_experience);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendEquippedItem(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::EquippedItemChange);
-		WriteByteByByte(pSi, (int8_t)pSi->m_controllableCharacter.m_inventory.m_equippedSlotID);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::EquippedItemChange);
+		WriteByteByByte(&pSi->m_writeBuffer, (int8_t)pSi->m_controllableCharacter.m_inventory.m_equippedSlotID);
 
 		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendPlayerList(SessionInfomation* pSi)
 	{
-		WriteByteByByte(pSi, (int32_t)PacketType::PlayerList);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::PlayerList);
 
-		WriteByteByByte(pSi, (int32_t)0);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)0);
 
-		WriteByteByByte(pSi, (int32_t)1);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)1);
 
-		WriteString(pSi, pSi->m_uuid);
+		WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
 
-		WriteString(pSi, pSi->m_userName);
+		WriteString(&pSi->m_writeBuffer, pSi->m_userName);
 
 		// #ToDo
 		// Send Property List Size
-		WriteByteByByte(pSi, (int32_t)0);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)0);
 
-		WriteByteByByte(pSi, (int32_t)m_world.m_gameMode);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)m_world.m_gameMode);
 
 		// #ToDo
-		WriteByteByByte(pSi, (int32_t)m_world.m_pingMs);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)m_world.m_pingMs);
 
-		WriteByteByByte(pSi, (char)0);
+		WriteByteByByte(&pSi->m_writeBuffer, (char)0);
 
 		EnqueueAndIssueSend(pSi);
 	}

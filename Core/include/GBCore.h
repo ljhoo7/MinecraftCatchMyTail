@@ -125,9 +125,9 @@ namespace GenericBoson
 		return sizeof(T);
 	}
 
-	protected: template<typename T> void WriteByteByByte(ExpandedOverlapped* pEol, T value)
+	protected: template<typename T> void WriteByteByByte(GBBuffer* pGbBuffer, T value)
 	{
-		char* buffer = pEol->m_writeBuffer.m_buffer;
+		char* buffer = pGbBuffer->m_buffer;
 
 		do
 		{
@@ -142,39 +142,39 @@ namespace GenericBoson
 			*buffer = (char)(value | MSB);
 
 			buffer++;
-			pEol->m_writeBuffer.m_writeOffset++;
+			pGbBuffer->m_writeOffset++;
 
 			value = value >> 7;
 		} while (0 < value);
 	}
 
-	protected: template<typename STRING> void WriteString(ExpandedOverlapped* pEol, const STRING& inString)
+	protected: template<typename STRING> void WriteString(GBBuffer* pGbBuffer, const STRING& inString)
 	{
 		uint32_t writeByteLength = 0;
-		char* buffer = pEol->m_writeBuffer.m_buffer;
+		char* buffer = pGbBuffer->m_writeBuffer.m_buffer;
 
 		// String Length
 		char inStringSize = (char)inString.length();
-		WriteByteByByte(pEol, inStringSize);
+		WriteByteByByte(pGbBuffer, inStringSize);
 
 		errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
-		pEol->m_writeBuffer.m_writeOffset += writeByteLength;
+		pGbBuffer->m_writeBuffer.m_writeOffset += writeByteLength;
 		buffer += inStringSize;
 	}
 
-	protected: template<typename T> void Write(ExpandedOverlapped* pEol, const T& outValue)
+	protected: template<typename T> void Write(GBBuffer* pGbBuffer, const T& outValue)
 	{
 		*(T*)buffer = outValue;
 
 		int writeLength = sizeof(T);
-		pEol->m_writeBuffer.m_buffer += writeLength;
-		pEol->m_writeBuffer.m_writeOffset += writeLength;
+		pGbBuffer->m_writeBuffer.m_buffer += writeLength;
+		pGbBuffer->m_writeBuffer.m_writeOffset += writeLength;
 	}
 
-	protected: void Write2BytesAsBigEndian(ExpandedOverlapped* eol, uint16_t value);
-	protected: void Write4BytesAsBigEndian(ExpandedOverlapped* eol, uint32_t value);
-	protected: void Write8BytesAsBigEndian(ExpandedOverlapped* eol, uint64_t value);
-	protected: void WriteIntGBVector3(ExpandedOverlapped* eol, const GBVector3<int>& value);
+	protected: void Write2BytesAsBigEndian(GBBuffer* eol, uint16_t value);
+	protected: void Write4BytesAsBigEndian(GBBuffer* eol, uint32_t value);
+	protected: void Write8BytesAsBigEndian(GBBuffer* eol, uint64_t value);
+	protected: void WriteIntGBVector3(GBBuffer* eol, const GBVector3<int>& value);
 
 	public: virtual ~Core();
 	public: void ThreadFunction();

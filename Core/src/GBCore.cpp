@@ -52,34 +52,34 @@ namespace GenericBoson
 		return -1;
 	}
 
-	void Core::WriteIntGBVector3(ExpandedOverlapped* pEol, const GBVector3<int>& value)
+	void Core::WriteIntGBVector3(GBBuffer* pGbBuffer, const GBVector3<int>& value)
 	{
 		const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
 		uint64_t spawnSpot = (uint64_t)(value.x & bitFlag) << 38; // 38 is the number of zero in bitFlag!
 		spawnSpot |= (uint64_t)(value.y 
 			& 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111);
 		spawnSpot |= (uint64_t)(value.z & bitFlag) << 26; // 26 is the number of one in bitFlag!
-		WriteByteByByte(pEol, spawnSpot);
+		WriteByteByByte(pGbBuffer, spawnSpot);
 	}
 
-	void Core::Write2BytesAsBigEndian(ExpandedOverlapped* pEol, uint16_t value)
+	void Core::Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htons(value);
-		WriteByteByByte(pEol, valueConvertedToBigEndian);
+		WriteByteByByte(pGbBuffer, valueConvertedToBigEndian);
 	}
 
-	void Core::Write8BytesAsBigEndian(ExpandedOverlapped* pEol, uint64_t value)
+	void Core::Write8BytesAsBigEndian(GBBuffer* pGbBuffer, uint64_t value)
 	{
 		uint64_t highWord = htonl((uint32_t)value) << 32;
 		uint64_t lowWord = htonl(value >> 32);
 		uint64_t valueConvertedToBigEndian = highWord + lowWord;
-		WriteByteByByte(pEol, valueConvertedToBigEndian);
+		WriteByteByByte(pGbBuffer, valueConvertedToBigEndian);
 	}
 
-	void Core::Write4BytesAsBigEndian(ExpandedOverlapped* pEol, uint32_t value)
+	void Core::Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htonl(value);
-		WriteByteByByte(pEol, valueConvertedToBigEndian);
+		WriteByteByByte(pGbBuffer, valueConvertedToBigEndian);
 	}
 
 	void Core::EnqueueAndIssueSend(ExpandedOverlapped* pEol)

@@ -12,6 +12,8 @@ file(GLOB TEST_CLIENT_HEADER_FILES
 
 add_executable(GBClient ${TEST_CLIENT_SRC_FILES} ${TEST_CLIENT_HEADER_FILES})
 
+target_link_libraries(GBClient ../lib/${CMAKE_VS_PLATFORM_NAME}/${CMAKE_CFG_INTDIR}/GBCore)
+
 set_property(TARGET GBClient PROPERTY COMPILE_DEFINITIONS _LIB UNICODE _UNICODE $<IF:$<CONFIG:Debug>,_DEBUG,NDEBUG>)
 
 target_link_libraries(GBClient ws2_32)

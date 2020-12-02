@@ -1,4 +1,4 @@
-#include "TestClient.h"
+#include "GBClient.h"
 
 int main()
 {

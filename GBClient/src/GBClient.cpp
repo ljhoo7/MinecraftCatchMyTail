@@ -3,28 +3,29 @@
 const int BUFFER_SIZE = 1024;
 
 template<typename T>
-T* TestClient::AssignFromBuffer(char* buffer, int& writeOffset)
+T* TestClient::AssignFromBuffer(GBBuffer* pGbBuffer)
 {
-	assert(writeOffset + sizeof(T) < BUFFER_SIZE);
+	assert(pGbBuffer->m_writeOffset + sizeof(T) < BUFFER_SIZE);
 
 	size_t bytesToAssign = sizeof(T);
 
-	T* pAddrToReturn = (T*)&buffer[writeOffset];
+	T* pAddrToReturn = (T*)&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset];
 
-	writeOffset += bytesToAssign;
+	pGbBuffer->m_writeOffset += bytesToAssign;
 
 	return pAddrToReturn;
 }
 
 template<typename STRING>
-void TestClient::InscribeStringToBuffer(const STRING& str, char* buffer, int& writeOffset)
+void TestClient::InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer)
 {
-	char* pStringLength = AssignFromBuffer<char>(buffer, writeOffset);
-	*pStringLength = (char)str.length();
+	char* pStringLength = AssignFromBuffer<char>(pGbBuffer);
+	char stringLength = (char)str.length();
+	WriteByteByByte(pGbBuffer, stringLength);
 
-	assert(writeOffset + *pStringLength < BUFFER_SIZE);
+	assert(pGbBuffer->m_writeOffset + *pStringLength < BUFFER_SIZE);
 
-	errno_t strncpyResult = strncpy_s(&buffer[writeOffset], BUFFER_SIZE - writeOffset, (char*)str.c_str(), *pStringLength);
+	errno_t strncpyResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset, (char*)str.c_str(), *pStringLength);
 
 	if (0 != strncpyResult)
 	{
@@ -32,7 +33,7 @@ void TestClient::InscribeStringToBuffer(const STRING& str, char* buffer, int& wr
 		assert(false);
 	}
 
-	writeOffset += *pStringLength;
+	pGbBuffer->m_writeOffset += *pStringLength;
 }
 
 void TestClient::Start()
@@ -64,33 +65,37 @@ void TestClient::Start()
 		std::cout << "[Connection failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
 	}
 
-	int writeOffset = 0;
-	char buffer[BUFFER_SIZE] = { 0, };
+	GBBuffer gbBuffer;
 	std::string serverAddrStr = "127.0.0.1";
 
-	char* pPacketLength = AssignFromBuffer<char>(buffer, writeOffset);
-	*pPacketLength = sizeof(int32_t) + sizeof(short) + sizeof(char) + serverAddrStr.length() + sizeof(short) + sizeof(char);
+	char* pPacketLength = AssignFromBuffer<char>(&gbBuffer);
+	char packetLength = sizeof(int32_t) + sizeof(short) + sizeof(char) + serverAddrStr.length() + sizeof(short) + sizeof(char);
+	WriteByteByByte(&gbBuffer, packetLength);
 
 	// [1]
-	char* pPacketType = AssignFromBuffer<char>(buffer, writeOffset);
-	*pPacketType = 0;
+	char* pPacketType = AssignFromBuffer<char>(&gbBuffer);
+	char packetType = 0;
+	WriteByteByByte(&gbBuffer, packetType);
 
 	// [2]
-	char* pProtocolVersion = AssignFromBuffer<char>(buffer, writeOffset);
-	*pProtocolVersion = 340;
+	char* pProtocolVersion = AssignFromBuffer<char>(&gbBuffer);
+	char protocolVersion = 340;
+	WriteByteByByte(&gbBuffer, protocolVersion);
 
 	// [3]
-	InscribeStringToBuffer(serverAddrStr, buffer, writeOffset);
+	InscribeStringToBuffer(serverAddrStr, &gbBuffer);
 
 	// [4]
-	short* pPort = AssignFromBuffer<short>(buffer, writeOffset);
-	*pPort = MINECRAFT_PORT_NUMBER;
+	short* pPort = AssignFromBuffer<short>(&gbBuffer);
+	short port = MINECRAFT_PORT_NUMBER;
+	WriteByteByByte(&gbBuffer, port);
 
 	// [5]
-	char* pNextStage = AssignFromBuffer<char>(buffer, writeOffset);
-	*pNextStage = 340;
+	char* pNextStage = AssignFromBuffer<char>(&gbBuffer);
+	char nextStage = 340;
+	WriteByteByByte(&gbBuffer, nextStage);
 
-	int sendResult = send(m_clientSocket, buffer, writeOffset, NULL);
+	int sendResult = send(m_clientSocket, gbBuffer.m_buffer, gbBuffer.m_writeOffset, NULL);
 
 	if (SOCKET_ERROR == sendResult)
 	{
