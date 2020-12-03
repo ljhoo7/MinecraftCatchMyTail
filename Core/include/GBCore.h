@@ -127,7 +127,7 @@ namespace GenericBoson
 
 	protected: template<typename T> void WriteByteByByte(GBBuffer* pGbBuffer, T value)
 	{
-		char* buffer = pGbBuffer->m_buffer;
+		char* buffer = &pGbBuffer->m_buffer[pGbBuffer->m_writeOffset];
 
 		do
 		{

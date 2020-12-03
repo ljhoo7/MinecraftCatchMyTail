@@ -19,13 +19,12 @@ T* TestClient::AssignFromBuffer(GBBuffer* pGbBuffer)
 template<typename STRING>
 void TestClient::InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer)
 {
-	char* pStringLength = AssignFromBuffer<char>(pGbBuffer);
 	char stringLength = (char)str.length();
 	WriteByteByByte(pGbBuffer, stringLength);
 
-	assert(pGbBuffer->m_writeOffset + *pStringLength < BUFFER_SIZE);
+	assert(pGbBuffer->m_writeOffset + stringLength < BUFFER_SIZE);
 
-	errno_t strncpyResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset, (char*)str.c_str(), *pStringLength);
+	errno_t strncpyResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset, (char*)str.c_str(), stringLength);
 
 	if (0 != strncpyResult)
 	{
@@ -33,7 +32,7 @@ void TestClient::InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer)
 		assert(false);
 	}
 
-	pGbBuffer->m_writeOffset += *pStringLength;
+	pGbBuffer->m_writeOffset += stringLength;
 }
 
 void TestClient::Start()
@@ -67,33 +66,30 @@ void TestClient::Start()
 
 	GBBuffer gbBuffer;
 	std::string serverAddrStr = "127.0.0.1";
+	char addStrSize = (char)serverAddrStr.length();
 
 	char* pPacketLength = AssignFromBuffer<char>(&gbBuffer);
-	char packetLength = sizeof(int32_t) + sizeof(short) + sizeof(char) + serverAddrStr.length() + sizeof(short) + sizeof(char);
-	WriteByteByByte(&gbBuffer, packetLength);
-
+	
 	// [1]
-	char* pPacketType = AssignFromBuffer<char>(&gbBuffer);
 	char packetType = 0;
 	WriteByteByByte(&gbBuffer, packetType);
 
 	// [2]
-	char* pProtocolVersion = AssignFromBuffer<char>(&gbBuffer);
-	char protocolVersion = 340;
+	short protocolVersion = 340;
 	WriteByteByByte(&gbBuffer, protocolVersion);
 
 	// [3]
 	InscribeStringToBuffer(serverAddrStr, &gbBuffer);
 
 	// [4]
-	short* pPort = AssignFromBuffer<short>(&gbBuffer);
-	short port = MINECRAFT_PORT_NUMBER;
-	WriteByteByByte(&gbBuffer, port);
+	unsigned short port = MINECRAFT_PORT_NUMBER;
+	Write2BytesAsBigEndian(&gbBuffer, port);
 
 	// [5]
-	char* pNextStage = AssignFromBuffer<char>(&gbBuffer);
-	char nextStage = 340;
+	char nextStage = 2;
 	WriteByteByByte(&gbBuffer, nextStage);
+
+	*pPacketLength = (char)(gbBuffer.m_writeOffset - 1);
 
 	int sendResult = send(m_clientSocket, gbBuffer.m_buffer, gbBuffer.m_writeOffset, NULL);
 
