@@ -65,7 +65,9 @@ namespace GenericBoson
 	void Core::Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htons(value);
-		WriteByteByByte(pGbBuffer, valueConvertedToBigEndian);
+
+		uint16_t* pTwoBytes = AssignFromBuffer<uint16_t>(pGbBuffer);
+		*pTwoBytes = valueConvertedToBigEndian;
 	}
 
 	void Core::Write8BytesAsBigEndian(GBBuffer* pGbBuffer, uint64_t value)
@@ -73,13 +75,17 @@ namespace GenericBoson
 		uint64_t highWord = htonl((uint32_t)value) << 32;
 		uint64_t lowWord = htonl(value >> 32);
 		uint64_t valueConvertedToBigEndian = highWord + lowWord;
-		WriteByteByByte(pGbBuffer, valueConvertedToBigEndian);
+		
+		uint64_t* pEightBytes = AssignFromBuffer<uint64_t>(pGbBuffer);
+		*pEightBytes = valueConvertedToBigEndian;
 	}
 
 	void Core::Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htonl(value);
-		WriteByteByByte(pGbBuffer, valueConvertedToBigEndian);
+		
+		uint32_t* pFourBytes = AssignFromBuffer<uint32_t>(pGbBuffer);
+		*pFourBytes = valueConvertedToBigEndian;
 	}
 
 	void Core::EnqueueAndIssueSend(ExpandedOverlapped* pEol)

@@ -25,12 +25,9 @@ public:
 
 	void Start();
 
-	template<typename T>
-	T* AssignFromBuffer(GBBuffer* pGbBuffer);
-
 	template<typename STRING>
 	void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);
 
-private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, uint32_t& readOffSet) override {}
+private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override {}
 private: void* GetSessionInformationArray() override { return nullptr; }
 };

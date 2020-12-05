@@ -37,7 +37,7 @@ namespace GenericBoson
 	public: void SendEquippedItem(SessionInfomation*);
 	public: void SendPlayerList(SessionInfomation*);
 
-	private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, uint32_t& readOffSet) override;
+	private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override;
 	private: void* GetSessionInformationArray() override;
 	};
 }

@@ -1,21 +1,5 @@
 #include "GBClient.h"
 
-const int BUFFER_SIZE = 1024;
-
-template<typename T>
-T* TestClient::AssignFromBuffer(GBBuffer* pGbBuffer)
-{
-	assert(pGbBuffer->m_writeOffset + sizeof(T) < BUFFER_SIZE);
-
-	size_t bytesToAssign = sizeof(T);
-
-	T* pAddrToReturn = (T*)&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset];
-
-	pGbBuffer->m_writeOffset += bytesToAssign;
-
-	return pAddrToReturn;
-}
-
 template<typename STRING>
 void TestClient::InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer)
 {

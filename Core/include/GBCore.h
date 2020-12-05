@@ -77,7 +77,20 @@ namespace GenericBoson
 
 	// for AcceptEx's recv buffer which is not using.
 	// Warning : If this is not using, but this must exists till the end.
-	private: char m_listenBuffer[1024];
+	private: char m_listenBuffer[BUFFER_SIZE];
+
+	protected: template<typename T> T* AssignFromBuffer(GBBuffer* pGbBuffer)
+	{
+		assert(pGbBuffer->m_writeOffset + sizeof(T) < BUFFER_SIZE);
+
+		size_t bytesToAssign = sizeof(T);
+
+		T* pAddrToReturn = (T*)&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset];
+
+		pGbBuffer->m_writeOffset += bytesToAssign;
+
+		return pAddrToReturn;
+	}
 
 	protected: template<typename T> uint32_t ReadByteByByte(char* buffer, T& value)
 	{
@@ -184,7 +197,7 @@ namespace GenericBoson
 	public: void EnqueueAndIssueSend(ExpandedOverlapped* pEol);
 
 		// Consuming a gathering completed message.
-	public: virtual void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* mescsage, const uint32_t messageSize, uint32_t& readOffSet) = 0;
+	public: virtual void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* mescsage, const uint32_t messageSize, int& readOffSet) = 0;
 
 	protected: virtual void* GetSessionInformationArray() = 0;
 

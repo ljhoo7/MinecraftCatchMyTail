@@ -175,7 +175,7 @@ namespace GenericBoson
 		return (void*)m_sessionInfoArray;
 	}
 
-	void Server::ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, uint32_t& readOffSet)
+	void Server::ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet)
 	{
 		SessionInfomation* pSi = static_cast<SessionInfomation*>(pEol);
 
