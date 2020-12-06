@@ -46,6 +46,7 @@ void TestClient::Start()
 	if (0 != connectResult)
 	{
 		std::cout << "[Connection failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+		return;
 	}
 
 	GBBuffer gbBuffer;
@@ -79,6 +80,30 @@ void TestClient::Start()
 
 	if (SOCKET_ERROR == sendResult)
 	{
-		std::cout << "[WSASend failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+		std::cout << "[send failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+		return;
+	}
+
+	int receivedBytes = 0;
+
+	while(true)
+	{
+		receivedBytes = recv(m_clientSocket, gbBuffer.m_buffer, 1, NULL);
+
+		if (SOCKET_ERROR == receivedBytes)
+		{
+			std::cout << "[recv failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+			return;
+		}
+
+		receivedBytes = recv(m_clientSocket, &gbBuffer.m_buffer[1], gbBuffer.m_buffer[0], NULL);
+
+		if (SOCKET_ERROR == receivedBytes)
+		{
+			std::cout << "[recv failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+			return;
+		}
+
+		// interpretation
 	}
 }
