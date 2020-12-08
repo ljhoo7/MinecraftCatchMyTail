@@ -92,7 +92,7 @@ void TestClient::Start()
 
 		if (SOCKET_ERROR == receivedBytes)
 		{
-			std::cout << "[recv failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+			std::cout << "[recv length failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
 			return;
 		}
 
@@ -100,7 +100,7 @@ void TestClient::Start()
 
 		if (SOCKET_ERROR == receivedBytes)
 		{
-			std::cout << "[recv failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+			std::cout << "[recv payload failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
 			return;
 		}
 
