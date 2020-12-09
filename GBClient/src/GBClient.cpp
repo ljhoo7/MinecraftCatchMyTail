@@ -50,42 +50,46 @@ void TestClient::Start()
 	}
 
 	GBBuffer gbBuffer;
-	std::string serverAddrStr = "127.0.0.1";
-	char addStrSize = (char)serverAddrStr.length();
 
-	char* pPacketLength = AssignFromBuffer<char>(&gbBuffer);
-	
-	// [1]
-	char packetType = 0;
-	WriteByteByByte(&gbBuffer, packetType);
-
-	// [2]
-	short protocolVersion = 340;
-	WriteByteByByte(&gbBuffer, protocolVersion);
-
-	// [3]
-	InscribeStringToBuffer(serverAddrStr, &gbBuffer);
-
-	// [4]
-	unsigned short port = MINECRAFT_PORT_NUMBER;
-	Write2BytesAsBigEndian(&gbBuffer, port);
-
-	// [5]
-	char nextStage = 2;
-	WriteByteByByte(&gbBuffer, nextStage);
-
-	*pPacketLength = (char)(gbBuffer.m_writeOffset - 1);
-
-	int sendResult = send(m_clientSocket, gbBuffer.m_buffer, gbBuffer.m_writeOffset, NULL);
-
-	if (SOCKET_ERROR == sendResult)
+	MakeAndSendPacket(&gbBuffer, [this](GBBuffer* pGbBuffer)
 	{
-		std::cout << "[send failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
-		return;
-	}
+		// [1]
+		char packetType = 0;
+		WriteByteByByte(pGbBuffer, packetType);
+
+		// [2]
+		short protocolVersion = 340;
+		WriteByteByByte(pGbBuffer, protocolVersion);
+
+		// [3]
+		std::string serverAddrStr = "127.0.0.1";
+		InscribeStringToBuffer(serverAddrStr, pGbBuffer);
+
+		// [4]
+		unsigned short port = MINECRAFT_PORT_NUMBER;
+		Write2BytesAsBigEndian(pGbBuffer, port);
+
+		// [5]
+		char nextStage = 2;
+		WriteByteByByte(pGbBuffer, nextStage);
+	});
+
+	MakeAndSendPacket(&gbBuffer, [this](GBBuffer* pGbBuffer)
+	{
+		// [1]
+		char uncompressedSize = 0;
+		WriteByteByByte(pGbBuffer, uncompressedSize);
+
+		// [2]
+		char packetType = 0;
+		WriteByteByByte(pGbBuffer, packetType);
+
+		// [3]
+		std::string IDString = "tester";
+		InscribeStringToBuffer(IDString, pGbBuffer);
+	});
 
 	int receivedBytes = 0;
-
 	while(true)
 	{
 		receivedBytes = recv(m_clientSocket, gbBuffer.m_buffer, 1, NULL);
