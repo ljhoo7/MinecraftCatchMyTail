@@ -189,7 +189,7 @@ namespace GenericBoson
 	protected: void Write8BytesAsBigEndian(GBBuffer* eol, uint64_t value);
 	protected: void WriteIntGBVector3(GBBuffer* eol, const GBVector3<int>& value);
 
-	protected: template<typename FUNCTION> void MakeAndSendPacket(GBBuffer* pGbBuffer, const FUNCTION& func)
+	protected: template<typename FUNCTION> void MakeAndSendPacket(SOCKET* pSocket, GBBuffer* pGbBuffer, const FUNCTION& func)
 	{
 		char* pPacketLength = AssignFromBuffer<char>(pGbBuffer);
 
@@ -197,7 +197,7 @@ namespace GenericBoson
 
 		*pPacketLength = (char)(pGbBuffer->m_writeOffset - 1);
 
-		int sendResult = send(m_clientSocket, pGbBuffer->m_buffer, pGbBuffer->m_writeOffset, NULL);
+		int sendResult = send(*pSocket, pGbBuffer->m_buffer, pGbBuffer->m_writeOffset, NULL);
 
 		if (SOCKET_ERROR == sendResult)
 		{

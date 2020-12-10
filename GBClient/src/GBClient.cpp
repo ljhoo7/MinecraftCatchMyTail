@@ -51,7 +51,7 @@ void TestClient::Start()
 
 	GBBuffer gbBuffer;
 
-	MakeAndSendPacket(&gbBuffer, [this](GBBuffer* pGbBuffer)
+	MakeAndSendPacket(&m_clientSocket, &gbBuffer, [this](GBBuffer* pGbBuffer)
 	{
 		// [1]
 		char packetType = 0;
@@ -74,7 +74,7 @@ void TestClient::Start()
 		WriteByteByByte(pGbBuffer, nextStage);
 	});
 
-	MakeAndSendPacket(&gbBuffer, [this](GBBuffer* pGbBuffer)
+	MakeAndSendPacket(&m_clientSocket, &gbBuffer, [this](GBBuffer* pGbBuffer)
 	{
 		// [1]
 		char uncompressedSize = 0;
