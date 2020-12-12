@@ -53,38 +53,30 @@ void TestClient::Start()
 
 	MakeAndSendPacket(&m_clientSocket, &gbBuffer, [this](GBBuffer* pGbBuffer)
 	{
-		// [1]
 		char packetType = 0;
 		WriteByteByByte(pGbBuffer, packetType);
 
-		// [2]
 		short protocolVersion = 340;
 		WriteByteByByte(pGbBuffer, protocolVersion);
 
-		// [3]
 		std::string serverAddrStr = "127.0.0.1";
 		InscribeStringToBuffer(serverAddrStr, pGbBuffer);
 
-		// [4]
 		unsigned short port = MINECRAFT_PORT_NUMBER;
 		Write2BytesAsBigEndian(pGbBuffer, port);
 
-		// [5]
 		char nextStage = 2;
 		WriteByteByByte(pGbBuffer, nextStage);
 	});
 
 	MakeAndSendPacket(&m_clientSocket, &gbBuffer, [this](GBBuffer* pGbBuffer)
 	{
-		// [1]
 		char uncompressedSize = 0;
 		WriteByteByByte(pGbBuffer, uncompressedSize);
 
-		// [2]
 		char packetType = 0;
 		WriteByteByByte(pGbBuffer, packetType);
 
-		// [3]
 		std::string IDString = "tester";
 		InscribeStringToBuffer(IDString, pGbBuffer);
 	});
