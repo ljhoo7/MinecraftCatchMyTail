@@ -213,7 +213,7 @@ namespace GenericBoson
 
 	public: void EnqueueAndIssueSend(ExpandedOverlapped* pEol);
 
-		// Consuming a gathering completed message.
+	// Consuming a gathered completed message.
 	public: virtual void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* mescsage, const uint32_t messageSize, int& readOffSet) = 0;
 
 	protected: virtual void* GetSessionInformationArray() = 0;
