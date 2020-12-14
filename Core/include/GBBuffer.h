@@ -11,5 +11,11 @@ namespace GenericBoson
 	public: char m_buffer[BUFFER_SIZE] = { 0, };
 	public: int m_writeOffset = 0;
 	public: int m_readOffset = 0;
+
+	public: inline void Reset()
+	{
+		m_writeOffset = 0;
+		m_readOffset = 0;
+	}
 	};
 }

@@ -191,6 +191,8 @@ namespace GenericBoson
 
 	protected: template<typename FUNCTION> void MakeAndSendPacket(SOCKET* pSocket, GBBuffer* pGbBuffer, const FUNCTION& func)
 	{
+		pGbBuffer->Reset();
+
 		char* pPacketLength = AssignFromBuffer<char>(pGbBuffer);
 
 		func(pGbBuffer);
