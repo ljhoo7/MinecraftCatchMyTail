@@ -71,9 +71,6 @@ void TestClient::Start()
 
 	MakeAndSendPacket(&m_clientSocket, &gbBuffer, [this](GBBuffer* pGbBuffer)
 	{
-		char uncompressedSize = 0;
-		WriteByteByByte(pGbBuffer, uncompressedSize);
-
 		char packetType = 0;
 		WriteByteByByte(pGbBuffer, packetType);
 
@@ -92,14 +89,22 @@ void TestClient::Start()
 			return;
 		}
 
-		receivedBytes = recv(m_clientSocket, &gbBuffer.m_buffer[1], gbBuffer.m_buffer[0], NULL);
-
-		if (SOCKET_ERROR == receivedBytes)
+		// This needs gathering!!!
 		{
-			std::cout << "[recv payload failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
-			return;
+			receivedBytes = recv(m_clientSocket, &gbBuffer.m_buffer[1], gbBuffer.m_buffer[0], NULL);
+
+			if (SOCKET_ERROR == receivedBytes)
+			{
+				std::cout << "[recv payload failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+				return;
+			}
 		}
 
-		// interpretation
+		//ConsumeGatheredMessage();
 	}
+}
+
+void TestClient::ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet)
+{
+
 }

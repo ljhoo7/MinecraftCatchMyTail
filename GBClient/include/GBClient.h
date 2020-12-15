@@ -15,6 +15,8 @@ using namespace GenericBoson;
 class TestClient : public Core
 {
 	SOCKET m_clientSocket = INVALID_SOCKET;
+
+	SessionState m_sessionState = SessionState::start;
 public:
 	TestClient() = default;
 	~TestClient()
@@ -28,6 +30,6 @@ public:
 	template<typename STRING>
 	void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);
 
-private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override {}
+private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override;
 private: void* GetSessionInformationArray() override { return nullptr; }
 };
