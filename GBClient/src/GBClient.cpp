@@ -89,22 +89,31 @@ void TestClient::Start()
 			return;
 		}
 
-		// This needs gathering!!!
+		int leftBytesToRecieve = gbBuffer.m_buffer[0];
+		while(0 < leftBytesToRecieve)
 		{
-			receivedBytes = recv(m_clientSocket, &gbBuffer.m_buffer[1], gbBuffer.m_buffer[0], NULL);
+			receivedBytes = recv(m_clientSocket, &gbBuffer.m_buffer[1], leftBytesToRecieve, NULL);
 
 			if (SOCKET_ERROR == receivedBytes)
 			{
 				std::cout << "[recv payload failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
 				return;
 			}
+
+			leftBytesToRecieve -= receivedBytes;
+
+			assert(leftBytesToRecieve < 0);
 		}
 
-		//ConsumeGatheredMessage();
+		ClientConsumeGatheredMessage(m_clientSocket, gbBuffer.m_buffer, gbBuffer.m_buffer[0], gbBuffer.m_readOffset);
 	}
 }
 
-void TestClient::ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet)
+void TestClient::ClientConsumeGatheredMessage(SOCKET sock, char* message, const uint32_t messageSize, int& readOffSet)
 {
-
+	// Packet Type
+	char packetType = 0;
+	uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
+	readOffSet += readPacketTypeByteLength;
+	message += readPacketTypeByteLength;
 }

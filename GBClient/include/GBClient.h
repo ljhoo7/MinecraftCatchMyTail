@@ -29,7 +29,7 @@ public:
 
 	template<typename STRING>
 	void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);
-
-private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override;
+private: void ClientConsumeGatheredMessage(SOCKET sock, char* buffer, const uint32_t messageSize, int& readOffSet);
+private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override {}
 private: void* GetSessionInformationArray() override { return nullptr; }
 };
