@@ -14,22 +14,21 @@ using namespace GenericBoson;
 
 class TestClient : public Core
 {
-	SOCKET m_clientSocket = INVALID_SOCKET;
+private: SOCKET m_clientSocket = INVALID_SOCKET;
 
-	SessionState m_sessionState = SessionState::start;
-public:
-	TestClient() = default;
-	~TestClient()
+private: SessionState m_sessionState = SessionState::start;
+public: TestClient() = default;
+public: ~TestClient()
 	{
 		closesocket(m_clientSocket);
 		WSACleanup();
 	}
 
-	void Start();
+public: void Start();
 
-	template<typename STRING>
-	void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);
-private: void ClientConsumeGatheredMessage(SOCKET sock, char* buffer, const uint32_t messageSize, int& readOffSet);
+public: template<typename STRING> void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);
+private: void ClientConsumeGatheredMessage(char* buffer, const uint32_t messageSize, int& readOffSet);
 private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override {}
 private: void* GetSessionInformationArray() override { return nullptr; }
+private: void GatheringMessage(char* message, uint32_t leftBytesToRecieve);
 };

@@ -89,31 +89,42 @@ void TestClient::Start()
 			return;
 		}
 
-		int leftBytesToRecieve = gbBuffer.m_buffer[0];
-		while(0 < leftBytesToRecieve)
-		{
-			receivedBytes = recv(m_clientSocket, &gbBuffer.m_buffer[1], leftBytesToRecieve, NULL);
-
-			if (SOCKET_ERROR == receivedBytes)
-			{
-				std::cout << "[recv payload failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
-				return;
-			}
-
-			leftBytesToRecieve -= receivedBytes;
-
-			assert(leftBytesToRecieve < 0);
-		}
-
-		ClientConsumeGatheredMessage(m_clientSocket, gbBuffer.m_buffer, gbBuffer.m_buffer[0], gbBuffer.m_readOffset);
+		GatheringMessage(&gbBuffer.m_buffer[1], gbBuffer.m_buffer[0]);
+		
+		ClientConsumeGatheredMessage(gbBuffer.m_buffer, gbBuffer.m_buffer[0], gbBuffer.m_readOffset);
 	}
 }
 
-void TestClient::ClientConsumeGatheredMessage(SOCKET sock, char* message, const uint32_t messageSize, int& readOffSet)
+void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
+{
+	while (0 < leftBytesToRecieve)
+	{
+		int receivedBytes = recv(m_clientSocket, message, leftBytesToRecieve, NULL);
+
+		if (SOCKET_ERROR == receivedBytes)
+		{
+			std::cout << "[recv payload failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
+			return;
+		}
+
+		leftBytesToRecieve -= receivedBytes;
+		message += receivedBytes;
+
+		assert(0 <= leftBytesToRecieve);
+	}
+
+}
+
+void TestClient::ClientConsumeGatheredMessage(char* message, const uint32_t messageSize, int& readOffSet)
 {
 	// Packet Type
 	char packetType = 0;
 	uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
+	readOffSet += readPacketTypeByteLength;
+	message += readPacketTypeByteLength;
+
+	char compressionThreashold = 0;
+	readPacketTypeByteLength = ReadByteByByte(message, compressionThreashold);
 	readOffSet += readPacketTypeByteLength;
 	message += readPacketTypeByteLength;
 }
