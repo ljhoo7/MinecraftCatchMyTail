@@ -117,7 +117,6 @@ void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
 
 void TestClient::ClientConsumeGatheredMessage(char* message, const uint32_t messageSize, int& readOffSet)
 {
-	// Packet Type
 	char packetType = 0;
 	uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
 	readOffSet += readPacketTypeByteLength;
