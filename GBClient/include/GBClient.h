@@ -18,12 +18,7 @@ private: SOCKET m_clientSocket = INVALID_SOCKET;
 
 private: SessionState m_sessionState = SessionState::start;
 public: TestClient() = default;
-public: ~TestClient()
-	{
-		closesocket(m_clientSocket);
-		WSACleanup();
-	}
-
+public: ~TestClient();
 public: void Start();
 
 public: template<typename STRING> void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);

@@ -1,5 +1,11 @@
 #include "GBClient.h"
 
+TestClient::~TestClient()
+{
+	closesocket(m_clientSocket);
+	WSACleanup();
+}
+
 template<typename STRING>
 void TestClient::InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer)
 {
