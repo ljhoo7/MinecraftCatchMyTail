@@ -185,13 +185,11 @@ namespace GenericBoson
 		readOffSet += readPacketTypeByteLength;
 		message += readPacketTypeByteLength;
 
-		switch (pSi->m_sessionState)
+		SessionState ss = pSi->m_sessionState;
+		PacketType pt = (PacketType)packetType;
+		if (SessionState::login == ss)
 		{
-		case SessionState::login:
-		{
-			switch ((PacketType)packetType)
-			{
-			case PacketType::LoginStart:
+			if (PacketType::LoginStart == pt)
 			{
 				// Server Address
 				std::string userName;
@@ -219,13 +217,12 @@ namespace GenericBoson
 
 				//eol.m_sessionState = authed;
 			}
-			break;
-			default:
+			else
+			{
 				assert(false);
 			}
 		}
-		break;
-		case SessionState::start:
+		if(SessionState::start == ss)
 		{
 			// Protocol Version
 			short protocolVersion = 0;
@@ -256,12 +253,9 @@ namespace GenericBoson
 
 			pSi->m_sessionState = (SessionState)nextStage;
 		}
-		break;
-		case SessionState::in_game:
+		if(SessionState::in_game == ss)
 		{
-			switch ((PacketType)packetType)
-			{
-			case PacketType::ClientSettings:
+			if(PacketType::ClientSettings == pt)
 			{
 				// Server Address
 				std::string localeString;
@@ -269,16 +263,14 @@ namespace GenericBoson
 				readOffSet += rr;
 				message += rr;
 			}
-			break;
-			default:
+			else
+			{
 				assert(false);
 			}
 		}
-		break;
-		default:
+		else
+		{
 			assert(false);
-			break;
 		}
 	}
-
 }

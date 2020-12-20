@@ -164,14 +164,14 @@ namespace GenericBoson
 	protected: template<typename STRING> void WriteString(GBBuffer* pGbBuffer, const STRING& inString)
 	{
 		uint32_t writeByteLength = 0;
-		char* buffer = pGbBuffer->m_writeBuffer.m_buffer;
+		char* buffer = pGbBuffer->m_buffer;
 
 		// String Length
 		char inStringSize = (char)inString.length();
 		WriteByteByByte(pGbBuffer, inStringSize);
 
 		errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
-		pGbBuffer->m_writeBuffer.m_writeOffset += writeByteLength;
+		pGbBuffer->m_writeOffset += writeByteLength;
 		buffer += inStringSize;
 	}
 
