@@ -88,6 +88,7 @@ void TestClient::Start()
 	while(true)
 	{
 		receivedBytes = recv(m_clientSocket, gbBuffer.m_buffer, 1, NULL);
+		gbBuffer.m_readOffset += 1;
 
 		if (SOCKET_ERROR == receivedBytes)
 		{
@@ -97,7 +98,7 @@ void TestClient::Start()
 
 		GatheringMessage(&gbBuffer.m_buffer[1], gbBuffer.m_buffer[0]);
 		
-		ClientConsumeGatheredMessage(gbBuffer.m_buffer, gbBuffer.m_buffer[0], gbBuffer.m_readOffset);
+		ClientConsumeGatheredMessage(&gbBuffer.m_buffer[1], gbBuffer.m_buffer[0], gbBuffer.m_readOffset);
 	}
 }
 
@@ -128,8 +129,16 @@ void TestClient::ClientConsumeGatheredMessage(char* message, const uint32_t mess
 	readOffSet += readPacketTypeByteLength;
 	message += readPacketTypeByteLength;
 
-	char compressionThreashold = 0;
-	readPacketTypeByteLength = ReadByteByByte(message, compressionThreashold);
-	readOffSet += readPacketTypeByteLength;
-	message += readPacketTypeByteLength;
+	PacketType pt = (PacketType)packetType;
+	if(PacketType:: StartCompression == pt)
+	{
+		uint32_t compressionThreashold = 0;
+		readPacketTypeByteLength = ReadByteByByte(message, compressionThreashold);
+		readOffSet += readPacketTypeByteLength;
+		message += readPacketTypeByteLength;
+	}
+	else if (PacketType::LoginSuccess == pt)
+	{
+
+	}
 }
