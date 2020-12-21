@@ -116,19 +116,32 @@ namespace GenericBoson
 	{
 		uint32_t readByteLength = 0;
 
-		// String Length
+		// Compressed bytes
+		char compressedBytes = 0;
+		uint32_t rr = ReadByteByByte(buffer, compressedBytes);
+		readByteLength += rr;
+		buffer += rr;
+
+		// Uncompressed String Actual Length
 		char stringLength = 0;
-		uint32_t rr1 = ReadByteByByte(buffer, stringLength);
-		readByteLength += rr1;
-		buffer += rr1;
+		rr = ReadByteByByte(buffer, stringLength);
+		readByteLength += rr;
+		buffer += rr;
 
 		outString.reserve(stringLength);
 		outString.assign(buffer, stringLength);
+
+		UnCompressString(outString);
 
 		readByteLength += stringLength;
 		buffer += stringLength;
 
 		return readByteLength;
+	}
+
+	protected: template<typename STRING> uint32_t UnCompressString(STRING& outString)
+	{
+		return 0;
 	}
 
 	protected: template<typename T> uint32_t Read(char* buffer, T& outValue)

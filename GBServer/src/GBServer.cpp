@@ -181,9 +181,9 @@ namespace GenericBoson
 
 		// Packet Type
 		char packetType = 0;
-		uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
-		readOffSet += readPacketTypeByteLength;
-		message += readPacketTypeByteLength;
+		uint32_t rr = ReadByteByByte(message, packetType);
+		readOffSet += rr;
+		message += rr;
 
 		SessionState ss = pSi->m_sessionState;
 		PacketType pt = (PacketType)packetType;
@@ -193,7 +193,7 @@ namespace GenericBoson
 			{
 				// Server Address
 				std::string userName;
-				uint32_t rr = ReadString(message, userName);
+				rr = ReadString(message, userName);
 				readOffSet += rr;
 				message += rr;
 
@@ -226,30 +226,30 @@ namespace GenericBoson
 		{
 			// Protocol Version
 			short protocolVersion = 0;
-			uint32_t rr1 = ReadByteByByte(message, protocolVersion);
-			readOffSet += rr1;
-			message += rr1;
+			rr = ReadByteByByte(message, protocolVersion);
+			readOffSet += rr;
+			message += rr;
 
 			pSi->m_protocolVersion = protocolVersion;
 
 			// Server Address
 			std::string serverAddressStr;
-			uint32_t rr2 = ReadString(message, serverAddressStr);
-			readOffSet += rr2;
-			message += rr2;
+			rr = ReadString(message, serverAddressStr);
+			readOffSet += rr;
+			message += rr;
 
 			// Server Port
 			uint16_t portNumber;
-			uint32_t rr3 = Read(message, portNumber);
+			rr = Read(message, portNumber);
 			portNumber = ntohs(portNumber);
-			readOffSet += rr3;
-			message += rr3;
+			readOffSet += rr;
+			message += rr;
 
 			// Next Stage
 			char nextStage = 0;
-			uint32_t rr4 = ReadByteByByte(message, nextStage);
-			readOffSet += rr4;
-			message += rr4;
+			rr = ReadByteByByte(message, nextStage);
+			readOffSet += rr;
+			message += rr;
 
 			pSi->m_sessionState = (SessionState)nextStage;
 		}
@@ -259,7 +259,7 @@ namespace GenericBoson
 			{
 				// Server Address
 				std::string localeString;
-				uint32_t rr = ReadString(message, localeString);
+				rr = ReadString(message, localeString);
 				readOffSet += rr;
 				message += rr;
 			}

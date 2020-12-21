@@ -125,20 +125,28 @@ void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
 void TestClient::ClientConsumeGatheredMessage(char* message, const uint32_t messageSize, int& readOffSet)
 {
 	char packetType = 0;
-	uint32_t readPacketTypeByteLength = ReadByteByByte(message, packetType);
-	readOffSet += readPacketTypeByteLength;
-	message += readPacketTypeByteLength;
+	uint32_t rr = ReadByteByByte(message, packetType);
+	readOffSet += rr;
+	message += rr;
 
 	PacketType pt = (PacketType)packetType;
 	if(PacketType:: StartCompression == pt)
 	{
 		uint32_t compressionThreashold = 0;
-		readPacketTypeByteLength = ReadByteByByte(message, compressionThreashold);
-		readOffSet += readPacketTypeByteLength;
-		message += readPacketTypeByteLength;
+		rr = ReadByteByByte(message, compressionThreashold);
+		readOffSet += rr;
+		message += rr;
 	}
 	else if (PacketType::LoginSuccess == pt)
 	{
+		std::string clientUUIDString;
+		rr = ReadString(message, clientUUIDString);
+		readOffSet += rr;
+		message += rr;
 
+		std::string userNameString;
+		rr = ReadString(message, userNameString);
+		readOffSet += rr;
+		message += rr;
 	}
 }
