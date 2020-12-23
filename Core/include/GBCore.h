@@ -131,17 +131,10 @@ namespace GenericBoson
 		outString.reserve(stringLength);
 		outString.assign(buffer, stringLength);
 
-		UnCompressString(outString);
-
 		readByteLength += stringLength;
 		buffer += stringLength;
 
 		return readByteLength;
-	}
-
-	protected: template<typename STRING> uint32_t UnCompressString(STRING& outString)
-	{
-		return 0;
 	}
 
 	protected: template<typename T> uint32_t Read(char* buffer, T& outValue)
