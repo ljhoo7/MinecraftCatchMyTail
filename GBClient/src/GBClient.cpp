@@ -87,8 +87,10 @@ void TestClient::Start()
 	int receivedBytes = 0;
 	while(true)
 	{
-		receivedBytes = recv(m_clientSocket, gbBuffer.m_buffer, 1, NULL);
-		gbBuffer.m_readOffset += 1;
+		GBBuffer tmpBuffer;
+
+		receivedBytes = recv(m_clientSocket, tmpBuffer.m_buffer, 1, NULL);
+		tmpBuffer.m_readOffset += 1;
 
 		if (SOCKET_ERROR == receivedBytes)
 		{
@@ -96,9 +98,9 @@ void TestClient::Start()
 			return;
 		}
 
-		GatheringMessage(&gbBuffer.m_buffer[1], gbBuffer.m_buffer[0]);
+		GatheringMessage(&tmpBuffer.m_buffer[1], tmpBuffer.m_buffer[0]);
 		
-		ClientConsumeGatheredMessage(&gbBuffer.m_buffer[1], gbBuffer.m_buffer[0], gbBuffer.m_readOffset);
+		ClientConsumeGatheredMessage(&tmpBuffer.m_buffer[1], tmpBuffer.m_buffer[0], tmpBuffer.m_readOffset);
 	}
 }
 
