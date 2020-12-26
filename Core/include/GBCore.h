@@ -116,15 +116,8 @@ namespace GenericBoson
 	{
 		uint32_t readByteLength = 0;
 
-		// Compressed bytes
-		char compressedBytes = 0;
-		uint32_t rr = ReadByteByByte(buffer, compressedBytes);
-		readByteLength += rr;
-		buffer += rr;
-
-		// Uncompressed String Actual Length
 		char stringLength = 0;
-		rr = ReadByteByByte(buffer, stringLength);
+		uint32_t rr = ReadByteByByte(buffer, stringLength);
 		readByteLength += rr;
 		buffer += rr;
 
