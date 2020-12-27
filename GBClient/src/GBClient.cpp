@@ -157,6 +157,50 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			message += rr;
 			messageSize -= rr;
 		}
+		else if (PacketType::JoinGame == pt)
+		{
+			char playerUniqueID = 0;
+			rr = ReadByteByByte(message, playerUniqueID);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			char hardMode = 0;
+			rr = ReadByteByByte(message, hardMode);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			int32_t dimesion = 0;
+			rr = ReadByteByByte(message, dimesion);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			char difficulty = 0;
+			rr = ReadByteByByte(message, difficulty);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			char maxPlayerCount = 0;
+			rr = ReadByteByByte(message, maxPlayerCount);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			std::string levelType;
+			rr = ReadString(message, levelType);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			bool reducedDebugInfo = false;
+			rr = ReadByteByByte(message, reducedDebugInfo);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+		}
 
 		assert(0 <= messageSize);
 
