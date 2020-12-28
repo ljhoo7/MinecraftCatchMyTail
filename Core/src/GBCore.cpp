@@ -59,7 +59,7 @@ namespace GenericBoson
 		spawnSpot |= (uint64_t)(value.y 
 			& 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111);
 		spawnSpot |= (uint64_t)(value.z & bitFlag) << 26; // 26 is the number of one in bitFlag!
-		WriteByteByByte(pGbBuffer, spawnSpot);
+		Write8BytesAsBigEndian(pGbBuffer, spawnSpot);
 	}
 
 	void Core::Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value)

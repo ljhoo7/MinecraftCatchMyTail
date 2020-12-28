@@ -201,6 +201,42 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			message += rr;
 			messageSize -= rr;
 		}
+		else if (PacketType::SpawnSpot == pt)
+		{
+			uint64_t endianChangedVector;
+			rr = ReadByteByByte(message, endianChangedVector);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+		}
+		else if (PacketType::Difficulty == pt)
+		{
+			short endianChangedDifficulty;
+			rr = ReadByteByByte(message, endianChangedDifficulty);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+		}
+		else if (PacketType::CharacterAbility == pt)
+		{
+			short endianChangedFlags;
+			rr = ReadByteByByte(message, endianChangedFlags);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			float endianChangedFlyingMaxSpeed;
+			rr = ReadByteByByte(message, endianChangedFlyingMaxSpeed);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+
+			float endianChangedNormalMaxSpeed;
+			rr = ReadByteByByte(message, endianChangedNormalMaxSpeed);
+			readOffSet += rr;
+			message += rr;
+			messageSize -= rr;
+		}
 
 		assert(0 <= messageSize);
 
