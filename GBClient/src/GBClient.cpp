@@ -225,14 +225,17 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			message += rr;
 			messageSize -= rr;
 
+			uint32_t tmpVariable;
 			float endianChangedFlyingMaxSpeed;
-			rr = ReadByteByByte(message, endianChangedFlyingMaxSpeed);
+			rr = ReadByteByByte(message, tmpVariable);
+			endianChangedFlyingMaxSpeed = (float)tmpVariable;
 			readOffSet += rr;
 			message += rr;
 			messageSize -= rr;
 
 			float endianChangedNormalMaxSpeed;
-			rr = ReadByteByByte(message, endianChangedNormalMaxSpeed);
+			rr = ReadByteByByte(message, tmpVariable);
+			endianChangedFlyingMaxSpeed = (float)tmpVariable;
 			readOffSet += rr;
 			message += rr;
 			messageSize -= rr;
