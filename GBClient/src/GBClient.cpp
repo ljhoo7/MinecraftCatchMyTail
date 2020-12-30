@@ -159,7 +159,7 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 		}
 		else if (PacketType::JoinGame == pt)
 		{
-			char playerUniqueID = 0;
+			uint32_t playerUniqueID = 0;
 			rr = ReadByteByByte(message, playerUniqueID);
 			readOffSet += rr;
 			message += rr;
