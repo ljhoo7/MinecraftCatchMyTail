@@ -128,7 +128,7 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 {
 	while(true)
 	{
-		char packetType = 0;
+		uint32_t packetType = 0;
 		uint32_t rr = ReadByteByByte(message, packetType);
 		readOffSet += rr;
 		message += rr;
@@ -153,7 +153,7 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 
 			std::string userNameString;
 			rr = ReadString(message, userNameString);
-			readOffSet += rr;
+ 			readOffSet += rr;
 			message += rr;
 			messageSize -= rr;
 		}
