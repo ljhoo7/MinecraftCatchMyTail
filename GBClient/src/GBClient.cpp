@@ -124,15 +124,38 @@ void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
 
 }
 
-void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSize, int& readOffSet)
+void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t receivedMessageSize, int& readOffSet)
 {
-	while(true)
+	char uncompressedSize = 0;
+	uint32_t rr = 0;
+	if (SessionState::in_game == m_sessionState)
 	{
-		uint32_t packetType = 0;
-		uint32_t rr = ReadByteByByte(message, (uint32_t)packetType);
+		// In Compression mode,
+		// If current state is IN_GAME,
+		// The header should be 'MessageSize + DataSize'.
+		// MessageSize : size of all fields below.
+		// DataSize : Zero means below not compressed.
+
+		
+		rr = ReadByteByByte(message, uncompressedSize);
 		readOffSet += rr;
 		message += rr;
-		messageSize -= rr;
+		receivedMessageSize -= rr;
+	}
+
+	if (0 != uncompressedSize)
+	{
+		// Uncompress();
+		assert(false); // temporary
+	}
+
+	while(true)
+	{
+		char packetType = 0;
+		rr = ReadByteByByte(message, packetType);
+		readOffSet += rr;
+		message += rr;
+		receivedMessageSize -= rr;
 
 		PacketType pt = (PacketType)packetType;
 		if (PacketType::StartCompression == pt)
@@ -141,7 +164,9 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			rr = ReadByteByByte(message, compressionThreashold);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
+
+			m_sessionState = SessionState::in_game;
 		}
 		else if (PacketType::LoginSuccess == pt)
 		{
@@ -149,13 +174,13 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			rr = ReadString(message, clientUUIDString);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			std::string userNameString;
 			rr = ReadString(message, userNameString);
  			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 		}
 		else if (PacketType::JoinGame == pt)
 		{
@@ -163,43 +188,43 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			rr = ReadByteByByte(message, playerUniqueID);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			char hardMode = 0;
 			rr = ReadByteByByte(message, hardMode);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			int32_t dimesion = 0;
 			rr = ReadByteByByte(message, dimesion);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			char difficulty = 0;
 			rr = ReadByteByByte(message, difficulty);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			char maxPlayerCount = 0;
 			rr = ReadByteByByte(message, maxPlayerCount);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			std::string levelType;
 			rr = ReadString(message, levelType);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			bool reducedDebugInfo = false;
 			rr = ReadByteByByte(message, reducedDebugInfo);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 		}
 		else if (PacketType::SpawnSpot == pt)
 		{
@@ -207,7 +232,7 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			rr = ReadByteByByte(message, endianChangedVector);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 		}
 		else if (PacketType::Difficulty == pt)
 		{
@@ -215,7 +240,7 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			rr = ReadByteByByte(message, endianChangedDifficulty);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 		}
 		else if (PacketType::CharacterAbility == pt)
 		{
@@ -223,7 +248,7 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			rr = ReadByteByByte(message, endianChangedFlags);
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			uint32_t tmpVariable;
 			float endianChangedFlyingMaxSpeed;
@@ -231,19 +256,19 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t messageSiz
 			endianChangedFlyingMaxSpeed = (float)tmpVariable;
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 
 			float endianChangedNormalMaxSpeed;
 			rr = ReadByteByByte(message, tmpVariable);
 			endianChangedFlyingMaxSpeed = (float)tmpVariable;
 			readOffSet += rr;
 			message += rr;
-			messageSize -= rr;
+			receivedMessageSize -= rr;
 		}
 
-		assert(0 <= messageSize);
+		assert(0 <= receivedMessageSize);
 
-		if (0 == messageSize)
+		if (0 == receivedMessageSize)
 		{
 			break;
 		}
