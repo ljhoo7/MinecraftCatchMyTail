@@ -79,7 +79,7 @@ namespace GenericBoson
 	// Warning : If this is not using, but this must exists till the end.
 	private: char m_listenBuffer[BUFFER_SIZE];
 
-	protected: template<typename T> T* AssignFromBuffer(GBBuffer* pGbBuffer)
+	protected: template<typename T> T* AssignFromBufferForWrite(GBBuffer* pGbBuffer)
 	{
 		assert(pGbBuffer->m_writeOffset + sizeof(T) < BUFFER_SIZE);
 
@@ -88,6 +88,19 @@ namespace GenericBoson
 		T* pAddrToReturn = (T*)&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset];
 
 		pGbBuffer->m_writeOffset += bytesToAssign;
+
+		return pAddrToReturn;
+	}
+
+	protected: template<typename T> T* AssignFromBufferForRead(GBBuffer* pGbBuffer)
+	{
+		assert(pGbBuffer->m_readOffset + sizeof(T) < BUFFER_SIZE);
+
+		size_t bytesToAssign = sizeof(T);
+
+		T* pAddrToReturn = (T*)&pGbBuffer->m_buffer[pGbBuffer->m_readOffset];
+
+		pGbBuffer->m_readOffset += bytesToAssign;
 
 		return pAddrToReturn;
 	}
@@ -188,11 +201,15 @@ namespace GenericBoson
 	protected: void Write8BytesAsBigEndian(GBBuffer* eol, uint64_t value);
 	protected: void WriteIntGBVector3(GBBuffer* eol, const GBVector3<int>& value);
 
+	protected: uint16_t Read2BytesAsBigEndian(GBBuffer* eol);
+	protected: uint32_t Read4BytesAsBigEndian(GBBuffer* eol);
+	protected: uint64_t Read8BytesAsBigEndian(GBBuffer* eol);
+
 	protected: template<typename FUNCTION> void MakeAndSendPacket(SOCKET* pSocket, GBBuffer* pGbBuffer, const FUNCTION& func)
 	{
 		pGbBuffer->Reset();
 
-		char* pPacketLength = AssignFromBuffer<char>(pGbBuffer);
+		char* pPacketLength = AssignFromBufferForWrite<char>(pGbBuffer);
 
 		func(pGbBuffer);
 

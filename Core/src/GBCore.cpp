@@ -66,8 +66,16 @@ namespace GenericBoson
 	{
 		uint32_t valueConvertedToBigEndian = htons(value);
 
-		uint16_t* pTwoBytes = AssignFromBuffer<uint16_t>(pGbBuffer);
+		uint16_t* pTwoBytes = AssignFromBufferForWrite<uint16_t>(pGbBuffer);
 		*pTwoBytes = valueConvertedToBigEndian;
+	}
+
+	void Core::Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value)
+	{
+		uint32_t valueConvertedToBigEndian = htonl(value);
+
+		uint32_t* pFourBytes = AssignFromBufferForWrite<uint32_t>(pGbBuffer);
+		*pFourBytes = valueConvertedToBigEndian;
 	}
 
 	void Core::Write8BytesAsBigEndian(GBBuffer* pGbBuffer, uint64_t value)
@@ -76,16 +84,30 @@ namespace GenericBoson
 		uint64_t lowWord = htonl(value >> 32);
 		uint64_t valueConvertedToBigEndian = highWord + lowWord;
 		
-		uint64_t* pEightBytes = AssignFromBuffer<uint64_t>(pGbBuffer);
+		uint64_t* pEightBytes = AssignFromBufferForWrite<uint64_t>(pGbBuffer);
 		*pEightBytes = valueConvertedToBigEndian;
 	}
 
-	void Core::Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value)
+	uint16_t Core::Read2BytesAsBigEndian(GBBuffer* pGbBuffer)
 	{
-		uint32_t valueConvertedToBigEndian = htonl(value);
-		
-		uint32_t* pFourBytes = AssignFromBuffer<uint32_t>(pGbBuffer);
-		*pFourBytes = valueConvertedToBigEndian;
+		uint16_t* pTwoBytes = AssignFromBufferForRead<uint16_t>(pGbBuffer);
+		return ntohs(*pTwoBytes);
+	}
+
+	uint32_t Core::Read4BytesAsBigEndian(GBBuffer* pGbBuffer)
+	{
+		uint32_t* pFourBytes = AssignFromBufferForRead<uint32_t>(pGbBuffer);
+		return ntohl(*pFourBytes);
+	}
+
+	uint64_t Core::Read8BytesAsBigEndian(GBBuffer* pGbBuffer)
+	{
+		uint64_t* pEightBytes = AssignFromBufferForRead<uint64_t>(pGbBuffer);
+
+		uint64_t highWord = ntohl((uint32_t)*pEightBytes) << 32;
+		uint64_t lowWord = ntohl(*pEightBytes >> 32);
+
+		return highWord + lowWord;
 	}
 
 	void Core::EnqueueAndIssueSend(ExpandedOverlapped* pEol)
