@@ -100,7 +100,7 @@ void TestClient::Start()
 
 		GatheringMessage(&tmpBuffer.m_buffer[1], tmpBuffer.m_buffer[0]);
 		
-		ClientConsumeGatheredMessage(&tmpBuffer.m_buffer[1], tmpBuffer.m_buffer[0], tmpBuffer.m_readOffset);
+		ClientConsumeGatheredMessage(tmpBuffer, tmpBuffer.m_buffer[0]);
 	}
 }
 
@@ -124,7 +124,7 @@ void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
 
 }
 
-void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t receivedMessageSize, int& readOffSet)
+void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receivedMessageSize)
 {
 	char uncompressedSize = 0;
 	uint32_t rr = 0;
@@ -137,9 +137,8 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t receivedMe
 		// DataSize : Zero means below not compressed.
 
 		
-		rr = ReadByteByByte(message, uncompressedSize);
-		readOffSet += rr;
-		message += rr;
+		rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], uncompressedSize);
+		buffer.m_readOffset += rr;
 		receivedMessageSize -= rr;
 	}
 
@@ -152,18 +151,16 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t receivedMe
 	while(true)
 	{
 		char packetType = 0;
-		rr = ReadByteByByte(message, packetType);
-		readOffSet += rr;
-		message += rr;
+		rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], packetType);
+		buffer.m_readOffset += rr;
 		receivedMessageSize -= rr;
 
 		PacketType pt = (PacketType)packetType;
 		if (PacketType::StartCompression == pt)
 		{
 			uint32_t compressionThreashold = 0;
-			rr = ReadByteByByte(message, compressionThreashold);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], compressionThreashold);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			m_sessionState = SessionState::in_game;
@@ -171,98 +168,82 @@ void TestClient::ClientConsumeGatheredMessage(char* message, uint32_t receivedMe
 		else if (PacketType::LoginSuccess == pt)
 		{
 			std::string clientUUIDString;
-			rr = ReadString(message, clientUUIDString);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], clientUUIDString);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			std::string userNameString;
-			rr = ReadString(message, userNameString);
- 			readOffSet += rr;
-			message += rr;
+			rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], userNameString);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
 		else if (PacketType::JoinGame == pt)
 		{
-			uint32_t playerUniqueID = 0;
-			rr = ReadByteByByte(message, playerUniqueID);
-			readOffSet += rr;
-			message += rr;
-			receivedMessageSize -= rr;
+			uint32_t playerUniqueID = Read4BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(playerUniqueID);
 
 			char hardMode = 0;
-			rr = ReadByteByByte(message, hardMode);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], hardMode);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			int32_t dimesion = 0;
-			rr = ReadByteByByte(message, dimesion);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], dimesion);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			char difficulty = 0;
-			rr = ReadByteByByte(message, difficulty);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], difficulty);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			char maxPlayerCount = 0;
-			rr = ReadByteByByte(message, maxPlayerCount);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], maxPlayerCount);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			std::string levelType;
-			rr = ReadString(message, levelType);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], levelType);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			bool reducedDebugInfo = false;
-			rr = ReadByteByByte(message, reducedDebugInfo);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], reducedDebugInfo);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
 		else if (PacketType::SpawnSpot == pt)
 		{
 			uint64_t endianChangedVector;
-			rr = ReadByteByByte(message, endianChangedVector);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedVector);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
 		else if (PacketType::Difficulty == pt)
 		{
 			short endianChangedDifficulty;
-			rr = ReadByteByByte(message, endianChangedDifficulty);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedDifficulty);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
 		else if (PacketType::CharacterAbility == pt)
 		{
 			short endianChangedFlags;
-			rr = ReadByteByByte(message, endianChangedFlags);
-			readOffSet += rr;
-			message += rr;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedFlags);
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			uint32_t tmpVariable;
 			float endianChangedFlyingMaxSpeed;
-			rr = ReadByteByByte(message, tmpVariable);
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], tmpVariable);
 			endianChangedFlyingMaxSpeed = (float)tmpVariable;
-			readOffSet += rr;
-			message += rr;
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
 			float endianChangedNormalMaxSpeed;
-			rr = ReadByteByByte(message, tmpVariable);
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], tmpVariable);
 			endianChangedFlyingMaxSpeed = (float)tmpVariable;
-			readOffSet += rr;
-			message += rr;
+			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
 

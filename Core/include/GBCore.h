@@ -196,14 +196,14 @@ namespace GenericBoson
 		pGbBuffer->m_writeBuffer.m_writeOffset += writeLength;
 	}
 
-	protected: void Write2BytesAsBigEndian(GBBuffer* eol, uint16_t value);
-	protected: void Write4BytesAsBigEndian(GBBuffer* eol, uint32_t value);
-	protected: void Write8BytesAsBigEndian(GBBuffer* eol, uint64_t value);
-	protected: void WriteIntGBVector3(GBBuffer* eol, const GBVector3<int>& value);
+	protected: void Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value);
+	protected: void Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value);
+	protected: void Write8BytesAsBigEndian(GBBuffer* pGbBuffer, uint64_t value);
+	protected: void WriteIntGBVector3(GBBuffer* pGbBuffer, const GBVector3<int>& value);
 
-	protected: uint16_t Read2BytesAsBigEndian(GBBuffer* eol);
-	protected: uint32_t Read4BytesAsBigEndian(GBBuffer* eol);
-	protected: uint64_t Read8BytesAsBigEndian(GBBuffer* eol);
+	protected: uint16_t Read2BytesAsBigEndian(GBBuffer* pGbBuffer);
+	protected: uint32_t Read4BytesAsBigEndian(GBBuffer* pGbBuffer);
+	protected: uint64_t Read8BytesAsBigEndian(GBBuffer* pGbBuffer);
 
 	protected: template<typename FUNCTION> void MakeAndSendPacket(SOCKET* pSocket, GBBuffer* pGbBuffer, const FUNCTION& func)
 	{

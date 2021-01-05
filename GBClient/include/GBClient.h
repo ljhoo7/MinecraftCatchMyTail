@@ -22,7 +22,7 @@ public: ~TestClient();
 public: void Start();
 
 public: template<typename STRING> void InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer);
-private: void ClientConsumeGatheredMessage(char* buffer, const uint32_t messageSize, int& readOffSet);
+private: void ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receivedMessageSize);
 private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override {}
 private: void* GetSessionInformationArray() override { return nullptr; }
 private: void GatheringMessage(char* message, uint32_t leftBytesToRecieve);
