@@ -187,10 +187,8 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			int32_t dimesion = 0;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], dimesion);
-			buffer.m_readOffset += rr;
-			receivedMessageSize -= rr;
+			uint32_t dimesion = Read4BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(dimesion);
 
 			char difficulty = 0;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], difficulty);
