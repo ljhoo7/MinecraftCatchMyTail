@@ -217,8 +217,8 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 		}
 		else if (PacketType::Difficulty == pt)
 		{
-			short endianChangedDifficulty;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedDifficulty);
+			char difficulty;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], difficulty);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}

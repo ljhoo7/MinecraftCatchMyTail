@@ -110,6 +110,8 @@ namespace GenericBoson
 		int shift = 0;
 		uint32_t readByteLength = 0;
 
+		memset(&value, 0, sizeof(T));
+
 		// the read MSB means the sign of keeping going.
 		unsigned char MSB = 0;
 		do

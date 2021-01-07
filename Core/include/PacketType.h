@@ -10,7 +10,7 @@ namespace GenericBoson
 		LoginSuccess = 2,
 		StartCompression = 3,
 		ClientSettings = 4,
-		Difficulty = 9,
+		Difficulty = 13,
 		Experience = 26,
 		EquippedItemChange = 29,
 		JoinGame = 35,
