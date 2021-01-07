@@ -212,10 +212,8 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 		}
 		else if (PacketType::SpawnSpot == pt)
 		{
-			uint64_t endianChangedVector;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedVector);
-			buffer.m_readOffset += rr;
-			receivedMessageSize -= rr;
+			uint64_t endianChangedVector = Read8BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(endianChangedVector);
 		}
 		else if (PacketType::Difficulty == pt)
 		{
