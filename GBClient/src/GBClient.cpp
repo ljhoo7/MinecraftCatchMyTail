@@ -238,9 +238,17 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 
 			float endianChangedNormalMaxSpeed;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], tmpVariable);
-			endianChangedFlyingMaxSpeed = (float)tmpVariable;
+			endianChangedNormalMaxSpeed = (float)tmpVariable;
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
+		}
+		else if (PacketType::Time == pt)
+		{
+			uint64_t endianChangedWorldAge = Read8BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(endianChangedWorldAge);
+
+			uint64_t endianChangedTimeOfDay = Read8BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(endianChangedTimeOfDay);
 		}
 
 		assert(0 <= receivedMessageSize);

@@ -16,9 +16,9 @@ namespace GenericBoson
 		JoinGame = 35,
 		CharacterAbility = 38,
 		PlayerList = 39,
-		SpawnSpot = 70,
 		Time = 61,
 		Health = 66,
-		Inventory = 71,
+		SpawnSpot = 71,
+		//Inventory = 71,
 	};
 }
