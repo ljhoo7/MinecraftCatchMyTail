@@ -224,23 +224,20 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 		}
 		else if (PacketType::CharacterAbility == pt)
 		{
-			short endianChangedFlags;
+			char endianChangedFlags;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedFlags);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			uint32_t tmpVariable;
-			float endianChangedFlyingMaxSpeed;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], tmpVariable);
-			endianChangedFlyingMaxSpeed = (float)tmpVariable;
-			buffer.m_readOffset += rr;
-			receivedMessageSize -= rr;
+			float flyingMaxSpeed;
+			uint32_t endianChangedFlyingMaxSpeed = Read4BytesAsBigEndian(&buffer);
+			flyingMaxSpeed = (float)endianChangedFlyingMaxSpeed;
+			receivedMessageSize -= sizeof(endianChangedFlyingMaxSpeed);
 
-			float endianChangedNormalMaxSpeed;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], tmpVariable);
-			endianChangedNormalMaxSpeed = (float)tmpVariable;
-			buffer.m_readOffset += rr;
-			receivedMessageSize -= rr;
+			float normalMaxSpeed;
+			uint32_t endianChangedNormalMaxSpeed = Read4BytesAsBigEndian(&buffer);
+			normalMaxSpeed = (float)endianChangedNormalMaxSpeed;
+			receivedMessageSize -= sizeof(endianChangedNormalMaxSpeed);
 		}
 		else if (PacketType::Time == pt)
 		{
