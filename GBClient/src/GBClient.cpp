@@ -247,6 +247,43 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			uint64_t endianChangedTimeOfDay = Read8BytesAsBigEndian(&buffer);
 			receivedMessageSize -= sizeof(endianChangedTimeOfDay);
 		}
+		else if (PacketType::Inventory == pt)
+		{
+			char inventoryID;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], inventoryID);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			short slotNum = Read2BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(slotNum);
+
+			for (int k = 0; k < slotNum; ++k)
+			{
+				short itemType = Read2BytesAsBigEndian(&buffer);
+				receivedMessageSize -= sizeof(itemType);
+
+				if (-1 == itemType)
+				{
+					// The tem is empty
+					continue;
+				}
+			}
+		}
+		else if (PacketType::Health == pt)
+		{
+			float health;
+			uint32_t endianChangedHealth = Read4BytesAsBigEndian(&buffer);
+			health = (float)endianChangedHealth;
+			receivedMessageSize -= sizeof(endianChangedHealth);
+
+			uint32_t foodLevel = Read4BytesAsBigEndian(&buffer);
+			receivedMessageSize -= sizeof(foodLevel);
+
+			float foodSaturationLevel;
+			uint32_t endianChangedFoodSaturationLevel = Read4BytesAsBigEndian(&buffer);
+			foodSaturationLevel = (float)endianChangedFoodSaturationLevel;
+			receivedMessageSize -= sizeof(endianChangedFoodSaturationLevel);
+		}
 
 		assert(0 <= receivedMessageSize);
 
