@@ -276,8 +276,10 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			health = (float)endianChangedHealth;
 			receivedMessageSize -= sizeof(endianChangedHealth);
 
-			uint32_t foodLevel = Read4BytesAsBigEndian(&buffer);
-			receivedMessageSize -= sizeof(foodLevel);
+			uint32_t foodLevel;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], foodLevel);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
 
 			float foodSaturationLevel;
 			uint32_t endianChangedFoodSaturationLevel = Read4BytesAsBigEndian(&buffer);
