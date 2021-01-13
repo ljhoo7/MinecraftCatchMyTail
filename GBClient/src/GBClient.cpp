@@ -148,7 +148,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 		assert(false); // temporary
 	}
 
-	while(true)
+	while (true)
 	{
 		char packetType = 0;
 		rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], packetType);
@@ -285,6 +285,23 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			uint32_t endianChangedFoodSaturationLevel = Read4BytesAsBigEndian(&buffer);
 			foodSaturationLevel = (float)endianChangedFoodSaturationLevel;
 			receivedMessageSize -= sizeof(endianChangedFoodSaturationLevel);
+		}
+		else if (PacketType::Experience == pt)
+		{
+			float xpPercent;
+			uint32_t endianChangedXpPercent = Read4BytesAsBigEndian(&buffer);
+			xpPercent = (float)endianChangedXpPercent;
+			receivedMessageSize -= sizeof(endianChangedXpPercent);
+
+			uint32_t xpLevel;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], xpLevel);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			uint32_t currentXp;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], currentXp);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
 		}
 
 		assert(0 <= receivedMessageSize);
