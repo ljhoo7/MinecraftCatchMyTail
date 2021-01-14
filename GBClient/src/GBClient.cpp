@@ -303,6 +303,13 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
+		else if (PacketType::HeldItemChange == pt)
+		{
+			char equippedSlotNum;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], equippedSlotNum);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+		}
 
 		assert(0 <= receivedMessageSize);
 
