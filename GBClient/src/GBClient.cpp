@@ -310,6 +310,74 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
+		else if (PacketType::PlayerList == pt)
+		{
+			uint32_t zero;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], zero);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			uint32_t one;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], one);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			std::string playerUUIDString;
+			rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], playerUUIDString);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			std::string playerListName;
+			rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], playerListName);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			uint32_t propertiesSize;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], propertiesSize);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			for (int k = 0; k < propertiesSize; ++k)
+			{
+				std::string nameProperty;
+				rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], playerListName);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+
+				std::string valueProperty;
+				rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], valueProperty);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+
+				bool signature;
+				rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], signature);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+
+				if (true == signature)
+				{
+					std::string signatureString;
+					rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], signatureString);
+					buffer.m_readOffset += rr;
+					receivedMessageSize -= rr;
+				}
+			}
+
+			uint32_t effectiveGameMode;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], effectiveGameMode);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			uint32_t ping;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], ping);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			bool onlyForFalse;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], onlyForFalse);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+		}
 
 		assert(0 <= receivedMessageSize);
 
