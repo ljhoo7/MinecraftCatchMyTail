@@ -7,6 +7,7 @@
 #include "GBBuffer.h"
 #include "PacketType.h"
 #include "GBVector.h"
+#include "UUID.h"
 
 #include <vector>
 #include <thread>
@@ -123,6 +124,21 @@ namespace GenericBoson
 			MSB = byteForBuffer & 0b1000'0000;
 			buffer++;
 		} while (0 != MSB);
+
+		return readByteLength;
+	}
+
+	protected: uint32_t ReadUUID(char* buffer, GBUUID& value)
+	{
+		uint32_t readByteLength = 0;
+
+		std::array<char, 16> tmpBuffer;
+		for (int k = 0; k < 16; ++k)
+		{
+			readByteLength += ReadByteByByte(buffer, tmpBuffer[k]);
+		}
+
+		value.FromRaw(tmpBuffer);
 
 		return readByteLength;
 	}
