@@ -128,14 +128,16 @@ namespace GenericBoson
 		return readByteLength;
 	}
 
-	protected: uint32_t ReadUUID(char* buffer, GBUUID& value)
+	protected: uint32_t ReadUUID(GBBuffer& buffer, GBUUID& value)
 	{
 		uint32_t readByteLength = 0;
 
 		std::array<char, 16> tmpBuffer;
 		for (int k = 0; k < 16; ++k)
 		{
-			readByteLength += ReadByteByByte(buffer, tmpBuffer[k]);
+			uint32_t rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], tmpBuffer[k]);
+			readByteLength += rr;
+			buffer.m_readOffset += rr;
 		}
 
 		value.FromRaw(tmpBuffer);

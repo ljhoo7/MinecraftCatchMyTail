@@ -323,7 +323,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			receivedMessageSize -= rr;
 
 			GBUUID playerUUID;
-			rr = ReadUUID(&buffer.m_buffer[buffer.m_readOffset], playerUUID);
+			rr = ReadUUID(buffer, playerUUID);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
