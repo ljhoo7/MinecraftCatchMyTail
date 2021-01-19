@@ -378,6 +378,13 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
+		else if (PacketType::Stastics == pt)
+		{
+			uint32_t storeSizeSum;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], storeSizeSum);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+		}
 
 		assert(0 <= receivedMessageSize);
 

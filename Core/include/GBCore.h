@@ -7,7 +7,7 @@
 #include "GBBuffer.h"
 #include "PacketType.h"
 #include "GBVector.h"
-#include "UUID.h"
+#include "GBUUID.h"
 
 #include <vector>
 #include <thread>
