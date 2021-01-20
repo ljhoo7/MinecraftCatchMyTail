@@ -384,6 +384,26 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], storeSizeSum);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
+
+			std::map<std::string, uint32_t> staticsMap;
+			for (int k = 0; k < storeSizeSum; ++k)
+			{
+				std::string keyString;
+				rr = ReadString(&buffer.m_buffer[buffer.m_readOffset], keyString);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+
+				uint32_t value;
+				rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], value);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+
+				staticsMap.emplace(keyString, value);
+			}
+			
+#if defined(_DEBUG)
+			int a = 0;
+#endif
 		}
 
 		assert(0 <= receivedMessageSize);

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
+#include <map>
 
 #include "../../Core/include/GBCore.h"
 
