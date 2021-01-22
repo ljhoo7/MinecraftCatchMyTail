@@ -400,10 +400,6 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 
 				staticsMap.emplace(keyString, value);
 			}
-			
-#if defined(_DEBUG)
-			int a = 0;
-#endif
 		}
 
 		assert(0 <= receivedMessageSize);
