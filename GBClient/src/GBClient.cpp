@@ -401,6 +401,34 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 				staticsMap.emplace(keyString, value);
 			}
 		}
+		else if (PacketType::UnlockRecipe == pt)
+		{
+			uint32_t zero;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], zero);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			bool trueOnly;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], trueOnly);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			bool falseOnly;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], falseOnly);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], m_recipeID);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			uint32_t recipeIDConfirm;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], recipeIDConfirm);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
+
+			assert(recipeIDConfirm == m_recipeID);
+		}
 
 		assert(0 <= receivedMessageSize);
 

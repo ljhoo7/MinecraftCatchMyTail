@@ -17,6 +17,7 @@ namespace GenericBoson
 		JoinGame = 35,
 		CharacterAbility = 44,
 		PlayerList = 46,
+		UnlockRecipe = 49,
 		HeldItemChange = 58,
 		Experience = 64,
 		Health = 65,

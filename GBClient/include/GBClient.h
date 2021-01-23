@@ -17,6 +17,8 @@ class TestClient : public Core
 {
 private: SOCKET m_clientSocket = INVALID_SOCKET;
 
+private: uint32_t m_recipeID = 0;
+
 private: SessionState m_sessionState = SessionState::start;
 public: TestClient() = default;
 public: ~TestClient();
