@@ -418,14 +418,32 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], m_recipeID);
+			uint32_t isZero;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], isZero);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			uint32_t recipeIDConfirm;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], recipeIDConfirm);
+			if (1 == isZero)
+			{
+				rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], m_recipeID);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+			}
+
+			uint32_t isZero2;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], isZero2);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
+
+			assert(isZero == isZero2);
+
+			uint32_t recipeIDConfirm;
+			if(1 == isZero2)
+			{
+				rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], recipeIDConfirm);
+				buffer.m_readOffset += rr;
+				receivedMessageSize -= rr;
+			}
 
 			assert(recipeIDConfirm == m_recipeID);
 		}
