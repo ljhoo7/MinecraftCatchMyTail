@@ -54,12 +54,48 @@ namespace GenericBoson
 
 	void Core::WriteIntGBVector3(GBBuffer* pGbBuffer, const GBVector3<int>& value)
 	{
-		const uint64_t bitFlag = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
-		uint64_t spawnSpot = (uint64_t)(value.x & bitFlag) << 38; // 38 is the number of zero in bitFlag!
-		spawnSpot |= (uint64_t)(value.y 
-			& 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111);
-		spawnSpot |= (uint64_t)(value.z & bitFlag) << 26; // 26 is the number of one in bitFlag!
+		uint64_t
+		spawnSpot = (uint64_t)(value.x & BIT_FLAG_FOR_VECTOR_XZ) << 38; // 38 is the number of zero in bitFlag!
+		spawnSpot |= (uint64_t)(value.y & BIT_FLAG_FOR_VECTOR_Y) << 26; // 26 is the number of one in bitFlag!
+		spawnSpot |= (uint64_t)(value.z & BIT_FLAG_FOR_VECTOR_XZ);
 		Write8BytesAsBigEndian(pGbBuffer, spawnSpot);
+	}
+
+	uint32_t Core::ReadIntGBVector3(GBBuffer* pGbBuffer, GBVector3<int>& value)
+	{
+		uint32_t readByteLength = 0;
+
+		uint64_t vectorChunk = Read8BytesAsBigEndian(pGbBuffer);
+		readByteLength += sizeof(vectorChunk);
+
+		uint32_t xRaw = (vectorChunk >> 38) & BIT_FLAG_FOR_VECTOR_XZ;
+		uint32_t yRaw = (vectorChunk >> 26) & BIT_FLAG_FOR_VECTOR_Y;
+		uint32_t zRaw = (vectorChunk & BIT_FLAG_FOR_VECTOR_XZ);
+
+		value.x = (int)xRaw;
+		value.y = (int)yRaw;
+		value.z = (int)zRaw;
+
+		// If it should be converted into negative, do it now.
+		if ((xRaw & 0x02000000) != 0)
+		{
+			value.x = 0x04000000 - value.x;
+			value.x *= -1;
+		}
+
+		if ((yRaw & 0x0800) != 0)
+		{
+			value.y = 0x01000 - value.y;
+			value.y *= -1;
+		}
+
+		if ((zRaw & 0x02000000) != 0)
+		{
+			value.z = 0x04000000 - value.z;
+			value.z *= -1;
+		}
+
+		return readByteLength;
 	}
 
 	void Core::Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value)
