@@ -65,7 +65,7 @@ namespace GenericBoson
 	{
 		uint32_t readByteLength = 0;
 
-		uint64_t vectorChunk = Read8BytesAsBigEndian(pGbBuffer);
+		int64_t vectorChunk = Read8BytesAsBigEndian(pGbBuffer);
 		readByteLength += sizeof(vectorChunk);
 
 		uint32_t xRaw = (vectorChunk >> 38) & BIT_FLAG_FOR_VECTOR_XZ;
@@ -140,10 +140,7 @@ namespace GenericBoson
 	{
 		uint64_t* pEightBytes = AssignFromBufferForRead<uint64_t>(pGbBuffer);
 
-		uint64_t highWord = ntohl((uint32_t)*pEightBytes) << 32;
-		uint64_t lowWord = ntohl(*pEightBytes >> 32);
-
-		return highWord + lowWord;
+		return ntohll(*pEightBytes);
 	}
 
 	void Core::EnqueueAndIssueSend(ExpandedOverlapped* pEol)
