@@ -230,15 +230,11 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receive
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			float flyingMaxSpeed;
-			uint32_t endianChangedFlyingMaxSpeed = Read4BytesAsBigEndian(&buffer);
-			flyingMaxSpeed = (float)endianChangedFlyingMaxSpeed;
-			receivedMessageSize -= sizeof(endianChangedFlyingMaxSpeed);
+			float flyingMaxSpeed = ReadFloat(&buffer);
+			receivedMessageSize -= 4;
 
-			float normalMaxSpeed;
-			uint32_t endianChangedNormalMaxSpeed = Read4BytesAsBigEndian(&buffer);
-			normalMaxSpeed = (float)endianChangedNormalMaxSpeed;
-			receivedMessageSize -= sizeof(endianChangedNormalMaxSpeed);
+			float normalMaxSpeed = ReadFloat(&buffer);
+			receivedMessageSize -= 4;
 		}
 		else if (PacketType::Time == pt)
 		{

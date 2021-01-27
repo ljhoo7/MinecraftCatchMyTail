@@ -221,6 +221,7 @@ namespace GenericBoson
 
 	protected: uint16_t Read2BytesAsBigEndian(GBBuffer* pGbBuffer);
 	protected: uint32_t Read4BytesAsBigEndian(GBBuffer* pGbBuffer);
+	protected: float ReadFloat(GBBuffer* pGbBuffer);
 	protected: uint64_t Read8BytesAsBigEndian(GBBuffer* pGbBuffer);
 	protected: uint32_t ReadIntGBVector3(GBBuffer* pGbBuffer, GBVector3<int>& value);
 

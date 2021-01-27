@@ -136,6 +136,17 @@ namespace GenericBoson
 		return ntohl(*pFourBytes);
 	}
 
+	float Core::ReadFloat(GBBuffer* pGbBuffer)
+	{
+		float returnValue;
+		uint32_t endianChangedFlyingMaxSpeed = Read4BytesAsBigEndian(pGbBuffer);
+
+		// Strangely, 'returnValue = (float)endianChangedFlyingMaxSpeed' does not work correctly.
+		memcpy_s(&returnValue, 4, &endianChangedFlyingMaxSpeed, 4);
+
+		return returnValue;
+	}
+
 	uint64_t Core::Read8BytesAsBigEndian(GBBuffer* pGbBuffer)
 	{
 		uint64_t* pEightBytes = AssignFromBufferForRead<uint64_t>(pGbBuffer);
