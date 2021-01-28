@@ -222,7 +222,7 @@ namespace GenericBoson
 				assert(false);
 			}
 		}
-		if(SessionState::start == ss)
+		else if(SessionState::start == ss)
 		{
 			// Protocol Version
 			short protocolVersion = 0;
@@ -253,7 +253,7 @@ namespace GenericBoson
 
 			pSi->m_sessionState = (SessionState)nextStage;
 		}
-		if(SessionState::in_game == ss)
+		else if(SessionState::in_game == ss)
 		{
 			if(PacketType::ClientSettings == pt)
 			{

@@ -61,7 +61,7 @@ namespace GenericBoson
 		};
 
 		// If you remove '/100', you will get a compile time error "out of heap".
-	public: static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
+	public: static constexpr int EXTENDED_OVERLAPPED_ARRAY_SIZE = 1;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 	private: SOCKET m_listenSocket = INVALID_SOCKET;
 	private: HANDLE m_IOCP = INVALID_HANDLE_VALUE;
 
@@ -186,6 +186,10 @@ namespace GenericBoson
 
 			value = value >> 7;
 		} while (0 < value);
+
+		assert(sizeof(char) <= sizeof(pGbBuffer->m_writeOffset));
+
+		pGbBuffer->m_buffer[0] = (char)pGbBuffer->m_writeOffset;
 	}
 
 	protected: template<typename STRING> void WriteString(GBBuffer* pGbBuffer, const STRING& inString)
