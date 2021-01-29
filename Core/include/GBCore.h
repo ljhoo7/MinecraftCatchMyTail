@@ -188,8 +188,6 @@ namespace GenericBoson
 		} while (0 < value);
 
 		assert(sizeof(char) <= sizeof(pGbBuffer->m_writeOffset));
-
-		pGbBuffer->m_buffer[0] = (char)pGbBuffer->m_writeOffset;
 	}
 
 	protected: template<typename STRING> void WriteString(GBBuffer* pGbBuffer, const STRING& inString)
