@@ -12,14 +12,14 @@ namespace GenericBoson
 
 	void Server::SendLoginSuccess(SessionInfomation* pSi)
 	{
-		MakeAndSendPacket(&pSi->m_socket, &pSi->m_writeBuffer, [pSi, this](GBBuffer* pGbBuffer)
+		MakeAndSendPacket(pSi, [this](SessionInfomation* pSi)
 		{
-			WriteByteByByte(pGbBuffer, (int32_t)PacketType::LoginSuccess);
+			WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::LoginSuccess);
 
 			// UUID #ToDo
 			pSi->m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-			WriteString(pGbBuffer, pSi->m_uuid);
-			WriteString(pGbBuffer, pSi->m_userName);
+			WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
+			WriteString(&pSi->m_writeBuffer, pSi->m_userName);
 		});
 		
 		//EnqueueAndIssueSend(pSi);
