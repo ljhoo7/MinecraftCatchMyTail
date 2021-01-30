@@ -50,13 +50,7 @@ namespace GenericBoson
 
 		*pPacketLength = (char)(pSi->m_writeBuffer->m_writeOffset - 1);
 
-		int sendResult = send(pSi->m_socket, pSi->m_writeBuffer->m_buffer, pSi->m_writeBuffer->m_writeOffset, NULL);
-
-		if (SOCKET_ERROR == sendResult)
-		{
-			std::cout << "[send failed] WSAGetLastError : " << WSAGetLastError() << std::endl;
-			return;
-		}
+		EnqueueAndIssueSend(pSi);
 	}
 	};
 }
