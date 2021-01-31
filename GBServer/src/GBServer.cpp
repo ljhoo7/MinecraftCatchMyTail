@@ -6,23 +6,16 @@ namespace GenericBoson
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::StartCompression);
 		WriteByteByByte(&pSi->m_writeBuffer, InternalConstant::CompressThreshold);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendLoginSuccess(SessionInfomation* pSi)
 	{
-		MakeAndSendPacket(pSi, [this](SessionInfomation* pSi)
-		{
-			WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::LoginSuccess);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::LoginSuccess);
 
-			// UUID #ToDo
-			pSi->m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-			WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
-			WriteString(&pSi->m_writeBuffer, pSi->m_userName);
-		});
-		
-		//EnqueueAndIssueSend(pSi);
+		// UUID #ToDo
+		pSi->m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
+		WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
+		WriteString(&pSi->m_writeBuffer, pSi->m_userName);
 	}
 
 	void Server::SendJoinGame(SessionInfomation* pSi)
@@ -49,8 +42,6 @@ namespace GenericBoson
 
 		uint8_t reducedDebugInfo = 0; // bool
 		WriteByteByByte(&pSi->m_writeBuffer, reducedDebugInfo);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendSpawnSpot(SessionInfomation* pSi)
@@ -59,8 +50,6 @@ namespace GenericBoson
 
 		GBVector3<int> spawnSpot(10, 10, 10);
 		WriteIntGBVector3(&pSi->m_writeBuffer, spawnSpot);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendDifficulty(SessionInfomation* pSi)
@@ -69,8 +58,6 @@ namespace GenericBoson
 
 		char difficulty = 1;
 		WriteByteByByte(&pSi->m_writeBuffer, difficulty);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendCharacterAbility(SessionInfomation* pSi)
@@ -84,8 +71,6 @@ namespace GenericBoson
 
 		float correctedSprintingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_sprintingMaxSpeed;
 		Write4BytesAsBigEndian(&pSi->m_writeBuffer, correctedSprintingMaxSpeed);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendTime(SessionInfomation* pSi)
@@ -96,8 +81,6 @@ namespace GenericBoson
 		// false == m_world.m_dayLightEnabled #ToDo
 
 		Write8BytesAsBigEndian(&pSi->m_writeBuffer, m_world.m_timeOfDay);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendInventory(SessionInfomation* pSi)
@@ -111,8 +94,6 @@ namespace GenericBoson
 			// #ToDo
 			pSlot->WriteItem();
 		}
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendHealth(SessionInfomation* pSi)
@@ -121,8 +102,6 @@ namespace GenericBoson
 		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_health);
 		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodLevel);
 		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodSaturationLevel);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendExperience(SessionInfomation* pSi)
@@ -135,16 +114,12 @@ namespace GenericBoson
 		int level = pSi->m_controllableCharacter.GetLevel();
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Experience);
 		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_experience);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendEquippedItem(SessionInfomation* pSi)
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::EquippedItemChange);
 		WriteByteByByte(&pSi->m_writeBuffer, (int8_t)pSi->m_controllableCharacter.m_inventory.m_equippedSlotID);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void Server::SendPlayerList(SessionInfomation* pSi)
@@ -169,8 +144,6 @@ namespace GenericBoson
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)m_world.m_pingMs);
 
 		WriteByteByByte(&pSi->m_writeBuffer, (char)0);
-
-		EnqueueAndIssueSend(pSi);
 	}
 
 	void* Server::GetSessionInformationArray()
@@ -202,23 +175,27 @@ namespace GenericBoson
 
 				pSi->m_userName = userName;
 
-				SendStartCompress(pSi);
-				SendLoginSuccess(pSi);
-				SendJoinGame(pSi);
-				SendSpawnSpot(pSi);
-				SendDifficulty(pSi);
-				SendCharacterAbility(pSi);
 
-				//SendWeather #ToDo
+				MakeAndSendPacket(pSi, [this](SessionInfomation* pSi)
+				{
+					SendStartCompress(pSi);
+					SendLoginSuccess(pSi);
+					SendJoinGame(pSi);
+					SendSpawnSpot(pSi);
+					SendDifficulty(pSi);
+					SendCharacterAbility(pSi);
 
-				SendTime(pSi);
-				SendInventory(pSi);
-				SendHealth(pSi);
-				SendExperience(pSi);
-				SendEquippedItem(pSi);
-				SendPlayerList(pSi);
+					//SendWeather #ToDo
 
-				//eol.m_sessionState = authed;
+					SendTime(pSi);
+					SendInventory(pSi);
+					SendHealth(pSi);
+					SendExperience(pSi);
+					SendEquippedItem(pSi);
+					SendPlayerList(pSi);
+
+					//eol.m_sessionState = authed;
+				});
 			}
 			else
 			{

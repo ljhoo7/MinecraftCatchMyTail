@@ -33,6 +33,7 @@ namespace GenericBoson
 	public: void SendTime(SessionInfomation*);
 	public: void SendInventory(SessionInfomation*);
 	public: void SendHealth(SessionInfomation*);
+
 	public: void SendExperience(SessionInfomation*);
 	public: void SendEquippedItem(SessionInfomation*);
 	public: void SendPlayerList(SessionInfomation*);
@@ -42,13 +43,13 @@ namespace GenericBoson
 
 	protected: template<typename FUNCTION> void MakeAndSendPacket(SessionInfomation* pSi, const FUNCTION& func)
 	{
-		pSi->m_writeBuffer->Reset();
+		pSi->m_writeBuffer.Reset();
 
 		char* pPacketLength = AssignFromBufferForWrite<char>(&pSi->m_writeBuffer);
 
 		func(pSi);
 
-		*pPacketLength = (char)(pSi->m_writeBuffer->m_writeOffset - 1);
+		*pPacketLength = (char)(pSi->m_writeBuffer.m_writeOffset - 1);
 
 		EnqueueAndIssueSend(pSi);
 	}
