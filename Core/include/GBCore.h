@@ -192,16 +192,12 @@ namespace GenericBoson
 
 	protected: template<typename STRING> void WriteString(GBBuffer* pGbBuffer, const STRING& inString)
 	{
-		uint32_t writeByteLength = 0;
-		char* buffer = pGbBuffer->m_buffer;
-
 		// String Length
 		char inStringSize = (char)inString.length();
 		WriteByteByByte(pGbBuffer, inStringSize);
 
-		errno_t cpyStrResult = strncpy_s(buffer, 1024, inString.c_str(), inStringSize);
-		pGbBuffer->m_writeOffset += writeByteLength;
-		buffer += inStringSize;
+		errno_t cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], 1024, inString.c_str(), inStringSize);
+		pGbBuffer->m_writeOffset += inStringSize;
 	}
 
 	protected: template<typename T> void Write(GBBuffer* pGbBuffer, const T& outValue)
