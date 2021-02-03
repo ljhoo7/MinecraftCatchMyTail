@@ -196,8 +196,11 @@ namespace GenericBoson
 		char inStringSize = (char)inString.length();
 		WriteByteByByte(pGbBuffer, inStringSize);
 
-		errno_t cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], 1024, inString.c_str(), inStringSize);
+		errno_t cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset - 1, inString.c_str(), inStringSize);
 		pGbBuffer->m_writeOffset += inStringSize;
+
+		int a = 0;
+		a = 1;
 	}
 
 	protected: template<typename T> void Write(GBBuffer* pGbBuffer, const T& outValue)
