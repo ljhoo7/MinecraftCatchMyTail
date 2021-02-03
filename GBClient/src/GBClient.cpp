@@ -6,25 +6,6 @@ TestClient::~TestClient()
 	WSACleanup();
 }
 
-template<typename STRING>
-void TestClient::InscribeStringToBuffer(const STRING& str, GBBuffer* pGbBuffer)
-{
-	char stringLength = (char)str.length();
-	WriteByteByByte(pGbBuffer, stringLength);
-
-	assert(pGbBuffer->m_writeOffset + stringLength < BUFFER_SIZE);
-
-	errno_t strncpyResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset, (char*)str.c_str(), stringLength);
-
-	if (0 != strncpyResult)
-	{
-		std::cout << "[strncpy_s failed] return value : " << strncpyResult << std::endl;
-		assert(false);
-	}
-
-	pGbBuffer->m_writeOffset += stringLength;
-}
-
 void TestClient::Start()
 {
 	WSADATA wsaData;
@@ -66,7 +47,13 @@ void TestClient::Start()
 		WriteByteByByte(pGbBuffer, protocolVersion);
 
 		std::string serverAddrStr = "127.0.0.1";
-		InscribeStringToBuffer(serverAddrStr, pGbBuffer);
+		errno_t strncpyResult = WriteString(pGbBuffer, serverAddrStr);
+
+		if (0 != strncpyResult)
+		{
+			std::cout << "[strncpy_s failed] return value : " << strncpyResult << std::endl;
+			assert(false);
+		}
 
 		unsigned short port = MINECRAFT_PORT_NUMBER;
 		Write2BytesAsBigEndian(pGbBuffer, port);
@@ -81,7 +68,13 @@ void TestClient::Start()
 		WriteByteByByte(pGbBuffer, packetType);
 
 		std::string IDString = "tester";
-		InscribeStringToBuffer(IDString, pGbBuffer);
+		errno_t strncpyResult = WriteString(pGbBuffer, IDString);
+
+		if (0 != strncpyResult)
+		{
+			std::cout << "[strncpy_s failed] return value : " << strncpyResult << std::endl;
+			assert(false);
+		}
 	});
 
 	int receivedBytes = 0;

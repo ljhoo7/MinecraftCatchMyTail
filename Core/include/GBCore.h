@@ -190,17 +190,18 @@ namespace GenericBoson
 		assert(sizeof(char) <= sizeof(pGbBuffer->m_writeOffset));
 	}
 
-	protected: template<typename STRING> void WriteString(GBBuffer* pGbBuffer, const STRING& inString)
+	protected: template<typename STRING> errno_t WriteString(GBBuffer* pGbBuffer, const STRING& inString)
 	{
 		// String Length
 		char inStringSize = (char)inString.length();
 		WriteByteByByte(pGbBuffer, inStringSize);
 
+		assert(pGbBuffer->m_writeOffset + stringLength < BUFFER_SIZE);
+
 		errno_t cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset - 1, inString.c_str(), inStringSize);
 		pGbBuffer->m_writeOffset += inStringSize;
 
-		int a = 0;
-		a = 1;
+		return cpyStrResult;
 	}
 
 	protected: template<typename T> void Write(GBBuffer* pGbBuffer, const T& outValue)
