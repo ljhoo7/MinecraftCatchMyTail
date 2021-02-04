@@ -196,7 +196,7 @@ namespace GenericBoson
 		char inStringSize = (char)inString.length();
 		WriteByteByByte(pGbBuffer, inStringSize);
 
-		assert(pGbBuffer->m_writeOffset + stringLength < BUFFER_SIZE);
+		assert(pGbBuffer->m_writeOffset + inStringSize < BUFFER_SIZE);
 
 		errno_t cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset - 1, inString.c_str(), inStringSize);
 		pGbBuffer->m_writeOffset += inStringSize;

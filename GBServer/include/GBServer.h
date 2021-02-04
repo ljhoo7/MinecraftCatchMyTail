@@ -49,6 +49,8 @@ namespace GenericBoson
 
 		func(pSi);
 
+		assert(pSi->m_writeBuffer.m_writeOffset < 257);
+
 		*pPacketLength = (char)(pSi->m_writeBuffer.m_writeOffset - 1);
 
 		EnqueueAndIssueSend(pSi);

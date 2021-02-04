@@ -97,11 +97,14 @@ void TestClient::Start()
 	}
 }
 
-void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
+// 'char' is -127 to 127. So use uint8_t!
+void TestClient::GatheringMessage(char* message, uint8_t leftBytesToRecieve)
 {
 	while (0 < leftBytesToRecieve)
 	{
 		int receivedBytes = recv(m_clientSocket, message, leftBytesToRecieve, NULL);
+
+		assert(receivedBytes < 256);
 
 		if (SOCKET_ERROR == receivedBytes)
 		{
@@ -109,7 +112,7 @@ void TestClient::GatheringMessage(char* message, uint32_t leftBytesToRecieve)
 			return;
 		}
 
-		leftBytesToRecieve -= receivedBytes;
+		leftBytesToRecieve -= (uint8_t)receivedBytes;
 		message += receivedBytes;
 
 		assert(0 <= leftBytesToRecieve);
