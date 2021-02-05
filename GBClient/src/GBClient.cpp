@@ -120,7 +120,7 @@ void TestClient::GatheringMessage(char* message, uint8_t leftBytesToRecieve)
 
 }
 
-void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint32_t receivedMessageSize)
+void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t receivedMessageSize)
 {
 	char uncompressedSize = 0;
 	uint32_t rr = 0;
