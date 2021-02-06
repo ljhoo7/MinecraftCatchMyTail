@@ -178,7 +178,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			uint32_t playerUniqueID = Read4BytesAsBigEndian(&buffer);
 			receivedMessageSize -= sizeof(playerUniqueID);
 
-			char hardMode = 0;
+			uint8_t hardMode = 0;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], hardMode);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
@@ -186,12 +186,12 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			uint32_t dimesion = Read4BytesAsBigEndian(&buffer);
 			receivedMessageSize -= sizeof(dimesion);
 
-			char difficulty = 0;
+			uint8_t difficulty = 0;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], difficulty);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			char maxPlayerCount = 0;
+			uint8_t maxPlayerCount = 0;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], maxPlayerCount);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
@@ -214,14 +214,14 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		}
 		else if (PacketType::Difficulty == pt)
 		{
-			char difficulty;
+			uint8_t difficulty;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], difficulty);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 		}
 		else if (PacketType::CharacterAbility == pt)
 		{
-			char endianChangedFlags;
+			uint8_t endianChangedFlags;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], endianChangedFlags);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
@@ -242,7 +242,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		}
 		else if (PacketType::Inventory == pt)
 		{
-			char inventoryID;
+			uint8_t inventoryID;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], inventoryID);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
@@ -298,7 +298,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		}
 		else if (PacketType::HeldItemChange == pt)
 		{
-			char equippedSlotNum;
+			uint8_t equippedSlotNum;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], equippedSlotNum);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
