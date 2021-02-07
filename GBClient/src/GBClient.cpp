@@ -120,6 +120,7 @@ void TestClient::GatheringMessage(char* message, uint8_t leftBytesToRecieve)
 
 }
 
+// Second parameter type must be uint8_t! char is -127 < char < 127.
 void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t receivedMessageSize)
 {
 	char uncompressedSize = 0;
