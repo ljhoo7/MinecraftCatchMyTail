@@ -87,7 +87,8 @@ namespace GenericBoson
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Inventory);
 		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_inventory.m_ID);
-		WriteByteByByte(&pSi->m_writeBuffer, (int16_t)pSi->m_controllableCharacter.m_inventory.GetTotalSlotCount());
+		int16_t slotCount = (int16_t)pSi->m_controllableCharacter.m_inventory.GetTotalSlotCount();
+		WriteByteByByte(&pSi->m_writeBuffer, slotCount);
 
 		for (auto& pSlot : pSi->m_controllableCharacter.m_inventory.m_slotVector)
 		{

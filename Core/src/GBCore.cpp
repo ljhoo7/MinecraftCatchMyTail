@@ -65,7 +65,7 @@ namespace GenericBoson
 	{
 		uint32_t readByteLength = 0;
 
-		int64_t vectorChunk = Read8BytesAsBigEndian(pGbBuffer);
+		uint64_t vectorChunk = Read8BytesAsBigEndian(pGbBuffer);
 		readByteLength += sizeof(vectorChunk);
 
 		uint32_t xRaw = (vectorChunk >> 38) & BIT_FLAG_FOR_VECTOR_XZ;
