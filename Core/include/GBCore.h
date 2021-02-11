@@ -216,9 +216,9 @@ namespace GenericBoson
 	protected: const uint64_t BIT_FLAG_FOR_VECTOR_XZ = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
 	protected: const uint64_t BIT_FLAG_FOR_VECTOR_Y = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111;
 
-	protected: void Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value);
-	protected: void Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value);
-	protected: void Write8BytesAsBigEndian(GBBuffer* pGbBuffer, uint64_t value);
+	protected: void Write2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint16_t value);
+	protected: void Write4BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint32_t value);
+	protected: void Write8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint64_t value);
 	protected: void WriteIntGBVector3(GBBuffer* pGbBuffer, const GBVector3<int>& value);
 
 	protected: uint16_t Read2BytesAsBigEndian(GBBuffer* pGbBuffer);

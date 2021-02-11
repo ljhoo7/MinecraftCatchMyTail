@@ -100,7 +100,7 @@ namespace GenericBoson
 		return readByteLength;
 	}
 
-	void Core::Write2BytesAsBigEndian(GBBuffer* pGbBuffer, uint16_t value)
+	void Core::Write2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint16_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htons(value);
 
@@ -108,7 +108,7 @@ namespace GenericBoson
 		*pTwoBytes = valueConvertedToBigEndian;
 	}
 
-	void Core::Write4BytesAsBigEndian(GBBuffer* pGbBuffer, uint32_t value)
+	void Core::Write4BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint32_t value)
 	{
 		uint32_t valueConvertedToBigEndian = htonl(value);
 
@@ -116,7 +116,7 @@ namespace GenericBoson
 		*pFourBytes = valueConvertedToBigEndian;
 	}
 
-	void Core::Write8BytesAsBigEndian(GBBuffer* pGbBuffer, uint64_t value)
+	void Core::Write8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint64_t value)
 	{
 		uint64_t highWord = htonl((uint32_t)value) << 32;
 		uint64_t lowWord = htonl(value >> 32);
