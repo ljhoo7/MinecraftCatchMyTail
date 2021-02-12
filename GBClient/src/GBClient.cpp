@@ -176,7 +176,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		}
 		else if (PacketType::JoinGame == pt)
 		{
-			uint32_t playerUniqueID = Read4BytesAsBigEndian(&buffer);
+			uint32_t playerUniqueID = Read4BytesAsBigEndian_Without_Sign(&buffer);
 			receivedMessageSize -= sizeof(playerUniqueID);
 
 			uint8_t hardMode = 0;
@@ -184,7 +184,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			uint32_t dimesion = Read4BytesAsBigEndian(&buffer);
+			uint32_t dimesion = Read4BytesAsBigEndian_Without_Sign(&buffer);
 			receivedMessageSize -= sizeof(dimesion);
 
 			uint8_t difficulty = 0;
@@ -235,10 +235,10 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		}
 		else if (PacketType::Time == pt)
 		{
-			uint64_t endianChangedWorldAge = Read8BytesAsBigEndian(&buffer);
+			uint64_t endianChangedWorldAge = Read8BytesAsBigEndian_Without_Sign(&buffer);
 			receivedMessageSize -= sizeof(endianChangedWorldAge);
 
-			uint64_t endianChangedTimeOfDay = Read8BytesAsBigEndian(&buffer);
+			uint64_t endianChangedTimeOfDay = Read8BytesAsBigEndian_Without_Sign(&buffer);
 			receivedMessageSize -= sizeof(endianChangedTimeOfDay);
 		}
 		else if (PacketType::Inventory == pt)
@@ -248,12 +248,12 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			short slotNum = Read2BytesAsBigEndian(&buffer);
+			short slotNum = Read2BytesAsBigEndian_Without_Sign(&buffer);
 			receivedMessageSize -= sizeof(slotNum);
 
 			for (int k = 0; k < slotNum; ++k)
 			{
-				short itemType = Read2BytesAsBigEndian(&buffer);
+				short itemType = Read2BytesAsBigEndian_Without_Sign(&buffer);
 				receivedMessageSize -= sizeof(itemType);
 
 				if (-1 == itemType)
@@ -266,7 +266,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		else if (PacketType::Health == pt)
 		{
 			float health;
-			uint32_t endianChangedHealth = Read4BytesAsBigEndian(&buffer);
+			uint32_t endianChangedHealth = Read4BytesAsBigEndian_Without_Sign(&buffer);
 			health = (float)endianChangedHealth;
 			receivedMessageSize -= sizeof(endianChangedHealth);
 
@@ -276,14 +276,14 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			receivedMessageSize -= rr;
 
 			float foodSaturationLevel;
-			uint32_t endianChangedFoodSaturationLevel = Read4BytesAsBigEndian(&buffer);
+			uint32_t endianChangedFoodSaturationLevel = Read4BytesAsBigEndian_Without_Sign(&buffer);
 			foodSaturationLevel = (float)endianChangedFoodSaturationLevel;
 			receivedMessageSize -= sizeof(endianChangedFoodSaturationLevel);
 		}
 		else if (PacketType::Experience == pt)
 		{
 			float xpPercent;
-			uint32_t endianChangedXpPercent = Read4BytesAsBigEndian(&buffer);
+			uint32_t endianChangedXpPercent = Read4BytesAsBigEndian_Without_Sign(&buffer);
 			xpPercent = (float)endianChangedXpPercent;
 			receivedMessageSize -= sizeof(endianChangedXpPercent);
 

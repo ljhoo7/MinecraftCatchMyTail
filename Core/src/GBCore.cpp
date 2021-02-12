@@ -67,7 +67,7 @@ namespace GenericBoson
 		uint32_t readByteLength = 0;
 
 		// Warning : Don't change the below type 'int64_t' to 'uint64_t'.
-		int64_t vectorChunk = Read8BytesAsBigEndian(pGbBuffer);
+		int64_t vectorChunk = Read8BytesAsBigEndian_Without_Sign(pGbBuffer);
 		readByteLength += sizeof(vectorChunk);
 
 		uint32_t xRaw = (vectorChunk >> 38) & BIT_FLAG_FOR_VECTOR_XZ;
@@ -126,13 +126,13 @@ namespace GenericBoson
 		*pEightBytes = valueConvertedToBigEndian;
 	}
 
-	uint16_t Core::Read2BytesAsBigEndian(GBBuffer* pGbBuffer)
+	uint16_t Core::Read2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
 	{
 		uint16_t* pTwoBytes = AssignFromBufferForRead<uint16_t>(pGbBuffer);
 		return ntohs(*pTwoBytes);
 	}
 
-	uint32_t Core::Read4BytesAsBigEndian(GBBuffer* pGbBuffer)
+	uint32_t Core::Read4BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
 	{
 		uint32_t* pFourBytes = AssignFromBufferForRead<uint32_t>(pGbBuffer);
 		return ntohl(*pFourBytes);
@@ -141,7 +141,7 @@ namespace GenericBoson
 	float Core::ReadFloat(GBBuffer* pGbBuffer)
 	{
 		float returnValue;
-		uint32_t endianChangedFlyingMaxSpeed = Read4BytesAsBigEndian(pGbBuffer);
+		uint32_t endianChangedFlyingMaxSpeed = Read4BytesAsBigEndian_Without_Sign(pGbBuffer);
 
 		// Strangely, 'returnValue = (float)endianChangedFlyingMaxSpeed' does not work correctly.
 		memcpy_s(&returnValue, 4, &endianChangedFlyingMaxSpeed, 4);
@@ -149,7 +149,7 @@ namespace GenericBoson
 		return returnValue;
 	}
 
-	int64_t Core::Read8BytesAsBigEndian(GBBuffer* pGbBuffer)
+	int64_t Core::Read8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
 	{
 		int64_t* pEightBytes = AssignFromBufferForRead<int64_t>(pGbBuffer);
 
