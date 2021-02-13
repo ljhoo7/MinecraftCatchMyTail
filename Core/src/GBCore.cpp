@@ -126,6 +126,18 @@ namespace GenericBoson
 		*pEightBytes = valueConvertedToBigEndian;
 	}
 
+	void Core::Write2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, uint16_t value)
+	{
+	}
+
+	void Core::Write4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, uint32_t value)
+	{
+	}
+
+	void Core::Write8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, uint64_t value)
+	{
+	}
+
 	uint16_t Core::Read2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
 	{
 		uint16_t* pTwoBytes = AssignFromBufferForRead<uint16_t>(pGbBuffer);
