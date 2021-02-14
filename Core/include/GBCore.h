@@ -216,9 +216,9 @@ namespace GenericBoson
 	protected: const uint64_t BIT_FLAG_FOR_VECTOR_XZ = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0011'1111'1111'1111'1111'1111'1111;
 	protected: const uint64_t BIT_FLAG_FOR_VECTOR_Y = 0b0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'0000'1111'1111'1111;
 
-	protected: void Write2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, uint16_t value);
-	protected: void Write4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, uint32_t value);
-	protected: void Write8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, uint64_t value);
+	protected: void Write2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, int16_t value);
+	protected: void Write4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, int32_t value);
+	protected: void Write8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, int64_t value);
 
 	protected: void Write2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint16_t value);
 	protected: void Write4BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint32_t value);
@@ -226,13 +226,13 @@ namespace GenericBoson
 
 	protected: void WriteIntGBVector3(GBBuffer* pGbBuffer, const GBVector3<int>& value);
 
-	protected: uint16_t Read2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
-	protected: uint32_t Read4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
+	protected: int16_t Read2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
+	protected: int32_t Read4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
 	protected: int64_t Read8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
 
 	protected: uint16_t Read2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer);
 	protected: uint32_t Read4BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer);
-	protected: int64_t Read8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer);
+	protected: uint64_t Read8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer);
 
 	protected: float ReadFloat(GBBuffer* pGbBuffer);
 	protected: uint32_t ReadIntGBVector3(GBBuffer* pGbBuffer, GBVector3<int>& value);
