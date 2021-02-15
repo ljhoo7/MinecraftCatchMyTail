@@ -128,26 +128,44 @@ namespace GenericBoson
 
 	void Core::Write2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, int16_t value)
 	{
+		Write2BytesAsBigEndian_Without_Sign(pGbBuffer, value);
 	}
 
 	void Core::Write4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, int32_t value)
 	{
+		Write4BytesAsBigEndian_Without_Sign(pGbBuffer, value);
 	}
 
 	void Core::Write8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer, int64_t value)
 	{
+		Write8BytesAsBigEndian_Without_Sign(pGbBuffer, value);
 	}
 
 	int16_t Core::Read2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer)
 	{
+		int16_t ret = 0;
+		uint16_t tmpUnsigned = Read2BytesAsBigEndian_Without_Sign(pGbBuffer);
+		memcpy_s(&ret, sizeof(ret), &tmpUnsigned, sizeof(tmpUnsigned));
+
+		return ret;
 	}
 
 	int32_t Core::Read4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer)
 	{
+		int32_t ret = 0;
+		uint32_t tmpUnsigned = Read4BytesAsBigEndian_Without_Sign(pGbBuffer);
+		memcpy_s(&ret, sizeof(ret), &tmpUnsigned, sizeof(tmpUnsigned));
+
+		return ret;
 	}
 
 	int64_t Core::Read8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer)
 	{
+		int64_t ret = 0;
+		uint64_t tmpUnsigned = Read4BytesAsBigEndian_Without_Sign(pGbBuffer);
+		memcpy_s(&ret, sizeof(ret), &tmpUnsigned, sizeof(tmpUnsigned));
+
+		return ret;
 	}
 
 	uint16_t Core::Read2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
