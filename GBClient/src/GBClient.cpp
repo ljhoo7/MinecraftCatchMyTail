@@ -56,7 +56,7 @@ void TestClient::Start()
 		}
 
 		unsigned short port = MINECRAFT_PORT_NUMBER;
-		Write2BytesAsBigEndian(pGbBuffer, port);
+		Write2BytesAsBigEndian_Without_Sign(pGbBuffer, port);
 
 		char nextStage = 2;
 		WriteByteByByte(pGbBuffer, nextStage);

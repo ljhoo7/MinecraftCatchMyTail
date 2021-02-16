@@ -23,13 +23,13 @@ namespace GenericBoson
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::JoinGame);
 
 		// Sending FermionID
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_ID);
+		Write4BytesAsBigEndian_Without_Sign(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_ID);
 
 		uint8_t hardCoreFlag = 0;
 		WriteByteByByte(&pSi->m_writeBuffer, hardCoreFlag);
 
 		Dimension demension = Dimension::overworld;
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, demension);
+		Write4BytesAsBigEndian_Without_Sign(&pSi->m_writeBuffer, demension);
 
 		uint8_t difficulty = 2; // 2 = Normal
 		WriteByteByByte(&pSi->m_writeBuffer, difficulty);
@@ -76,11 +76,11 @@ namespace GenericBoson
 	void Server::SendTime(SessionInfomation* pSi)
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Time);
-		Write8BytesAsBigEndian(&pSi->m_writeBuffer, m_world.m_ageMs);
+		Write8BytesAsBigEndian_Signed(&pSi->m_writeBuffer, m_world.m_ageMs);
 
 		// false == m_world.m_dayLightEnabled #ToDo
 
-		Write8BytesAsBigEndian(&pSi->m_writeBuffer, m_world.m_timeOfDay);
+		Write8BytesAsBigEndian_Signed(&pSi->m_writeBuffer, m_world.m_timeOfDay);
 	}
 
 	void Server::SendInventory(SessionInfomation* pSi)

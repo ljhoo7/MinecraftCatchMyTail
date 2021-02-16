@@ -59,7 +59,7 @@ namespace GenericBoson
 		spawnSpot = (int64_t)(value.x & BIT_FLAG_FOR_VECTOR_XZ) << 38; // 38 is the number of zero in bitFlag!
 		spawnSpot |= (int64_t)(value.y & BIT_FLAG_FOR_VECTOR_Y) << 26; // 26 is the number of one in bitFlag!
 		spawnSpot |= (int64_t)(value.z & BIT_FLAG_FOR_VECTOR_XZ);
-		Write8BytesAsBigEndian(pGbBuffer, spawnSpot);
+		Write8BytesAsBigEndian_Signed(pGbBuffer, spawnSpot);
 	}
 
 	uint32_t Core::ReadIntGBVector3(GBBuffer* pGbBuffer, GBVector3<int>& value)
@@ -67,7 +67,7 @@ namespace GenericBoson
 		uint32_t readByteLength = 0;
 
 		// Warning : Don't change the below type 'int64_t' to 'uint64_t'.
-		int64_t vectorChunk = Read8BytesAsBigEndian_Without_Sign(pGbBuffer);
+		int64_t vectorChunk = Read8BytesAsBigEndian_Signed(pGbBuffer);
 		readByteLength += sizeof(vectorChunk);
 
 		uint32_t xRaw = (vectorChunk >> 38) & BIT_FLAG_FOR_VECTOR_XZ;
