@@ -191,7 +191,7 @@ namespace GenericBoson
 		return returnValue;
 	}
 
-	int64_t Core::Read8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
+	uint64_t Core::Read8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
 	{
 		int64_t* pEightBytes = AssignFromBufferForRead<int64_t>(pGbBuffer);
 
