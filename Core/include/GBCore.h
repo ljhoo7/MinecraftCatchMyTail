@@ -226,6 +226,8 @@ namespace GenericBoson
 
 	protected: void WriteIntGBVector3(GBBuffer* pGbBuffer, const GBVector3<int>& value);
 
+	protected: void WriteFloat(GBBuffer* pGbBuffer, float value);
+
 	protected: int16_t Read2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
 	protected: int32_t Read4BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);
 	protected: int64_t Read8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer);

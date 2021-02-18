@@ -67,10 +67,10 @@ namespace GenericBoson
 		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_abilityState);
 
 		float correctedFlyingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_flyingMaxSpeed;
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, correctedFlyingMaxSpeed);
+		WriteFloat(&pSi->m_writeBuffer, correctedFlyingMaxSpeed);
 
 		float correctedSprintingMaxSpeed = 0.05f * pSi->m_controllableCharacter.m_sprintingMaxSpeed;
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, correctedSprintingMaxSpeed);
+		WriteFloat(&pSi->m_writeBuffer, correctedSprintingMaxSpeed);
 	}
 
 	void Server::SendTime(SessionInfomation* pSi)
@@ -100,9 +100,9 @@ namespace GenericBoson
 	void Server::SendHealth(SessionInfomation* pSi)
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Health);
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_health);
+		WriteFloat(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_health);
 		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodLevel);
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodSaturationLevel);
+		WriteFloat(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_foodSaturationLevel);
 	}
 
 	void Server::SendExperience(SessionInfomation* pSi)
@@ -110,7 +110,7 @@ namespace GenericBoson
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Experience);
 
 		float xpPercentage = pSi->m_controllableCharacter.GetXpPercentage();
-		Write4BytesAsBigEndian(&pSi->m_writeBuffer, xpPercentage);
+		WriteFloat(&pSi->m_writeBuffer, xpPercentage);
 
 		int level = pSi->m_controllableCharacter.GetLevel();
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Experience);

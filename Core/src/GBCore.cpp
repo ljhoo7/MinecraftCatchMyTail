@@ -180,6 +180,11 @@ namespace GenericBoson
 		return ntohl(*pFourBytes);
 	}
 
+	void Core::WriteFloat(GBBuffer* pGbBuffer, float value)
+	{
+		Write4BytesAsBigEndian_Without_Sign(pGbBuffer, value);
+	}
+
 	float Core::ReadFloat(GBBuffer* pGbBuffer)
 	{
 		float returnValue;
