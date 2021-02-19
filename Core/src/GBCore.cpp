@@ -162,7 +162,7 @@ namespace GenericBoson
 	int64_t Core::Read8BytesAsBigEndian_Signed(GBBuffer* pGbBuffer)
 	{
 		int64_t ret = 0;
-		uint64_t tmpUnsigned = Read4BytesAsBigEndian_Without_Sign(pGbBuffer);
+		uint64_t tmpUnsigned = Read8BytesAsBigEndian_Without_Sign(pGbBuffer);
 		memcpy_s(&ret, sizeof(ret), &tmpUnsigned, sizeof(tmpUnsigned));
 
 		return ret;
