@@ -48,7 +48,7 @@ namespace GenericBoson
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::SpawnSpot);
 
-		GBVector3<int> spawnSpot(-16, 71, 0);
+		GBVector3<int> spawnSpot(10, 10, 10);
 		WriteIntGBVector3(&pSi->m_writeBuffer, spawnSpot);
 	}
 

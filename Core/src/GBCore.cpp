@@ -118,10 +118,12 @@ namespace GenericBoson
 
 	void Core::Write8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer, uint64_t value)
 	{
-		uint64_t highWord = htonl((uint32_t)value) << 32;
+		/*uint64_t highWord = htonl((uint32_t)value) << 32;
 		uint64_t lowWord = htonl(value >> 32);
-		uint64_t valueConvertedToBigEndian = highWord + lowWord;
+		uint64_t valueConvertedToBigEndian = highWord + lowWord;*/
 		
+		uint64_t valueConvertedToBigEndian = htonll(value);
+
 		uint64_t* pEightBytes = AssignFromBufferForWrite<uint64_t>(pGbBuffer);
 		*pEightBytes = valueConvertedToBigEndian;
 	}
@@ -198,7 +200,7 @@ namespace GenericBoson
 
 	uint64_t Core::Read8BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
 	{
-		int64_t* pEightBytes = AssignFromBufferForRead<int64_t>(pGbBuffer);
+		uint64_t* pEightBytes = AssignFromBufferForRead<uint64_t>(pGbBuffer);
 
 		return ntohll(*pEightBytes);
 	}
