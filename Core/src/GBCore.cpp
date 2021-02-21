@@ -184,7 +184,9 @@ namespace GenericBoson
 
 	void Core::WriteFloat(GBBuffer* pGbBuffer, float value)
 	{
-		Write4BytesAsBigEndian_Without_Sign(pGbBuffer, value);
+		uint32_t tmpBytes = 0;
+		memcpy_s(&tmpBytes, sizeof(tmpBytes), &value, sizeof(value));
+		Write4BytesAsBigEndian_Without_Sign(pGbBuffer, tmpBytes);
 	}
 
 	float Core::ReadFloat(GBBuffer* pGbBuffer)
