@@ -248,8 +248,10 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			short slotNum = Read2BytesAsBigEndian_Without_Sign(&buffer);
-			receivedMessageSize -= sizeof(slotNum);
+			short slotNum;
+			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], slotNum);
+			buffer.m_readOffset += rr;
+			receivedMessageSize -= rr;
 
 			for (int k = 0; k < slotNum; ++k)
 			{
@@ -265,27 +267,21 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 		}
 		else if (PacketType::Health == pt)
 		{
-			float health;
-			uint32_t endianChangedHealth = Read4BytesAsBigEndian_Without_Sign(&buffer);
-			health = (float)endianChangedHealth;
-			receivedMessageSize -= sizeof(endianChangedHealth);
+			float health = ReadFloat(&buffer);
+			receivedMessageSize -= 4;
 
 			uint32_t foodLevel;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], foodLevel);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			float foodSaturationLevel;
-			uint32_t endianChangedFoodSaturationLevel = Read4BytesAsBigEndian_Without_Sign(&buffer);
-			foodSaturationLevel = (float)endianChangedFoodSaturationLevel;
-			receivedMessageSize -= sizeof(endianChangedFoodSaturationLevel);
+			float foodSaturationLevel = ReadFloat(&buffer);
+			receivedMessageSize -= 4;
 		}
 		else if (PacketType::Experience == pt)
 		{
-			float xpPercent;
-			uint32_t endianChangedXpPercent = Read4BytesAsBigEndian_Without_Sign(&buffer);
-			xpPercent = (float)endianChangedXpPercent;
-			receivedMessageSize -= sizeof(endianChangedXpPercent);
+			float xpPercent = ReadFloat(&buffer);
+			receivedMessageSize -= 4;
 
 			uint32_t xpLevel;
 			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], xpLevel);
