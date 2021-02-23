@@ -128,18 +128,6 @@ namespace GenericBoson
 		return readByteLength;
 	}
 
-	protected: uint32_t ReadUUID(char* buffer, GBUUID& value)
-	{
-		const uint32_t UUID_SIZE = 16;
-
-		std::array<char, UUID_SIZE> tmpBuffer;
-		memcpy_s(tmpBuffer.data(), UUID_SIZE, buffer, UUID_SIZE);
-
-		value.FromRaw(tmpBuffer);
-
-		return UUID_SIZE;
-	}
-
 	protected: template<typename STRING> uint32_t ReadString(char* buffer, STRING& outString)
 	{
 		uint32_t readByteLength = 0;

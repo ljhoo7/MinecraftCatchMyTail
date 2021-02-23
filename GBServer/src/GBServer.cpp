@@ -113,7 +113,7 @@ namespace GenericBoson
 		WriteFloat(&pSi->m_writeBuffer, xpPercentage);
 
 		int level = pSi->m_controllableCharacter.GetLevel();
-		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::Experience);
+		WriteByteByByte(&pSi->m_writeBuffer, level);
 		WriteByteByByte(&pSi->m_writeBuffer, pSi->m_controllableCharacter.m_experience);
 	}
 
