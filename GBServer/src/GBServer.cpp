@@ -201,6 +201,7 @@ namespace GenericBoson
 					SendExperience(pSi);
 					SendEquippedItem(pSi);
 					SendPlayerList(pSi);
+					SendStatistics(pSi);
 
 					//eol.m_sessionState = authed;
 				});
