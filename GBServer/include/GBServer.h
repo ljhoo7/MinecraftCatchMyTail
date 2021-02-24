@@ -37,6 +37,7 @@ namespace GenericBoson
 	public: void SendExperience(SessionInfomation*);
 	public: void SendEquippedItem(SessionInfomation*);
 	public: void SendPlayerList(SessionInfomation*);
+	public: void SendStatistics(SessionInfomation*);
 
 	private: void ConsumeGatheredMessage(ExpandedOverlapped* pEol, char* message, const uint32_t messageSize, int& readOffSet) override;
 	private: void* GetSessionInformationArray() override;

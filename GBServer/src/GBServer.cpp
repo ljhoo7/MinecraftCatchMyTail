@@ -147,6 +147,13 @@ namespace GenericBoson
 		WriteByteByByte(&pSi->m_writeBuffer, (char)0);
 	}
 
+	void Server::SendStatistics(SessionInfomation* pSi)
+	{
+		// #ToDo
+		// Send storeSizeSum Size
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)0);
+	}
+
 	void* Server::GetSessionInformationArray()
 	{
 		return (void*)m_sessionInfoArray;
