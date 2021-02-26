@@ -248,8 +248,8 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
-			short slotNum;
-			rr = ReadByteByByte(&buffer.m_buffer[buffer.m_readOffset], slotNum);
+			int16_t slotNum;
+			slotNum = Read2BytesAsBigEndian_Signed(&buffer);
 			buffer.m_readOffset += rr;
 			receivedMessageSize -= rr;
 
