@@ -143,6 +143,15 @@ namespace GenericBoson
 		Write8BytesAsBigEndian_Without_Sign(pGbBuffer, value);
 	}
 
+	int8_t Core::Read1BytesAsBigEndian_Signed(GBBuffer* pGbBuffer)
+	{
+		int8_t ret = 0;
+		uint8_t tmpUnsigned = Read1BytesAsBigEndian_Without_Sign(pGbBuffer);
+		memcpy_s(&ret, sizeof(ret), &tmpUnsigned, sizeof(tmpUnsigned));
+
+		return ret;
+	}
+
 	int16_t Core::Read2BytesAsBigEndian_Signed(GBBuffer* pGbBuffer)
 	{
 		int16_t ret = 0;
@@ -168,6 +177,12 @@ namespace GenericBoson
 		memcpy_s(&ret, sizeof(ret), &tmpUnsigned, sizeof(tmpUnsigned));
 
 		return ret;
+	}
+
+	uint8_t Core::Read1BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
+	{
+		uint8_t* pOneBytes = AssignFromBufferForRead<uint8_t>(pGbBuffer);
+		return *pOneBytes;
 	}
 
 	uint16_t Core::Read2BytesAsBigEndian_Without_Sign(GBBuffer* pGbBuffer)
