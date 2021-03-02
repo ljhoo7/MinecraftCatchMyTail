@@ -231,16 +231,24 @@ namespace GenericBoson
 	protected: float ReadFloat(GBBuffer* pGbBuffer);
 	protected: uint32_t ReadIntGBVector3(GBBuffer* pGbBuffer, GBVector3<int>& value);
 
-	protected: uint32_t ReadUUID(char* buffer, GBUUID& value)
+	protected: uint32_t ReadUUID(GBBuffer* pGbBuffer, GBUUID& value)
 	{
 		const uint32_t UUID_SIZE = 16;
 
 		std::array<char, UUID_SIZE> tmpBuffer;
-		memcpy_s(tmpBuffer.data(), UUID_SIZE, buffer, UUID_SIZE);
-
+		memcpy_s(tmpBuffer.data(), UUID_SIZE, &pGbBuffer->m_buffer[pGbBuffer->m_readOffset], UUID_SIZE);
+		pGbBuffer->m_readOffset += UUID_SIZE;
 		value.FromRaw(tmpBuffer);
 
 		return UUID_SIZE;
+	}
+
+	protected: void WriteUUID(GBBuffer* pGbBuffer, GBUUID& value)
+	{
+		for (auto iChar : value.ToRaw())
+		{
+			Write1BytesAsBigEndian_Without_Sign(pGbBuffer, iChar);
+		}
 	}
 
 	protected: template<typename FUNCTION> void MakeAndSendPacket(SOCKET* pSocket, GBBuffer* pGbBuffer, const FUNCTION& func)

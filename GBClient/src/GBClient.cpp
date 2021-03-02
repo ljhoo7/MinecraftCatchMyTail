@@ -313,8 +313,7 @@ void TestClient::ClientConsumeGatheredMessage(GBBuffer& buffer, uint8_t received
 			receivedMessageSize -= rr;
 
 			GBUUID playerUUID;
-			rr = ReadUUID(&buffer.m_buffer[buffer.m_readOffset], playerUUID);
-			buffer.m_readOffset += rr;
+			rr = ReadUUID(&buffer, playerUUID);
 			receivedMessageSize -= rr;
 
 			std::string playerListName;
