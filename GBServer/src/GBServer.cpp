@@ -13,8 +13,8 @@ namespace GenericBoson
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::LoginSuccess);
 
 		// UUID #ToDo
-		pSi->m_uuid = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
-		WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
+		pSi->m_uuid.FromString(L"5550AEA5-0443-4C06-A1CB-CF916EA1623D");
+		WriteString(&pSi->m_writeBuffer, pSi->m_uuid.ToString());
 		WriteString(&pSi->m_writeBuffer, pSi->m_userName);
 	}
 

@@ -14,7 +14,7 @@ namespace GenericBoson
 	{
 		Character m_controllableCharacter;
 
-		std::string m_uuid;
+		GBUUID m_uuid;
 		std::string m_userName;
 
 		SessionState m_sessionState = SessionState::start;

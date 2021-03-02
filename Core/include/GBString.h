@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tchar.h>
 #include <string>
 
 namespace GenericBoson

@@ -2,9 +2,11 @@
 
 #include <array>
 
+#include "GBString.h"
+
 namespace GenericBoson
 {
-	enum class UUIDType : char
+	enum class UUIDType : uint8_t
 	{
 		Obsolete = 0,
 		Standard = 1,
@@ -14,10 +16,13 @@ namespace GenericBoson
 
 	class GBUUID
 	{
-	private: std::array<char, 16> m_UUID;
+	private: std::array<uint8_t, 16> m_UUID;
 	private: UUIDType GetUUIDType() const;
 
-	public: std::array<char, 16> ToRaw() const;
-	public: void FromRaw(const std::array<char, 16>&);
+	public: std::array<uint8_t, 16> ToRaw() const;
+	public: void FromRaw(const std::array<uint8_t, 16>&);
+
+	public: void FromString(const TCHAR* rawString);
+	public: GBString ToString();
 	};
 }

@@ -2,9 +2,9 @@
 
 namespace GenericBoson
 {
-	std::array<char, 16> GBUUID::ToRaw() const
+	std::array<uint8_t, 16> GBUUID::ToRaw() const
 	{
-		std::array<char, 16> returnValue(m_UUID);
+		std::array<uint8_t, 16> returnValue(m_UUID);
 
 		if (UUIDType::MSLegacyGUID != GetUUIDType())
 		{
@@ -15,7 +15,7 @@ namespace GenericBoson
 		throw std::exception();
 	}
 
-	void GBUUID::FromRaw(const std::array<char, 16>& rawValue)
+	void GBUUID::FromRaw(const std::array<uint8_t, 16>& rawValue)
 	{
 		m_UUID = rawValue;
 
@@ -26,6 +26,19 @@ namespace GenericBoson
 
 		// #ToDo
 		throw std::exception();
+	}
+
+	void GBUUID::FromString(const TCHAR* rawString)
+	{
+	}
+
+	GBString GBUUID::ToString()
+	{
+		GBString stringToReturn;
+
+		// For guaranteed return value copy elision, You must use above C++17
+		// static_assert(201700L < __cplusplus); // not working
+		return stringToReturn;
 	}
 
 	UUIDType GBUUID::GetUUIDType() const

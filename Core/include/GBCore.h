@@ -235,7 +235,7 @@ namespace GenericBoson
 	{
 		const uint32_t UUID_SIZE = 16;
 
-		std::array<char, UUID_SIZE> tmpBuffer;
+		std::array<uint8_t, UUID_SIZE> tmpBuffer;
 		memcpy_s(tmpBuffer.data(), UUID_SIZE, &pGbBuffer->m_buffer[pGbBuffer->m_readOffset], UUID_SIZE);
 		pGbBuffer->m_readOffset += UUID_SIZE;
 		value.FromRaw(tmpBuffer);
