@@ -28,8 +28,48 @@ namespace GenericBoson
 		throw std::exception();
 	}
 
-	void GBUUID::FromString(const TCHAR* rawString)
+	bool GBUUID::FromString(const GBString& str)
 	{
+		GBString copiedString;
+		size_t strLength = str.length();
+
+		copiedString.reserve(strLength);
+
+		if (36 == strLength)
+		{
+			int barIndexArray[] { 8, 13, 18, 23 };
+
+			for (auto barIndex : barIndexArray)
+			{
+				if ('-' != str[barIndex])
+				{
+					return false;
+				}
+			}
+
+			for (auto iChar : str)
+			{
+				if ('-' == iChar)
+				{
+					continue;
+				}
+
+				copiedString.push_back(iChar);
+			}
+		}
+		else if (32 == strLength)
+		{
+			copiedString.assign(str);
+		}
+		else
+		{
+			return false;
+		}
+
+		for (auto& iByte : m_UUID)
+		{
+			//iByte = 
+		}
 	}
 
 	GBString GBUUID::ToString()
