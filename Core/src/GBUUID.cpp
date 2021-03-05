@@ -66,9 +66,17 @@ namespace GenericBoson
 			return false;
 		}
 
-		for (auto& iByte : m_UUID)
+		for(int k = 0; k < m_UUID.size(); ++k)
 		{
-			//iByte = 
+			uint8_t highNibble = m_UUID[k];
+			uint8_t lowNibble = m_UUID[k];
+			if ((highNibble > 0x1111) || (lowNibble > 0x1111))
+			{
+				// Invalid
+				return false;
+			}
+
+			m_UUID[k] = (uint8_t)((highNibble << 4) | lowNibble);
 		}
 	}
 
