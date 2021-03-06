@@ -68,8 +68,8 @@ namespace GenericBoson
 
 		for(int k = 0; k < m_UUID.size(); ++k)
 		{
-			uint8_t highNibble = m_UUID[k];
-			uint8_t lowNibble = m_UUID[k];
+			uint8_t highNibble = CharacterToByte(2 * m_UUID[k]);
+			uint8_t lowNibble = CharacterToByte(2 * m_UUID[k] + 1);
 			if ((highNibble > 0x1111) || (lowNibble > 0x1111))
 			{
 				// Invalid
@@ -78,6 +78,23 @@ namespace GenericBoson
 
 			m_UUID[k] = (uint8_t)((highNibble << 4) | lowNibble);
 		}
+	}
+
+	uint8_t GBUUID::CharacterToByte(char hexCharacter)
+	{
+		if ('0' <= hexCharacter && hexCharacter <= '9')
+		{
+			return (uint8_t)(hexCharacter - '0');
+		}
+		if ('a' <= hexCharacter && hexCharacter <= 'f')
+		{
+			return (uint8_t)(10 + hexCharacter - 'a');
+		}
+		if ('A' <= hexCharacter && hexCharacter <= 'F')
+		{
+			return (uint8_t)(10 + hexCharacter - 'A');
+		}
+		return 0x1111;
 	}
 
 	GBString GBUUID::ToString()

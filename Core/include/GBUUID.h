@@ -22,6 +22,7 @@ namespace GenericBoson
 	public: std::array<uint8_t, 16> ToRaw() const;
 	public: void FromRaw(const std::array<uint8_t, 16>&);
 
+	public: uint8_t CharacterToByte(char hexCharacter);
 	public: bool FromString(const GBString& str);
 	public: GBString ToString();
 	};
