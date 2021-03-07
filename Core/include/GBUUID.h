@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cassert>
 
 #include "GBString.h"
 
@@ -23,6 +24,7 @@ namespace GenericBoson
 	public: void FromRaw(const std::array<uint8_t, 16>&);
 
 	public: uint8_t CharacterToByte(char hexCharacter);
+	public: char ByteToCharacter(uint8_t hexCharacter);
 	public: bool FromString(const GBString& str);
 	public: GBString ToString();
 	};

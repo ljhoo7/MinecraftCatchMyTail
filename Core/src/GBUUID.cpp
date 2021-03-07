@@ -97,9 +97,33 @@ namespace GenericBoson
 		return 0x1111;
 	}
 
+	char GBUUID::ByteToCharacter(uint8_t hexCharacter)
+	{
+		assert((hexCharacter & 0x11110000) == 0);
+
+		char charToReturn;
+
+		charToReturn = (char)(
+			(hexCharacter < 10) ?
+			('0' + hexCharacter) :
+			('a' + hexCharacter - 10)
+			);
+
+		return charToReturn;
+	}
+
 	GBString GBUUID::ToString()
 	{
 		GBString stringToReturn;
+
+		for (size_t i = 0; i != m_UUID.size(); ++i)
+		{
+			uint8_t highNibble = (m_UUID[i] >> 4) & 0x0f;
+			uint8_t lowNibble = m_UUID[i] & 0x1111;
+
+			stringToReturn[2 * i] = ByteToCharacter(highNibble);
+			stringToReturn[2 * i + 1] = ByteToCharacter(lowNibble);
+		}
 
 		// For guaranteed return value copy elision, You must use above C++17
 		// static_assert(201700L < __cplusplus); // not working
