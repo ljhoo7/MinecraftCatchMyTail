@@ -14,6 +14,7 @@
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <tchar.h>
 
 namespace GenericBoson
 {
@@ -186,7 +187,16 @@ namespace GenericBoson
 
 		assert(pGbBuffer->m_writeOffset + inStringSize < BUFFER_SIZE);
 
-		errno_t cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset - 1, inString.c_str(), inStringSize);
+		errno_t cpyStrResult = 0;
+		if constexpr(true == std::is_same_v<std::decay_t<decltype(inString)>, std::string>)
+		{
+			cpyStrResult = strncpy_s(&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset - 1, inString.c_str(), inStringSize);
+		}
+		else
+		{
+			cpyStrResult = _tcsncpy_s((TCHAR*)&pGbBuffer->m_buffer[pGbBuffer->m_writeOffset], BUFFER_SIZE - pGbBuffer->m_writeOffset - 1, inString.c_str(), inStringSize);
+		}
+
 		pGbBuffer->m_writeOffset += inStringSize;
 
 		return cpyStrResult;

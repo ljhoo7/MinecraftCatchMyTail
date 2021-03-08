@@ -112,9 +112,11 @@ namespace GenericBoson
 		return charToReturn;
 	}
 
-	GBString GBUUID::ToString()
+	std::string GBUUID::ToString()
 	{
-		GBString stringToReturn;
+		std::string stringToReturn;
+
+		stringToReturn.resize(m_UUID.size() * 2);
 
 		for (size_t i = 0; i != m_UUID.size(); ++i)
 		{

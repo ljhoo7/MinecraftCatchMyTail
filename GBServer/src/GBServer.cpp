@@ -131,7 +131,7 @@ namespace GenericBoson
 
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)1);
 
-		WriteString(&pSi->m_writeBuffer, pSi->m_uuid);
+		WriteUUID(&pSi->m_writeBuffer, pSi->m_uuid);
 
 		WriteString(&pSi->m_writeBuffer, pSi->m_userName);
 

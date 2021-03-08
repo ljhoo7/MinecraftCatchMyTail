@@ -26,6 +26,6 @@ namespace GenericBoson
 	public: uint8_t CharacterToByte(char hexCharacter);
 	public: char ByteToCharacter(uint8_t hexCharacter);
 	public: bool FromString(const GBString& str);
-	public: GBString ToString();
+	public: std::string ToString();
 	};
 }
