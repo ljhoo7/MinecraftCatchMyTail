@@ -185,6 +185,7 @@ namespace GenericBoson
 
 				pSi->m_userName = userName;
 
+				ss = SessionState::in_game;
 
 				MakeAndSendPacket(pSi, [this](SessionInfomation* pSi)
 				{
