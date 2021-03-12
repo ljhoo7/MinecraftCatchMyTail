@@ -16,4 +16,10 @@ namespace GenericBoson
 #define GBFUNCTION __FUNCTION__
 #define _GBT(PARAM) PARAM
 #endif //defined(UNICODE)
+
+	template<typename T>
+	class GBStringT
+	{
+
+	};
 }
