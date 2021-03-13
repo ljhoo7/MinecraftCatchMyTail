@@ -17,7 +17,7 @@ namespace GenericBoson
 #define _GBT(PARAM) PARAM
 #endif //defined(UNICODE)
 
-	template<typename T>
+	template<typename T, typename CHARTRAIT>
 	class GBStringT
 	{
 
