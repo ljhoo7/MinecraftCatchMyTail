@@ -154,6 +154,29 @@ namespace GenericBoson
 		// #ToDo
 		// Send storeSizeSum Size
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)0);
+
+		// size
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)5);
+
+		std::string statics1 = "stat.timeSinceDeath";
+		WriteString(&pSi->m_writeBuffer, statics1);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)107);
+
+		std::string statics2 = "stat.drop";
+		WriteString(&pSi->m_writeBuffer, statics2);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)0);
+
+		std::string statics3 = "stat.leaveGame";
+		WriteString(&pSi->m_writeBuffer, statics3);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)11);
+
+		std::string statics4 = "stat.playOneMinute";
+		WriteString(&pSi->m_writeBuffer, statics4);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)107);
+
+		std::string statics5 = "stat.walkOneCm";
+		WriteString(&pSi->m_writeBuffer, statics5);
+		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)0);
 	}
 
 	void* Server::GetSessionInformationArray()
