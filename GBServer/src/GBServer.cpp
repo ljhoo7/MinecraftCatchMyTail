@@ -212,22 +212,48 @@ namespace GenericBoson
 
 				MakeAndSendPacket(pSi, [this](SessionInfomation* pSi)
 				{
-					SendStartCompress(pSi);
-					SendLoginSuccess(pSi);
-					SendJoinGame(pSi);
-					SendSpawnSpot(pSi);
-					SendDifficulty(pSi);
-					SendCharacterAbility(pSi);
+					int prevWriteOffset = 0;
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendStartCompress(pSi);}, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendLoginSuccess(pSi);}, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendJoinGame(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendSpawnSpot(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendDifficulty(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendCharacterAbility(pSi); }, prevWriteOffset);
 
 					//SendWeather #ToDo
 
-					SendTime(pSi);
-					SendInventory(pSi);
-					SendHealth(pSi);
-					SendExperience(pSi);
-					SendEquippedItem(pSi);
-					SendPlayerList(pSi);
-					SendStatistics(pSi);
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendTime(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendInventory(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendHealth(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendExperience(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendEquippedItem(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendPlayerList(pSi); }, prevWriteOffset);
+
+					AppendSizeAtFront(pSi, [this](SessionInfomation* pSi)
+					{SendStatistics(pSi); }, prevWriteOffset);
 				});
 			}
 			else

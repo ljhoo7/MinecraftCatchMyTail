@@ -46,15 +46,26 @@ namespace GenericBoson
 	{
 		pSi->m_writeBuffer.Reset();
 
-		char* pPacketLength = AssignFromBufferForWrite<char>(&pSi->m_writeBuffer);
+		//char* pPacketLength = AssignFromBufferForWrite<char>(&pSi->m_writeBuffer);
 
 		func(pSi);
 
 		assert(pSi->m_writeBuffer.m_writeOffset < 257);
 
-		*pPacketLength = (char)(pSi->m_writeBuffer.m_writeOffset - 1);
+		//*pPacketLength = (char)(pSi->m_writeBuffer.m_writeOffset - 1);
 
 		EnqueueAndIssueSend(pSi);
+	}
+
+	protected: template<typename FUNCTION> int AppendSizeAtFront(SessionInfomation* pSi, const FUNCTION& func, int& previousWriteOffset)
+	{
+		char* pPacketLength = AssignFromBufferForWrite<char>(&pSi->m_writeBuffer);
+
+		func(pSi);
+
+		*pPacketLength = (char)(pSi->m_writeBuffer.m_writeOffset - 1 - previousWriteOffset);
+
+		return pSi->m_writeBuffer.m_writeOffset;
 	}
 	};
 }
