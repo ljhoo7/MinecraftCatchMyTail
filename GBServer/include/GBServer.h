@@ -50,7 +50,7 @@ namespace GenericBoson
 
 		func(pSi);
 
-		assert(pSi->m_writeBuffer.m_writeOffset < 257);
+		assert(pSi->m_writeBuffer.m_writeOffset < BUFFER_SIZE);
 
 		//*pPacketLength = (char)(pSi->m_writeBuffer.m_writeOffset - 1);
 

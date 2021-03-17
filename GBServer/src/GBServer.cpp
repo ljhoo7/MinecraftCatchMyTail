@@ -15,9 +15,10 @@ namespace GenericBoson
 		// UUID #ToDo
 		//pSi->m_uuid.FromString(L"5550AEA5-0443-4C06-A1CB-CF916EA1623D");
 		//std::string uuidString = pSi->m_uuid.ToString();
-		std::string uuidString = "5550AEA5-0443-4C06-A1CB-CF916EA1623D";
+		std::string uuidString = "cd219047-4980-3421-86fd-81dfa659fabe";
 		WriteString(&pSi->m_writeBuffer, uuidString);
-		WriteString(&pSi->m_writeBuffer, pSi->m_userName);
+		std::string tmpNameString = "ljhoo7";
+		WriteString(&pSi->m_writeBuffer, tmpNameString);//pSi->m_userName);
 	}
 
 	void Server::SendJoinGame(SessionInfomation* pSi)
@@ -50,7 +51,7 @@ namespace GenericBoson
 	{
 		WriteByteByByte(&pSi->m_writeBuffer, (int32_t)PacketType::SpawnSpot);
 
-		GBVector3<int> spawnSpot(10, 10, 10);
+		GBVector3<int> spawnSpot(-16, 71, 0);
 		WriteIntGBVector3(&pSi->m_writeBuffer, spawnSpot);
 	}
 
